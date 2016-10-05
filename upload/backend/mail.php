@@ -10,9 +10,9 @@
 //
 //
 
-$GLOBALS["TTMail"] = new TTMail;
+$GLOBALS["TTMail"] = new TTv3Mail;
 
-class TTMail {
+class TTv3Mail {
 	var $type;
 
 	var $smtp_host;

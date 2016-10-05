@@ -93,7 +93,7 @@ $page = (int) $_GET['page'];
 $perpage = 200;
 
 $res = SQL_Query_exec("SELECT COUNT(*) FROM torrents WHERE torrents.owner = " . $CURUSER["id"] ."");
-$arr = mysql_fetch_row($res);
+$arr = mysqli_fetch_row($res);
 $pages = floor($arr[0] / $perpage);
 if ($pages * $perpage < $arr[0])
   ++$pages;
@@ -131,7 +131,7 @@ $orderby = "ORDER BY added DESC";
 
 $query = SQL_Query_exec("SELECT torrents.id, torrents.category, torrents.name, torrents.added, torrents.hits, torrents.banned, torrents.comments, torrents.seeders, torrents.leechers, torrents.times_completed, categories.name AS cat_name, categories.parent_cat AS cat_parent FROM torrents LEFT JOIN categories ON category = categories.id $where $orderby LIMIT $offset,$perpage");
 
-$allcats = mysql_num_rows($query);
+$allcats = mysqli_num_rows($query);
 	if($allcats == 0) {
 		echo '<div class="f-border comment"><br /><b>'.T_("NO_UPLOADS").'</b></div>';
 	}else{
@@ -152,7 +152,7 @@ $allcats = mysql_num_rows($query);
     
 <?php
   
-		while($row = mysql_fetch_assoc($query))
+		while($row = mysqli_fetch_assoc($query))
 			{
 			$char1 = 35; //cut length 
 			$smallname = CutName(htmlspecialchars($row["name"]), $char1);
@@ -182,7 +182,7 @@ if ($action=="edit_settings"){
 
 	$ss_r = SQL_Query_exec("SELECT * from stylesheets");
 	$ss_sa = array();
-	while ($ss_a = mysql_fetch_assoc($ss_r))
+	while ($ss_a = mysqli_fetch_assoc($ss_r))
 	{
 	  $ss_id = $ss_a["id"];
 	  $ss_name = $ss_a["name"];
@@ -198,17 +198,17 @@ if ($action=="edit_settings"){
 
 	$countries = "<option value='0'>----</option>\n";
 	$ct_r = SQL_Query_exec("SELECT id,name from countries ORDER BY name");
-	while ($ct_a = mysql_fetch_assoc($ct_r))
+	while ($ct_a = mysqli_fetch_assoc($ct_r))
 	  $countries .= "<option value='$ct_a[id]'" . ($CURUSER["country"] == $ct_a['id'] ? " selected='selected'" : "") . ">$ct_a[name]</option>\n";
 
 $moods = "<option value='0'>--- ".T_("MOOD_SELECT")." ----</option>";
 $ms_r = SQL_Query_exec("SELECT id,name from moods ORDER BY name");
-while ($ms_a = mysql_fetch_assoc($ms_r))
+while ($ms_a = mysqli_fetch_assoc($ms_r))
 $moods .= "<option value='$ms_a[id]'>$ms_a[name]</option>";
 
 	$teams = "<option value='0'>--- ".T_("NONE_SELECTED")." ----</option>\n";
 	$sashok = SQL_Query_exec("SELECT id,name FROM teams ORDER BY name");
-	while ($sasha = mysql_fetch_assoc($sashok))
+	while ($sasha = mysqli_fetch_assoc($sashok))
 		$teams .= "<option value='$sasha[id]'" . ($CURUSER["team"] == $sasha['id'] ? " selected='selected'" : "") . ">$sasha[name]</option>\n"; 
 
 
@@ -222,11 +222,11 @@ $moods .= "<option value='$ms_a[id]'>$ms_a[name]</option>";
 
 	// START CAT LIST SQL
 	$r = SQL_Query_exec("SELECT id,name,parent_cat FROM categories ORDER BY parent_cat ASC, sort_index ASC");
-	if (mysql_num_rows($r) > 0)
+	if (mysqli_num_rows($r) > 0)
 	{
 		$categories .= "<table><tr>\n";
 		$i = 0;
-		while ($a = mysql_fetch_assoc($r))
+		while ($a = mysqli_fetch_assoc($r))
 		{
 		  $categories .=  ($i && $i % 2 == 0) ? "</tr><tr>" : "";
 		  $categories .= "<td class='bottom' style='padding-right: 5px'><input name='cat$a[id]' type=\"checkbox\" " . (strpos($CURUSER['notifs'], "[cat$a[id]]") !== false ? " checked='checked'" : "") . " value='yes' />&nbsp;" .htmlspecialchars($a["parent_cat"]).": " . htmlspecialchars($a["name"]) . "</td>\n";
@@ -326,9 +326,9 @@ print("<div class='profile-stats'>
 		  $privacy = $_POST["privacy"];
 		  $notifs = ($pmnotif == 'yes' ? "[pm]" : "");
 		  $r = SQL_Query_exec("SELECT id FROM categories");
-		  $rows = mysql_num_rows($r);
+		  $rows = mysqli_num_rows($r);
 		  for ($i = 0; $i < $rows; ++$i) {
-				$a = mysql_fetch_assoc($r);
+				$a = mysqli_fetch_assoc($r);
 				if ($_POST["cat$a[id]"] == 'yes')
 				  $notifs .= "[cat$a[id]]";
 		  }

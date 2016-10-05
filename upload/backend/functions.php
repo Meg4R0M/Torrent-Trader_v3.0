@@ -262,7 +262,7 @@ function leftblocks() {
 function rightblocks() {
     global $site_config, $CURUSER, $THEME, $LANGUAGE, $TTCache, $blockfilename;  //Define globals
 
-    if (($blocks=$TTCache->get("blocks_right", 900)) === false) {
+    if (($blocks=$TTv3Cache->get("blocks_right", 900)) === false) {
         $res = SQL_Query_exec("SELECT * FROM blocks WHERE position='right' AND enabled=1 ORDER BY sort");
         $blocks = array();
         while ($result = mysqli_fetch_assoc($res)) {
@@ -277,7 +277,7 @@ function rightblocks() {
 }
 
 function middleblocks() {
-    global $site_config, $CURUSER, $THEME, $LANGUAGE, $TTCache;  //Define globals
+    global $site_config, $CURUSER, $THEME, $LANGUAGE, $TTv3Cache;  //Define globals
     
     if (($blocks=$TTCache->get("blocks_middle", 900)) === false) {
         $res = SQL_Query_exec("SELECT * FROM blocks WHERE position='middle' AND enabled=1 ORDER BY sort");

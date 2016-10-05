@@ -18,7 +18,7 @@ begin_block('Profile');
 
 	$avatar = htmlspecialchars($CURUSER["avatar"]);
 	if (!$avatar)
-		$avatar = $site_config["SITEURL"]."/images/default_avatar.png";
+		$avatar = "/images/default_avatar.png";
 
 	$userdownloaded = mksize($CURUSER["downloaded"]);
 	$useruploaded = mksize($CURUSER["uploaded"]);

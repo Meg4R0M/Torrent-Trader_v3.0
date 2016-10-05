@@ -1,143 +1,140 @@
-<?php
-//
-//  TorrentTrader v2.x
-//      $LastChangedDate: 2012-08-04 03:50:42 +0100 (Sat, 04 Aug 2012) $
-//      $LastChangedBy: torrenttrader $
-//
-//      http://www.torrenttrader.org
-//
-//
-require_once("backend/functions.php");
-dbconn();
-loggedinonly();
+<?php 
+// 
+//  TorrentTrader v3.x 
+//      $LastChangedDate: 2016-10-05 18:54:42 +0100 (Wed, 05 Oct 2016) $ 
+//      $LastChangedBy: Meg4R0M $ 
+// 
+require_once("backend/functions.php"); 
+dbconn(); 
+loggedinonly(); 
 
-if ($CURUSER["view_users"]=="no")
-    show_error_msg(T_("ERROR"), T_("NO_USER_VIEW"), 1);
-    
-$search = trim($_GET['search']);
-$class = (int) $_GET['class'];
-$letter = trim($_GET['letter']);
+if ($CURUSER["view_users"]=="no") 
+    show_error_msg(T_("ERROR"), T_("NO_USER_VIEW"), 1); 
+     
+$search = trim($_GET['search']); 
+$class = (int) $_GET['class']; 
+$letter = trim($_GET['letter']); 
 
-if (!$class)
-	unset($class);
+if (!$class) 
+    unset($class); 
 
-$q = $query = null;
-if ($search) {
-	$query = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'";
-	if ($search) {
-		$q = "search=" . htmlspecialchars($search);
-	}
-} elseif ($letter) {
-	if (strlen($letter) > 1)
-		unset($letter);
-	if ($letter == "" || strpos("abcdefghijklmnopqrstuvwxyz", $letter) === false) {
-		unset($letter);
-	} else {
-		$query = "username LIKE '$letter%' AND status='confirmed'";
-	}
-	$q = "letter=$letter";
-}
+$q = $query = null; 
+if ($search) { 
+    $query = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'"; 
+    if ($search) { 
+        $q = "search=" . htmlspecialchars($search); 
+    } 
+} elseif ($letter) { 
+    if (strlen($letter) > 1) 
+        unset($letter); 
+    if ($letter == "" || strpos("abcdefghijklmnopqrstuvwxyz", $letter) === false) { 
+        unset($letter); 
+    } else { 
+        $query = "username LIKE '$letter%' AND status='confirmed'"; 
+    } 
+    $q = "letter=$letter"; 
+} 
 
-if (!$query) {
-	$query = "status='confirmed'";
-}
+if (!$query) { 
+    $query = "status='confirmed'"; 
+} 
 
-if ($class) {
-	$query .= " AND class=$class";
-	$q .= ($q ? "&amp;" : "") . "class=$class";
-}
+if ($class) { 
+    $query .= " AND class=$class"; 
+    $q .= ($q ? "&amp;" : "") . "class=$class"; 
+} 
 
-stdhead(T_("USERS"));
-begin_frame(T_("USERS"));
-print("<center><br /><form method='get' action='../members/'>\n");
-print(T_("SEARCH").": <input type='text' size='30' name='search' />\n");
-print("<select name='class'>\n");
-print("<option value='-'>(any class)</option>\n");
-$res = SQL_Query_exec("SELECT group_id, level FROM groups");
-while ($row = mysql_fetch_assoc($res)) {
-	print("<option value='$row[group_id]'" . ($class && $class == $row['group_id'] ? " selected='selected'" : "") . ">".htmlspecialchars($row['level'])."</option>\n");
-}
-print("</select>\n");
-print("<input type='submit' value='".T_("SEARCH")."' />\n");
-print("</form></center>\n");
+stdhead(T_("USERS")); 
+begin_frame(T_("USERS")); 
+print("<center><br /><form method='get' action='../members/'>\n"); 
+print(T_("SEARCH").": <input type='text' size='30' name='search' />\n"); 
+print("<select name='class'>\n"); 
+print("<option value='-'>(any class)</option>\n"); 
+$res = SQL_Query_exec("SELECT group_id, level FROM groups"); 
+while ($row = mysqli_fetch_assoc($res)) { 
+    print("<option value='$row[group_id]'" . ($class && $class == $row['group_id'] ? " selected='selected'" : "") . ">".htmlspecialchars($row['level'])."</option>\n"); 
+} 
+print("</select>\n"); 
+print("<input type='submit' value='".T_("SEARCH")."' />\n"); 
+print("</form></center>\n"); 
 
-print("<p align='center'>\n");
+print("<p align='center'>\n"); 
 
-print("<a href='../members/'><b>".T_("ALL")."</b></a> - \n");
-foreach (range("a", "z") as $l) {
-	$L = strtoupper($l);
-	if ($l == $letter)
-		print("<b>$L</b>\n");
-	else
-		print("<a href='../members/?letter=$l'><b>$L</b></a>\n");
-}
+print("<a href='../members/'><b>".T_("ALL")."</b></a> - \n"); 
+foreach (range("a", "z") as $l) { 
+    $L = strtoupper($l); 
+    if ($l == $letter) 
+        print("<b>$L</b>\n"); 
+    else 
+        print("<a href='../members/?letter=$l'><b>$L</b></a>\n"); 
+} 
 
-print("</p>\n");
+print("</p>\n"); 
 
-$page = (int) $_GET['page'];
-$perpage = 25;
+$page = (int) $_GET['page']; 
+$perpage = 25; 
 
-$res = SQL_Query_exec("SELECT COUNT(*) FROM users WHERE $query");
-$arr = mysql_fetch_row($res);
-$pages = floor($arr[0] / $perpage);
-if ($pages * $perpage < $arr[0])
-  ++$pages;
+$res = SQL_Query_exec("SELECT COUNT(*) FROM users WHERE $query"); 
+$arr = mysqli_fetch_row($res); 
+$pages = floor($arr[0] / $perpage); 
+if ($pages * $perpage < $arr[0]) 
+  ++$pages; 
 
-if ($page < 1)
-  $page = 1;
-else
-  if ($page > $pages)
-    $page = $pages;
+if ($page < 1) 
+  $page = 1; 
+else 
+  if ($page > $pages) 
+    $page = $pages; 
 
-for ($i = 1; $i <= $pages; ++$i)
-  if ($i == $page)
-    $pagemenu .= "$i\n";
-  else
-    $pagemenu .= "<a href='?$q&amp;page=$i'>$i</a>\n";
+for ($i = 1; $i <= $pages; ++$i) 
+  if ($i == $page) 
+    $pagemenu .= "$i\n"; 
+  else 
+    $pagemenu .= "<a href='?$q&amp;page=$i'>$i</a>\n"; 
 
-if ($page == 1)
-  $browsemenu .= "";
-//  $browsemenu .= "[Prev]";
-else
-  $browsemenu .= "<a href='?$q&amp;page=" . ($page - 1) . "'>[Prev]</a>";
+if ($page == 1) 
+  $browsemenu .= ""; 
+//  $browsemenu .= "[Prev]"; 
+else 
+  $browsemenu .= "<a href='?$q&amp;page=" . ($page - 1) . "'>[Prev]</a>"; 
 
-$browsemenu .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+$browsemenu .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; 
 
-if ($page == $pages)
-  $browsemenu .= "";
-//  $browsemenu .= "[Next]";
-else
-  $browsemenu .= "<a href='?$q&amp;page=" . ($page + 1) . "'>[Next]</a>";
+if ($page == $pages) 
+  $browsemenu .= ""; 
+//  $browsemenu .= "[Next]"; 
+else 
+  $browsemenu .= "<a href='?$q&amp;page=" . ($page + 1) . "'>[Next]</a>"; 
 
-$offset = max( 0, ( $page * $perpage ) - $perpage );
+$offset = max( 0, ( $page * $perpage ) - $perpage ); 
 
-$res = SQL_Query_exec("SELECT users.*, groups.level FROM users INNER JOIN groups ON groups.group_id=users.class WHERE $query ORDER BY username LIMIT $offset,$perpage");
+$res = SQL_Query_exec("SELECT users.*, groups.level FROM users INNER JOIN groups ON groups.group_id=users.class WHERE $query ORDER BY username LIMIT $offset,$perpage"); 
 
-print("<br /><table border='0' class='table_table' width='100%' cellpadding='3' cellspacing='3'><tr><th class='table_head'>" . T_("USERNAME") . "</th><th class='table_head'>" . T_("REGISTERED") . "</th><th class='table_head'>" . T_("LAST_ACCESS") . "</th><th class='table_head'>" . T_("CLASS") . "</th>\n");
-while ($arr = mysql_fetch_assoc($res)) {
-	
-		$cres = SQL_Query_exec("SELECT name,flagpic FROM countries WHERE id=$arr[country]");
+print("<br /><table border='0' class='table_table' width='100%' cellpadding='3' cellspacing='3'><tr><th class='table_head'>" . T_("USERNAME") . "</th><th class='table_head'>" . T_("REGISTERED") . "</th><th class='table_head'>" . T_("LAST_ACCESS") . "</th><th class='table_head'>" . T_("CLASS") . "</th>\n"); 
+while ($arr = mysqli_fetch_assoc($res)) { 
+     
+        $cres = SQL_Query_exec("SELECT name,flagpic FROM countries WHERE id=$arr[country]"); 
 
-		if ($carr = mysql_fetch_assoc($cres)) {
-			$country = "";
-		} else {
-			$country = "";
-		}
-	
+        if ($carr = mysqli_fetch_assoc($cres)) { 
+            $country = ""; 
+        } else { 
+            $country = ""; 
+        } 
+     
 
-/*	if ($arr['added'] == '0000-00-00 00:00:00')
-		$arr['added'] = '-';
-	if ($arr['last_access'] == '0000-00-00 00:00:00')
-		$arr['last_access'] = T_("NEVER");*/
+/*    if ($arr['added'] == '0000-00-00 00:00:00') 
+        $arr['added'] = '-'; 
+    if ($arr['last_access'] == '0000-00-00 00:00:00') 
+        $arr['last_access'] = T_("NEVER");*/ 
 
-  print("<tr><td class='table_col1' align='left'><a href='../user/?id=$arr[id]'><b>$arr[username]</b></a>" .($arr["donated"] > 0 ? "<img src='$site_config[SITEURL]/images/star.png' border='0' alt='Donated' />" : "")."</td>" .
-  "<td align=\"center\" class='table_col2'>".utc_to_tz($arr["added"])."</td><td align=\"center\" class='table_col1'>".utc_to_tz($arr["last_access"])."</td>".
-    "<td class='table_col2' align='center'>" . T_($arr["level"]) . "</td>$country</tr>\n");
-}
-print('</table>');
+  print("<tr><td class='table_col1' align='left'><a href='../user/?id=$arr[id]'><b>$arr[username]</b></a>" .($arr["donated"] > 0 ? "<img src='$site_config[SITEURL]/images/star.png' border='0' alt='Donated' />" : "")."</td>" . 
+  "<td align=\"center\" class='table_col2'>".utc_to_tz($arr["added"])."</td><td align=\"center\" class='table_col1'>".utc_to_tz($arr["last_access"])."</td>". 
+    "<td class='table_col2' align='center'>" . T_($arr["level"]) . "</td>$country</tr>\n"); 
+} 
+print('</table>'); 
 
-print("<br /><p align='center'>$pagemenu<br />$browsemenu</p>");
-end_frame();
-stdfoot();
+print("<br /><p align='center'>$pagemenu<br />$browsemenu</p>"); 
+end_frame(); 
+stdfoot(); 
 
 ?>
