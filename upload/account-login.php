@@ -21,7 +21,7 @@ if ($_POST["username"] && $_POST["password"]) {
 
 	if (!empty($_POST["username"]) && !empty($_POST["password"])) {
 		$res = SQL_Query_exec("SELECT id, password, secret, status, enabled FROM users WHERE username = " . sqlesc($_POST["username"]) . "");
-		$row = mysql_fetch_assoc($res);
+		$row = mysqli_fetch_assoc($res);
 
 		if ( ! $row || $row["password"] != $password )
 			$message = T_("LOGIN_INCORRECT");

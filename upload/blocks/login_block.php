@@ -31,7 +31,7 @@ begin_block('Profile');
 	else
 		$userratio = "---";
  $res = SQL_Query_exec("SELECT `moodspic` FROM `moods` WHERE `id` = '$CURUSER[moods]'");
-	 $row = mysql_fetch_assoc($res);
+	 $row = mysqli_fetch_assoc($res);
 	 $moods = ( $row ) ? "<img src='../images/moods/$row[moodspic]' alt='$row[moodspic]' title='$row[moodspic]' />" : 'Unknown';
 	print ("<center><img width='120' height='120' src='$avatar' alt='' /></center>");
   print ("<center><br>$moods<br></center>");

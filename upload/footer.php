@@ -11,7 +11,7 @@
     // Most users online
 $monli = "SELECT * FROM mostonline";
 $result = SQL_Query_exec($monli);
-$details = mysql_fetch_array($result);
+$details = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
 if ($totalonline > $details['amount'])
 {

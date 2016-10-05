@@ -1,4 +1,4 @@
-<?php
+ <?php
 //
 //  TorrentTrader v2.x
 //      $LastChangedDate: 2012-01-07 14:57:37 +0000 (Sat, 07 Jan 2012) $
@@ -43,7 +43,7 @@ $where = implode(" AND ", $wherea);
 $wherecatina = array();
 $wherecatin = "";
 $res = SQL_Query_exec("SELECT id FROM categories");
-while($row = mysql_fetch_array($res)){
+while($row = mysqli_fetch_array($res)){
     if ($_GET["c$row[id]"]) {
         $wherecatina[] = $row["id"];
         $addparam .= "c$row[id]=1&amp;";
@@ -88,7 +88,7 @@ if ($_GET["sort"] || $_GET["order"]) {
 
 //Get Total For Pager
 $res = SQL_Query_exec("SELECT COUNT(*) FROM torrents LEFT JOIN categories ON category = categories.id $where");
-$row = mysql_fetch_row($res);
+$row = mysqli_fetch_row($res);
 $count = $row[0];
 
 //get sql info
@@ -107,7 +107,7 @@ begin_frame(T_("BROWSE_TORRENTS"));
 echo "<center><b>".T_("CATEGORIES").":</b> ";
 $catsquery = SQL_Query_exec("SELECT distinct parent_cat FROM categories ORDER BY parent_cat");
 echo " - <a href='../browse/'>".T_("SHOW_ALL")."</a>";
-while($catsrow = mysql_fetch_assoc($catsquery)){
+while($catsrow = mysqli_fetch_assoc($catsquery)){
         echo " - <a href='../browse/?parent_cat=".urlencode($catsrow['parent_cat'])."'>$catsrow[parent_cat]</a>";
 }
 
@@ -119,7 +119,7 @@ while($catsrow = mysql_fetch_assoc($catsquery)){
 <?php
 $i = 0;
 $cats = SQL_Query_exec("SELECT * FROM categories ORDER BY parent_cat, name");
-while ($cat = mysql_fetch_assoc($cats)) {
+while ($cat = mysqli_fetch_assoc($cats)) {
     $catsperrow = 5;
     print(($i && $i % $catsperrow == 0) ? "</tr><tr align='right'>" : "");
     print("<td style=\"padding-bottom: 2px;padding-left: 2px\"><a href='../browse/?cat={$cat["id"]}'>".htmlspecialchars($cat["parent_cat"])." - " . htmlspecialchars($cat["name"]) . "</a> <input name='c{$cat["id"]}' type=\"checkbox\" " . (in_array($cat["id"], $wherecatina) || $_GET["cat"] == $cat["id"] ? "checked='checked' " : "") . "value='1' /></td>\n");
@@ -133,7 +133,7 @@ if ($parent_cat){
     $thisurl .= "parent_cat=".urlencode($parent_cat)."&amp;";
     echo "<br /><br /><b>".T_("YOU_ARE_IN").":</b> <a href='../browse/?parent_cat=".urlencode($parent_cat)."'>".htmlspecialchars($parent_cat)."</a><br /><b>".T_("SUB_CATS").":</b> ";
     $subcatsquery = SQL_Query_exec("SELECT id, name, parent_cat FROM categories WHERE parent_cat=".sqlesc($parent_cat)." ORDER BY name");
-    while($subcatsrow = mysql_fetch_assoc($subcatsquery)){
+    while($subcatsrow = mysqli_fetch_assoc($subcatsquery)){
         $name = $subcatsrow['name'];
         echo " - <a href='../browse/?cat=$subcatsrow[id]'>$name</a>";
     }
@@ -181,4 +181,4 @@ if ($CURUSER)
 
 end_frame();
 stdfoot();
-?>
+?> 

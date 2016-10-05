@@ -24,7 +24,7 @@ if ($site_config["MEMBERSONLY"] && !$CURUSER) {
 } else {
 	$query = "SELECT torrents.id, torrents.anon, torrents.announce, torrents.category, torrents.leechers, torrents.nfo, torrents.seeders, torrents.name, torrents.times_completed, torrents.size, torrents.added, torrents.comments, torrents.numfiles, torrents.filename, torrents.owner, torrents.external, torrents.freeleech, categories.name AS cat_name, categories.image AS cat_pic, categories.parent_cat AS cat_parent, users.username, users.privacy, IF(torrents.numratings < 2, NULL, ROUND(torrents.ratingsum / torrents.numratings, 1)) AS rating FROM torrents LEFT JOIN categories ON category = categories.id LEFT JOIN users ON torrents.owner = users.id WHERE visible = 'yes' AND banned = 'no' ORDER BY id DESC LIMIT 25";
 	$res = SQL_Query_exec($query);
-	if (mysql_num_rows($res)) {
+	if (mysqli_num_rows($res)) {
 		torrenttable($res);
 	}else {
 		print("<div class='f-border'>");

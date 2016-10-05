@@ -11,7 +11,7 @@ if (!$site_config["MEMBERSONLY"] || $CURUSER) {
 		$res = SQL_Query_exec("SELECT id, name, seeders, leechers FROM torrents WHERE seeders = 0 AND leechers > 0 AND banned = 'no' AND $external ORDER BY leechers DESC LIMIT 5");
 		$rows = array();
 
-		while ($row = mysql_fetch_assoc($res)) {
+		while ($row = mysqli_fetch_assoc($res)) {
 			$rows[] = $row;
 		}
 

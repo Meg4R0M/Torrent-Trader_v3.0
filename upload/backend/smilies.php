@@ -1,10 +1,9 @@
 <?php
 //
-//  TorrentTrader v2.x
-//      $LastChangedDate: 2012-09-19 19:13:35 +0100 (Wed, 19 Sep 2012) $
-//      $LastChangedBy: torrenttrader $
+//  TorrentTrader v3.x
+//      $LastChangedDate: 2016-10-05 15:25:35 +0100 (Wed, 5 Oct 2016) $
+//      $LastChangedBy: Meg4R0M $
 //
-//      http://www.torrenttrader.org
 //
 //
 
@@ -46,7 +45,7 @@ function insert_smilies_frame() {
 
 	echo "<table><tr><td>Type...</td><td>To make a...</td></tr>";
 	foreach ($smilies as $code => $url) {
-		echo "<tr><td>$code</td><td><a href=\"javascript:window.opener.SmileIT('$code', '".cleanstr($_GET["form"])."', '".htmlspecialchars($_GET["text"])."')\"><img src=\"$site_config[SITEURL]/images/smilies/$url\" alt=\"$code\" title=\"$code\" border=\"0\"></a></td></tr>";
+		echo "<tr><td>$code</td><td><a href=\"javascript:window.opener.SmileIT('$code', '".cleanstr($_GET["form"])."', '".htmlspecialchars($_GET["text"])."')\"><img src=\"/images/smilies/$url\" alt=\"$code\" title=\"$code\" border=\"0\"></a></td></tr>";
 	}
 	echo "</table>";
 }

@@ -1,10 +1,9 @@
-<?php
+ <?php
 //
-//  TorrentTrader v2.x
-//	$LastChangedDate: 2012-08-18 19:52:54 +0100 (Sat, 18 Aug 2012) $
-//      $LastChangedBy: arcticwolf44 $
-//	
-//	http://www.torrenttrader.org
+//  TorrentTrader v3.x
+//    $LastChangedDate: 2016-10-05 14:25:54 +0100 (Wed, 5 Oct 2016) $
+//    $LastChangedBy: Meg4R0M $
+//    
 //
 //
 
@@ -27,38 +26,39 @@ global $site_config;
 
 //Get Last Cleanup
 $res = SQL_Query_exec("SELECT last_time FROM tasks WHERE task = 'cleanup'");
-$row = mysql_fetch_row($res);
+$row = mysqli_fetch_row($res);
 if (!$row){
-		$lastclean="never done...";
+        $lastclean="never done...";
 }else{
-	$row[0]=gmtime()-$row[0]; $days=intval($row[0] / 86400);$row[0]-=$days*86400;
-	$hours=intval($row[0] / 3600); $row[0]-=$hours*3600; $mins=intval($row[0] / 60);
-	$secs=$row[0]-($mins*60);
-	$lastclean = "$days days, $hours hrs, $mins minutes, $secs seconds ago.";
+    $row[0]=gmtime()-$row[0]; $days=intval($row[0] / 86400);$row[0]-=$days*86400;
+    $hours=intval($row[0] / 3600); $row[0]-=$hours*3600; $mins=intval($row[0] / 60);
+    $secs=$row[0]-($mins*60);
+    $lastclean = "$days days, $hours hrs, $mins minutes, $secs seconds ago.";
 }
 
-	begin_frame(T_("MENU"));
-	print "Last cleanup performed: ".$lastclean." [<a href='admincp.php?action=forceclean'>".T_("FORCE_CLEAN")."</a>]<br /><br />";
+    begin_frame(T_("MENU"));
+    print "Last cleanup performed: ".$lastclean." [<a href='admincp.php?action=forceclean'>".T_("FORCE_CLEAN")."</a>]<br /><br />";
                                       
-	if ($site_config["ttversion"] != "2-svn") {  
+    if ($site_config["ttversion"] != "2-svn") {  
         $file = @file_get_contents('https://www.torrenttrader.org/tt2version.php');
         if ($site_config['ttversion'] >= $file){
-			echo "<br /><center><b>".T_("YOU_HAVE_LATEST_VER_INSTALLED")." v$site_config[ttversion]</b></center>";
-		}else{
-			echo "<br /><center><b><font class='error'>".T_("NEW_VERSION_OF_TT_NOW_AVAIL").": v".$file." you have v".$site_config['ttversion']."<br /> Please visit <a href=http://www.torrenttrader.org>TorrentTrader.org</a> to upgrade.</font></b></center>";
-		}
-	}
+            echo "<br /><center><b>".T_("YOU_HAVE_LATEST_VER_INSTALLED")." v$site_config[ttversion]</b></center>";
+        }else{
+            echo "<br /><center><b><font class='error'>".T_("NEW_VERSION_OF_TT_NOW_AVAIL").": v".$file." you have v".$site_config['ttversion']."<br /> Please visit <a href=http://www.torrenttrader.org>TorrentTrader.org</a> to upgrade.</font></b></center>";
+        }
+    }
 
-	$res = SQL_Query_exec("SELECT VERSION() AS mysql_version");
-    $row = mysql_fetch_assoc($res);
+    $res = SQL_Query_exec("SELECT VERSION() AS mysql_version");
+    $row = mysqli_fetch_assoc($res);
     $mysqlver = $row['mysql_version']; 
 
-	$pending = get_row_count("users", "WHERE status = 'pending' AND invited_by = '0'");
-	echo "<center><b>".T_("USERS_AWAITING_VALIDATION").":</b> <a href='admincp.php?action=confirmreg'>($pending)</a></center><br />";
+    $pending = get_row_count("users", "WHERE status = 'pending' AND invited_by = '0'");
+    echo "<center><b>".T_("USERS_AWAITING_VALIDATION").":</b> <a href='admincp.php?action=confirmreg'>($pending)</a></center><br />";
 
-	echo "<center>".T_("VERSION_MYSQL").": <b>" . $mysqlver . "</b><br />".T_("VERSION_PHP").": <b>" . phpversion() . "</b></center>";
+    echo "<center>".T_("VERSION_MYSQL").": <b>" . $mysqlver . "</b><br />".T_("VERSION_PHP").": <b>" . phpversion() . "</b></center>";
 
-?>
+?><br />
+<br />
 <table border="0" width="100%" cellspacing="0" cellpadding="0">
 <tr>
     <td align="center"><a href="admincp.php?action=usersearch"><img src="images/admin/user_search.png" border="0" width="32" height="32" alt="" /><br /><?php echo T_("ADVANCED_USER_SEARCH"); ?></a><br /></td>
@@ -130,115 +130,115 @@ if (!$row){
 </table>
 
 <?php
-	end_frame();
+    end_frame();
 }
 
 
 if (!$action){
-	stdhead(T_("ADMIN_CP"));
-	navmenu();
-	stdfoot();
+    stdhead(T_("ADMIN_CP"));
+    navmenu();
+    stdfoot();
 }
 
 /////////////////////// GROUPS MANAGEMENT ///////////////////////
 if ($action=="groups" && $do=="view"){
-	stdhead(T_("GROUPS_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("GROUPS_MANAGEMENT"));
+    navmenu();
 
-	begin_frame(T_("USER_GROUPS"));
-	
+    begin_frame(T_("USER_GROUPS"));
+    
     print("<center><a href='admincp.php?action=groups&amp;do=add'>".T_("GROUPS_ADD_NEW")."</a></center>\n");
 
-	print("<br /><br />\n<table width=\"100%\" align=\"center\" border=\"0\" class=\"table_table\">\n");
-	print("<tr>\n");
-	print("<th class='table_head'>".T_("NAME")."</th>\n");
-	print("<th class='table_head'>".T_("TORRENTS")."<br />".T_("GROUPS_VIEW_EDIT_DEL")."</th>\n");
-	print("<th class='table_head'>".T_("MEMBERS")."<br />".T_("GROUPS_VIEW_EDIT_DEL")."</th>\n");
-	print("<th class='table_head'>".T_("NEWS")."<br />".T_("GROUPS_VIEW_EDIT_DEL")."</th>\n");
-	print("<th class='table_head'>".T_("FORUM")."<br />".T_("GROUPS_VIEW_EDIT_DEL")."</th>\n");
-	print("<th class='table_head'>".T_("UPLOAD")."</th>\n");
-	print("<th class='table_head'>".T_("DOWNLOAD")."</th>\n");
-	print("<th class='table_head'>".T_("DOWNLOAD")." Slots</th>\n");
-	print("<th class='table_head'>".T_("CP_VIEW")."</th>\n");
+    print("<br /><br />\n<table width=\"100%\" align=\"center\" border=\"0\" class=\"table_table\">\n");
+    print("<tr>\n");
+    print("<th class='table_head'>".T_("NAME")."</th>\n");
+    print("<th class='table_head'>".T_("TORRENTS")."<br />".T_("GROUPS_VIEW_EDIT_DEL")."</th>\n");
+    print("<th class='table_head'>".T_("MEMBERS")."<br />".T_("GROUPS_VIEW_EDIT_DEL")."</th>\n");
+    print("<th class='table_head'>".T_("NEWS")."<br />".T_("GROUPS_VIEW_EDIT_DEL")."</th>\n");
+    print("<th class='table_head'>".T_("FORUM")."<br />".T_("GROUPS_VIEW_EDIT_DEL")."</th>\n");
+    print("<th class='table_head'>".T_("UPLOAD")."</th>\n");
+    print("<th class='table_head'>".T_("DOWNLOAD")."</th>\n");
+    print("<th class='table_head'>".T_("DOWNLOAD")." Slots</th>\n");
+    print("<th class='table_head'>".T_("CP_VIEW")."</th>\n");
     print("<th class='table_head'>".T_("CP_STAFF_PAGE")."</th>");
     print("<th class='table_head'>".T_("CP_STAFF_PUBLIC")."</th>");
     print("<th class='table_head'>".T_("CP_STAFF_SORT")."</th>");
-	print("<th class='table_head'>".T_("DEL")."</th>\n");
-	print("</tr>\n");
+    print("<th class='table_head'>".T_("DEL")."</th>\n");
+    print("</tr>\n");
 
-	$getlevel=SQL_Query_exec("SELECT * from groups ORDER BY group_id");
-	while ($level=mysql_fetch_assoc($getlevel)) {
-		 print("<tr>\n");
-		 print("<td class='table_col1'><a href='admincp.php?action=groups&amp;do=edit&amp;group_id=".$level["group_id"]."'>".htmlspecialchars($level["level"])."</a></td>\n");
-		 print("<td class='table_col2'>".$level["view_torrents"]."/".$level["edit_torrents"]."/".$level["delete_torrents"]."</td>\n");
-		 print("<td class='table_col1'>".$level["view_users"]."/".$level["edit_users"]."/".$level["delete_users"]."</td>\n");
-		 print("<td class='table_col2'>".$level["view_news"]."/".$level["edit_news"]."/".$level["delete_news"]."</td>\n");
-		 print("<td class='table_col1'>".$level["view_forum"]."/".$level["edit_forum"]."/".$level["delete_forum"]."</td>\n");
-		 print("<td class='table_col2'>".$level["can_upload"]."</td>\n");
-		 print("<td class='table_col1'>".$level["can_download"]."</td>\n");
+    $getlevel=SQL_Query_exec("SELECT * from groups ORDER BY group_id");
+    while ($level=mysqli_fetch_assoc($getlevel)) {
+         print("<tr>\n");
+         print("<td class='table_col1'><a href='admincp.php?action=groups&amp;do=edit&amp;group_id=".$level["group_id"]."'>".htmlspecialchars($level["level"])."</a></td>\n");
+         print("<td class='table_col2'>".$level["view_torrents"]."/".$level["edit_torrents"]."/".$level["delete_torrents"]."</td>\n");
+         print("<td class='table_col1'>".$level["view_users"]."/".$level["edit_users"]."/".$level["delete_users"]."</td>\n");
+         print("<td class='table_col2'>".$level["view_news"]."/".$level["edit_news"]."/".$level["delete_news"]."</td>\n");
+         print("<td class='table_col1'>".$level["view_forum"]."/".$level["edit_forum"]."/".$level["delete_forum"]."</td>\n");
+         print("<td class='table_col2'>".$level["can_upload"]."</td>\n");
+         print("<td class='table_col1'>".$level["can_download"]."</td>\n");
                  print("<td class='table_col2'>".$level["maxslots"]."</td>\n");
-		 print("<td class='table_col2'>".$level["control_panel"]."</td>\n");
+         print("<td class='table_col2'>".$level["control_panel"]."</td>\n");
          print("<td class='table_col1'>".$level["staff_page"]."</td>\n");
          print("<td class='table_col2'>".$level["staff_public"]."</td>\n");  
          print("<td class='table_col1'>".$level["staff_sort"]."</td>\n");  
-		 print("<td class='table_col1'><a href='admincp.php?action=groups&amp;do=delete&amp;group_id=".$level["group_id"]."'>Del</a></td>\n");
+         print("<td class='table_col1'><a href='admincp.php?action=groups&amp;do=delete&amp;group_id=".$level["group_id"]."'>Del</a></td>\n");
 
-		 print("</tr>\n");
-	}
+         print("</tr>\n");
+    }
 
-	print("</table><br /><br />");
-	end_frame();
-	stdfoot();
+    print("</table><br /><br />");
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="groups" && $do=="edit"){
-	$group_id=intval($_GET["group_id"]);
-	$rlevel=SQL_Query_exec("SELECT * FROM groups WHERE group_id=$group_id");
-	if (!$rlevel)
-		show_error_msg(T_("ERROR"),T_("CP_NO_GROUP_ID_FOUND"),1);
+    $group_id=intval($_GET["group_id"]);
+    $rlevel=SQL_Query_exec("SELECT * FROM groups WHERE group_id=$group_id");
+    if (!$rlevel)
+        show_error_msg(T_("ERROR"),T_("CP_NO_GROUP_ID_FOUND"),1);
 
-	$level=mysql_fetch_assoc($rlevel);
+    $level=mysqli_fetch_assoc($rlevel);
 
-	stdhead(T_("GROUPS_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("GROUPS_MANAGEMENT"));
+    navmenu();
 
 
-	begin_frame(T_("CP_EDIT_GROUP"));
-	?>
-	<form action="admincp.php?action=groups&amp;do=update&amp;group_id=<?php echo $level["group_id"]; ?>" name="level" method="post">
-	<table width="100%" align="center">
-	<tr><td>Name:</td><td><input type="text" name="gname" value="<?php echo $level["level"];?>" size="40" /></td></tr>
-	<tr><td>View Torrents:</td><td>  <?php echo T_("YES");?> <input type="radio" name="vtorrent" value="yes" <?php if ($level["view_torrents"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="vtorrent" value="no" <?php if ($level["view_torrents"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Edit Torrents:</td><td>  <?php echo T_("YES");?> <input type="radio" name="etorrent" value="yes" <?php if ($level["edit_torrents"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="etorrent" value="no" <?php if ($level["edit_torrents"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Delete Torrents:</td><td>  <?php echo T_("YES");?> <input type="radio" name="dtorrent" value="yes" <?php if ($level["delete_torrents"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="dtorrent" value="no" <?php if ($level["delete_torrents"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>View Users:</td><td>  <?php echo T_("YES");?> <input type="radio" name="vuser" value="yes" <?php if ($level["view_users"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="vuser" value="no" <?php if ($level["view_users"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Edit Users:</td><td>  <?php echo T_("YES");?> <input type="radio" name="euser" value="yes" <?php if ($level["edit_users"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="euser" value="no" <?php if ($level["edit_users"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Delete Users:</td><td>  <?php echo T_("YES");?> <input type="radio" name="duser" value="yes" <?php if ($level["delete_users"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="duser" value="no" <?php if ($level["delete_users"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>View News:</td><td>  <?php echo T_("YES");?> <input type="radio" name="vnews" value="yes" <?php if ($level["view_news"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="vnews" value="no" <?php if ($level["view_news"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Edit News:</td><td>  <?php echo T_("YES");?> <input type="radio" name="enews" value="yes" <?php if ($level["edit_news"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="enews" value="no" <?php if ($level["edit_news"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Delete News:</td><td> <?php echo T_("YES");?> <input type="radio" name="dnews" value="yes" <?php if ($level["delete_news"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="dnews" value="no" <?php if ($level["delete_news"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>View Forums:</td><td>  <?php echo T_("YES");?> <input type="radio" name="vforum" value="yes" <?php if ($level["view_forum"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="vforum" value="no" <?php if ($level["view_forum"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Edit In Forums:</td><td>  <?php echo T_("YES");?> <input type="radio" name="eforum" value="yes" <?php if ($level["edit_forum"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="eforum" value="no" <?php if ($level["edit_forum"]=="no") echo "checked = 'checked'" ?> /></td></tr>
-	<tr><td>Delete In Forums:</td><td>  <?php echo T_("YES");?> <input type="radio" name="dforum" value="yes" <?php if ($level["delete_forum"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="dforum" value="no" <?php if ($level["delete_forum"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Can Upload:</td><td>  <?php echo T_("YES");?> <input type="radio" name="upload" value="yes" <?php if ($level["can_upload"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="upload" value="no" <?php if ($level["can_upload"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Can Download:</td><td>  <?php echo T_("YES");?> <input type="radio" name="down" value="yes" <?php if ($level["can_download"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="down" value="no" <?php if ($level["can_download"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    begin_frame(T_("CP_EDIT_GROUP"));
+    ?>
+    <form action="admincp.php?action=groups&amp;do=update&amp;group_id=<?php echo $level["group_id"]; ?>" name="level" method="post">
+    <table width="100%" align="center">
+    <tr><td>Name:</td><td><input type="text" name="gname" value="<?php echo $level["level"];?>" size="40" /></td></tr>
+    <tr><td>View Torrents:</td><td>  <?php echo T_("YES");?> <input type="radio" name="vtorrent" value="yes" <?php if ($level["view_torrents"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="vtorrent" value="no" <?php if ($level["view_torrents"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Edit Torrents:</td><td>  <?php echo T_("YES");?> <input type="radio" name="etorrent" value="yes" <?php if ($level["edit_torrents"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="etorrent" value="no" <?php if ($level["edit_torrents"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Delete Torrents:</td><td>  <?php echo T_("YES");?> <input type="radio" name="dtorrent" value="yes" <?php if ($level["delete_torrents"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="dtorrent" value="no" <?php if ($level["delete_torrents"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>View Users:</td><td>  <?php echo T_("YES");?> <input type="radio" name="vuser" value="yes" <?php if ($level["view_users"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="vuser" value="no" <?php if ($level["view_users"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Edit Users:</td><td>  <?php echo T_("YES");?> <input type="radio" name="euser" value="yes" <?php if ($level["edit_users"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="euser" value="no" <?php if ($level["edit_users"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Delete Users:</td><td>  <?php echo T_("YES");?> <input type="radio" name="duser" value="yes" <?php if ($level["delete_users"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="duser" value="no" <?php if ($level["delete_users"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>View News:</td><td>  <?php echo T_("YES");?> <input type="radio" name="vnews" value="yes" <?php if ($level["view_news"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="vnews" value="no" <?php if ($level["view_news"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Edit News:</td><td>  <?php echo T_("YES");?> <input type="radio" name="enews" value="yes" <?php if ($level["edit_news"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="enews" value="no" <?php if ($level["edit_news"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Delete News:</td><td> <?php echo T_("YES");?> <input type="radio" name="dnews" value="yes" <?php if ($level["delete_news"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="dnews" value="no" <?php if ($level["delete_news"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>View Forums:</td><td>  <?php echo T_("YES");?> <input type="radio" name="vforum" value="yes" <?php if ($level["view_forum"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="vforum" value="no" <?php if ($level["view_forum"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Edit In Forums:</td><td>  <?php echo T_("YES");?> <input type="radio" name="eforum" value="yes" <?php if ($level["edit_forum"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="eforum" value="no" <?php if ($level["edit_forum"]=="no") echo "checked = 'checked'" ?> /></td></tr>
+    <tr><td>Delete In Forums:</td><td>  <?php echo T_("YES");?> <input type="radio" name="dforum" value="yes" <?php if ($level["delete_forum"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="dforum" value="no" <?php if ($level["delete_forum"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Can Upload:</td><td>  <?php echo T_("YES");?> <input type="radio" name="upload" value="yes" <?php if ($level["can_upload"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="upload" value="no" <?php if ($level["can_upload"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Can Download:</td><td>  <?php echo T_("YES");?> <input type="radio" name="down" value="yes" <?php if ($level["can_download"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="down" value="no" <?php if ($level["can_download"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
 <tr><td>Download Slots:</td><td><input type="text" name="downslots" value="<?php echo number_format($level["maxslots"]);?>" size="40" /></td></tr>
-	<tr><td>Can View CP:</td><td>  <?php echo T_("YES");?> <input type="radio" name="admincp" value="yes" <?php if ($level["control_panel"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="admincp" value="no" <?php if ($level["control_panel"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
-	<tr><td>Staff Page:</td><td>  <?php echo T_("YES");?> <input type="radio" name="staffpage" value="yes" <?php if ($level["staff_page"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="staffpage" value="no" <?php if ($level["staff_page"]=="no") echo "checked = 'checked'"; ?> /></td></tr> 
+    <tr><td>Can View CP:</td><td>  <?php echo T_("YES");?> <input type="radio" name="admincp" value="yes" <?php if ($level["control_panel"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="admincp" value="no" <?php if ($level["control_panel"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
+    <tr><td>Staff Page:</td><td>  <?php echo T_("YES");?> <input type="radio" name="staffpage" value="yes" <?php if ($level["staff_page"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="staffpage" value="no" <?php if ($level["staff_page"]=="no") echo "checked = 'checked'"; ?> /></td></tr> 
     <tr><td>Staff Public:</td><td>  <?php echo T_("YES");?> <input type="radio" name="staffpublic" value="yes" <?php if ($level["staff_public"]=="yes") echo "checked = 'checked'" ?> />&nbsp;&nbsp; <?php echo T_("NO");?> <input type="radio" name="staffpublic" value="no" <?php if ($level["staff_public"]=="no") echo "checked = 'checked'"; ?> /></td></tr>
     <tr><td>Staff Sort:</td><td><input type='text' name='sort' size='3' value='<?php echo $level["staff_sort"]; ?>' /></td></tr>
     <?php
-	print("\n<tr><td align=\"center\" ><input type=\"submit\" name=\"write\" value=\"Confirm\" /></td></tr>");
-	print("</table></form><br /><br />");
-	end_frame();
-	stdfoot();
+    print("\n<tr><td align=\"center\" ><input type=\"submit\" name=\"write\" value=\"Confirm\" /></td></tr>");
+    print("</table></form><br /><br />");
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="groups" && $do=="update"){
-		stdhead(T_("GROUPS_MANAGEMENT"));
-		navmenu();
+        stdhead(T_("GROUPS_MANAGEMENT"));
+        navmenu();
 
-		begin_frame(T_("_BTN_UPDT_"));
+        begin_frame(T_("_BTN_UPDT_"));
 
      $update = array();
      $update[] = "level = " . sqlesc($_POST["gname"]);
@@ -267,138 +267,138 @@ if ($action=="groups" && $do=="update"){
      $group_id=intval($_GET["group_id"]);
      SQL_Query_exec("UPDATE groups SET $strupdate WHERE group_id=$group_id");
                  
-		echo "<br /><center><b>".T_("CP_UPDATED_OK")."</b></center><br />";
-		end_frame();
-		stdfoot();	
+        echo "<br /><center><b>".T_("CP_UPDATED_OK")."</b></center><br />";
+        end_frame();
+        stdfoot();    
 }
 
 if ($action=="groups" && $do=="delete"){
-		//Needs to be secured!!!!
-		$group_id=intval($_GET["group_id"]);
-		if (($group_id=="1") || ($group_id=="7"))
-			show_error_msg(T_("ERROR"),T_("CP_YOU_CANT_DEL_THIS_GRP"),1);
+        //Needs to be secured!!!!
+        $group_id=intval($_GET["group_id"]);
+        if (($group_id=="1") || ($group_id=="7"))
+            show_error_msg(T_("ERROR"),T_("CP_YOU_CANT_DEL_THIS_GRP"),1);
  
-		SQL_Query_exec("DELETE FROM groups WHERE group_id=$group_id");
+        SQL_Query_exec("DELETE FROM groups WHERE group_id=$group_id");
         show_error_msg(T_("_DEL_"), T_("CP_DEL_OK"), 1);
 }
 
 
 if ($action=="groups" && $do=="add") {
-	stdhead(T_("GROUPS_MANAGEMENT"));
+    stdhead(T_("GROUPS_MANAGEMENT"));
 
-	navmenu();
+    navmenu();
 
-	begin_frame(T_("GROUPS_ADD_NEW"));
-	?>
-	<form action="admincp.php?action=groups&amp;do=addnew" name="level" method="post">
-	<table width="100%" align="center">
-	<tr><td>Group Name:</td><td><input type="text" name="gname" value="" size="40" /></td></tr>
-	<tr><td>Copy Settings From: </td><td><select name="getlevel" size="1">
-	<?php
-	$rlevel=SQL_Query_exec("SELECT DISTINCT group_id, level FROM groups ORDER BY group_id");
+    begin_frame(T_("GROUPS_ADD_NEW"));
+    ?>
+    <form action="admincp.php?action=groups&amp;do=addnew" name="level" method="post">
+    <table width="100%" align="center">
+    <tr><td>Group Name:</td><td><input type="text" name="gname" value="" size="40" /></td></tr>
+    <tr><td>Copy Settings From: </td><td><select name="getlevel" size="1">
+    <?php
+    $rlevel=SQL_Query_exec("SELECT DISTINCT group_id, level FROM groups ORDER BY group_id");
 
-	while($level=mysql_fetch_assoc($rlevel)) {
-		print("\n<option value='".$level["group_id"]."'>".htmlspecialchars($level["level"])."</option>");
-	}
-	print("\n</select></td></tr>");
-	print("\n<tr><td align=\"center\" ><input type=\"submit\" name=\"confirm\" value=\"Confirm\" /></td></tr>");
-	print("</table></form><br /><br />");
-	end_frame();
-	stdfoot();	
+    while($level=mysqli_fetch_assoc($rlevel)) {
+        print("\n<option value='".$level["group_id"]."'>".htmlspecialchars($level["level"])."</option>");
+    }
+    print("\n</select></td></tr>");
+    print("\n<tr><td align=\"center\" ><input type=\"submit\" name=\"confirm\" value=\"Confirm\" /></td></tr>");
+    print("</table></form><br /><br />");
+    end_frame();
+    stdfoot();    
 }
 
 if ($action=="groups" && $do=="addnew") {
-	
-	stdhead(T_("GROUPS_MANAGEMENT"));
+    
+    stdhead(T_("GROUPS_MANAGEMENT"));
 
-	navmenu();
+    navmenu();
 
-	begin_frame(T_("GROUPS_ADD_NEW"));
+    begin_frame(T_("GROUPS_ADD_NEW"));
 
-	$group_id=intval($_POST["getlevel"]);
+    $group_id=intval($_POST["getlevel"]);
 
-	$rlevel=SQL_Query_exec("SELECT * FROM groups WHERE group_id=$group_id");
-	$level=mysql_fetch_assoc($rlevel);
-	if (!$level)
-	   show_error_msg(T_("ERROR"),T_("CP_INVALID_ID"),1);
+    $rlevel=SQL_Query_exec("SELECT * FROM groups WHERE group_id=$group_id");
+    $level=mysqli_fetch_assoc($rlevel);
+    if (!$level)
+       show_error_msg(T_("ERROR"),T_("CP_INVALID_ID"),1);
 
-	$update = array();
-	$update[] = "level = " . sqlesc($level["level"]);
-	$update[] = "view_torrents = " . sqlesc($level["view_torrents"]);
-	$update[] = "edit_torrents = " . sqlesc($level["edit_torrents"]);
-	$update[] = "delete_torrents = " . sqlesc($level["delete_torrents"]);
-	$update[] = "view_users = " . sqlesc($level["view_users"]);
-	$update[] = "edit_users = " . sqlesc($level["edit_users"]);
-	$update[] = "delete_users = " . sqlesc($level["delete_users"]);
-	$update[] = "view_news = " . sqlesc($level["view_news"]);
-	$update[] = "edit_news = " . sqlesc($level["edit_news"]);
-	$update[] = "delete_news = " . sqlesc($level["delete_news"]);
-	$update[] = "view_forum = " . sqlesc($level["view_forum"]);
-	$update[] = "edit_forum = " . sqlesc($level["edit_forum"]);
-	$update[] = "delete_forum = " . sqlesc($level["delete_forum"]);
-	$update[] = "can_upload = " . sqlesc($level["can_upload"]);
-	$update[] = "can_download = " . sqlesc($level["can_download"]);
-	$update[] = "control_panel = " . sqlesc($level["control_panel"]);
+    $update = array();
+    $update[] = "level = " . sqlesc($level["level"]);
+    $update[] = "view_torrents = " . sqlesc($level["view_torrents"]);
+    $update[] = "edit_torrents = " . sqlesc($level["edit_torrents"]);
+    $update[] = "delete_torrents = " . sqlesc($level["delete_torrents"]);
+    $update[] = "view_users = " . sqlesc($level["view_users"]);
+    $update[] = "edit_users = " . sqlesc($level["edit_users"]);
+    $update[] = "delete_users = " . sqlesc($level["delete_users"]);
+    $update[] = "view_news = " . sqlesc($level["view_news"]);
+    $update[] = "edit_news = " . sqlesc($level["edit_news"]);
+    $update[] = "delete_news = " . sqlesc($level["delete_news"]);
+    $update[] = "view_forum = " . sqlesc($level["view_forum"]);
+    $update[] = "edit_forum = " . sqlesc($level["edit_forum"]);
+    $update[] = "delete_forum = " . sqlesc($level["delete_forum"]);
+    $update[] = "can_upload = " . sqlesc($level["can_upload"]);
+    $update[] = "can_download = " . sqlesc($level["can_download"]);
+    $update[] = "control_panel = " . sqlesc($level["control_panel"]);
 $update[]="maxslots='".$level["maxslots"]."'";
     $update[] = "staff_page = " . sqlesc($level["staff_page"]);
     $update[] = "staff_public = " . sqlesc($level["staff_public"]);
     $update[] = "staff_sort = " . intval($level["staff_sort"]);
-	$strupdate = implode(",", $update);
-	SQL_Query_exec("INSERT INTO groups SET $strupdate");
+    $strupdate = implode(",", $update);
+    SQL_Query_exec("INSERT INTO groups SET $strupdate");
 
-	echo "<br /><center><b>Added OK</b></center><br />";
-	end_frame();
-	stdfoot();	
+    echo "<br /><center><b>Added OK</b></center><br />";
+    end_frame();
+    stdfoot();    
 }
 
 #====================================#
-#		Theme Management		#
+#        Theme Management        #
 #====================================#
 
 if ($action == "style") {
-	if ($do == "add") {
-		stdhead();
-		navmenu();
-		if ($_POST) {
-			if (empty($_POST['name']))
-				$error .= T_("THEME_NAME_WAS_EMPTY")."<br />";
-			if (empty($_POST['uri']))
-				$error .= T_("THEME_FOLDER_NAME_WAS_EMPTY");
-			if ($error)
-				show_error_msg(T_("ERROR"), T_("THEME_NOT_ADDED_REASON")." $error", 1);
-			if (SQL_Query_exec("INSERT INTO stylesheets (name, uri) VALUES (".sqlesc($_POST["name"]).", ".sqlesc($_POST["uri"]).")"))
-				show_error_msg(T_("SUCCESS"), "Theme '".htmlspecialchars($_POST["name"])."' added.", 0);
-			elseif (mysql_errno() == 1062)
-				show_error_msg(T_("FAILED"), T_("THEME_ALREADY_EXISTS"), 0);
-			else
-				show_error_msg(T_("FAILED"), T_("THEME_NOT_ADDED_DB_ERROR")." ".mysql_error(), 0);
-		}
-		begin_frame(T_("THEME_ADD"));
-		?>
+    if ($do == "add") {
+        stdhead();
+        navmenu();
+        if ($_POST) {
+            if (empty($_POST['name']))
+                $error .= T_("THEME_NAME_WAS_EMPTY")."<br />";
+            if (empty($_POST['uri']))
+                $error .= T_("THEME_FOLDER_NAME_WAS_EMPTY");
+            if ($error)
+                show_error_msg(T_("ERROR"), T_("THEME_NOT_ADDED_REASON")." $error", 1);
+            if (SQL_Query_exec("INSERT INTO stylesheets (name, uri) VALUES (".sqlesc($_POST["name"]).", ".sqlesc($_POST["uri"]).")"))
+                show_error_msg(T_("SUCCESS"), "Theme '".htmlspecialchars($_POST["name"])."' added.", 0);
+            elseif (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062)
+                show_error_msg(T_("FAILED"), T_("THEME_ALREADY_EXISTS"), 0);
+            else
+                show_error_msg(T_("FAILED"), T_("THEME_NOT_ADDED_DB_ERROR")." ".((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)), 0);
+        }
+        begin_frame(T_("THEME_ADD"));
+        ?>
         <form action='admincp.php' method='post'>
-		<input type='hidden' name='action' value='style' />
+        <input type='hidden' name='action' value='style' />
         <input type='hidden' name='do' value='add' />
         <table align='center' width='400' cellspacing='0' class='table_table'>
-		<tr>
-		<td class='table_col1'><?php echo T_("THEME_NAME_OF_NEW")?>:</td>
-		<td class='table_col2' align='right'><input type='text' name='name' size='30' maxlength='30' value='<?php echo $name; ?>' /></td>
-		</tr>
-		<tr>
-		<td class='table_col1'><?php echo T_("THEME_FOLDER_NAME_CASE_SENSITIVE")?>:</td>
-		<td class='table_col2' align='right'><input type='text' name='uri' size='30' maxlength='30' value='<?php echo $uri; ?>' /></td>
-		</tr>
-		<tr>
-		<td colspan='2' align='center' class='table_head'>
-		<input type='submit' value='Add new theme' />
-		<input type='reset' value='<?php echo T_("RESET")?>' />
-		</td>
-		</tr>
-		</table>
+        <tr>
+        <td class='table_col1'><?php echo T_("THEME_NAME_OF_NEW")?>:</td>
+        <td class='table_col2' align='right'><input type='text' name='name' size='30' maxlength='30' value='<?php echo $name; ?>' /></td>
+        </tr>
+        <tr>
+        <td class='table_col1'><?php echo T_("THEME_FOLDER_NAME_CASE_SENSITIVE")?>:</td>
+        <td class='table_col2' align='right'><input type='text' name='uri' size='30' maxlength='30' value='<?php echo $uri; ?>' /></td>
+        </tr>
+        <tr>
+        <td colspan='2' align='center' class='table_head'>
+        <input type='submit' value='Add new theme' />
+        <input type='reset' value='<?php echo T_("RESET")?>' />
+        </td>
+        </tr>
+        </table>
         </form>
-		<br /><?php echo T_("THEME_PLEASE_NOTE_ALL_THEMES_MUST"); ?>
-		<?php
-		end_frame();
-		stdfoot();
+        <br /><?php echo T_("THEME_PLEASE_NOTE_ALL_THEMES_MUST"); ?>
+        <?php
+        end_frame();
+        stdfoot();
    } elseif ($do == "del") {
 
         if (!@count($_POST["ids"])) show_error_msg(T_("ERROR"), T_("NOTHING_SELECTED"), 1);
@@ -408,224 +408,224 @@ if ($action == "style") {
         SQL_Query_exec("UPDATE `users` SET `stylesheet` = ".$site_config["default_theme"]." WHERE stylesheet NOT IN (SELECT id FROM stylesheets)");
         autolink("admincp.php?action=style", T_("THEME_SUCCESS_THEME_DELETED"));
                                  
-	}elseif ($do == "add2") {
+    }elseif ($do == "add2") {
 
-		$add = $_POST["add"];
-		$a = 0;
-		foreach ($add as $theme) {
-			if ($theme['add'] != 1) { $a++; continue; }
-			if (!SQL_Query_exec("INSERT INTO stylesheets (name, uri) VALUES(".sqlesc($theme['name']).", ".sqlesc($theme['uri']).")")) {
-				if (mysql_errno() == 1062)
-					$error .= htmlspecialchars($theme['name'])." - ".T_("THEME_ALREADY_EXISTS").".<br />";
-				else
-					$error .= htmlspecialchars($theme['name']).": ".T_("THEME_DATEBASE_ERROR")." ".mysql_error()." (".mysql_errno().")<br />";
-			}else
-				$added .= htmlspecialchars($theme['name'])."<br />";
-		}
+        $add = $_POST["add"];
+        $a = 0;
+        foreach ($add as $theme) {
+            if ($theme['add'] != 1) { $a++; continue; }
+            if (!SQL_Query_exec("INSERT INTO stylesheets (name, uri) VALUES(".sqlesc($theme['name']).", ".sqlesc($theme['uri']).")")) {
+                if (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062)
+                    $error .= htmlspecialchars($theme['name'])." - ".T_("THEME_ALREADY_EXISTS").".<br />";
+                else
+                    $error .= htmlspecialchars($theme['name']).": ".T_("THEME_DATEBASE_ERROR")." ".((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false))." (".((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)).")<br />";
+            }else
+                $added .= htmlspecialchars($theme['name'])."<br />";
+        }
         
         if ($a == count($add))
             autolink("admincp.php?action=style", T_("THEME_NOTHING_SELECTED"));
 
-		if ($added)
+        if ($added)
             autolink("admincp.php?action=style", sprintf(T_("THEME_THE_FOLLOWING_THEMES_WAS_ADDED"), $added));   
-		if ($error)
-			show_error_msg(T_("FAILED"), sprintf(T_("THEME_THE_FOLLOWING_THEMES_WAS_NOT_ADDED"), $error), 1);
+        if ($error)
+            show_error_msg(T_("FAILED"), sprintf(T_("THEME_THE_FOLLOWING_THEMES_WAS_NOT_ADDED"), $error), 1);
         
-	}else{
-		stdhead(T_("THEME_MANAGEMENT"));
-		navmenu();
-		begin_frame(T_("THEME_MANAGEMENT"));
-		$res = SQL_Query_exec("SELECT * FROM stylesheets");
-		echo "<center><a href='admincp.php?action=style&amp;do=add'>".T_("THEME_ADD")."</a><!-- - <b>".T_("THEME_CLICK_A_THEME_TO_EDIT")."</b>--></center><br />";
-		echo T_("THEME_CURRENT").":<form id='deltheme' method='post' action='admincp.php?action=style&amp;do=del'><table width='60%' class='table_table' align='center'>".
-			"<tr><th class='table_head'>ID</th><th class='table_head'>".T_("NAME")."</th><th class='table_head'>".T_("THEME_FOLDER_NAME")."</th><th width='5%' class='table_head'><input type='checkbox' name='checkall' onclick='checkAll(this.form.id);' /></th></tr>";
-		while ($row=mysql_fetch_assoc($res)) {
-			if (!is_dir("themes/$row[uri]"))
-				$row['uri'] .= " <b>- ".T_("THEME_DIR_DONT_EXIST")."</b>";
-			echo "<tr><td class='table_col1' align='center'>$row[id]</td><td class='table_col2' align='center'>$row[name]</td><td class='table_col1' align='center'>$row[uri]</td><td class='table_col2' align='center'><input name='ids[]' type='checkbox' value='$row[id]' /></td></tr>";
-		}
-		mysql_free_result($res);
-		echo "<tr><td colspan='4' align='right'><input type='submit' value='".T_("SELECTED_DELETE")."' /></td></tr></table></form>";
-		
-		echo "<p>".T_("THEME_IN_THEMES_BUT_NOT_IN_DB")."</p><form id='addtheme' action='admincp.php?action=style&amp;do=add2' method='post'><table width='60%' class='table_table' align='center'>".
-			"<tr><th class='table_head'>".T_("NAME")."</th><th class='table_head'>".T_("THEME_FOLDER_NAME")."</th><th width='5%' class='table_head'><input type='checkbox' name='checkall' onclick='checkAll(this.form.id);' /></th></tr>";
-		$dh = opendir("themes/");
-		$i=0;
-		while (($file = readdir($dh)) !== false) {
-			if ($file == "." || $file == ".." || !is_dir("themes/$file"))
-				continue;
-			if (is_file("themes/$file/header.php")) {
-					$res = SQL_Query_exec("SELECT id FROM stylesheets WHERE uri = '$file' ");
-					if (mysql_num_rows($res) == 0) {
-						echo "<tr><td class='table_col1' align='center'><input type='text' name='add[$i][name]' value='$file' /></td><td class='table_col2' align='center'>$file<input type='hidden' name='add[$i][uri]' value='$file' /></td><td class='table_col1' align='center'><input type='checkbox' name='add[$i][add]' value='1' /></td></tr>";
-						$i++;
-					}
-				}
-		}
-		if (!$i) echo "<tr><td class='table_col1' align='center' colspan='3'>".T_("THEME_NOTHING_TO_SHOW")."</td></tr>";
-		echo "</table><p align='center'>".($i?"<input type='submit' value='".T_("SELECTED_ADD")."' />":"")."</p></form>";
-		end_frame();
-		stdfoot();
-	}
+    }else{
+        stdhead(T_("THEME_MANAGEMENT"));
+        navmenu();
+        begin_frame(T_("THEME_MANAGEMENT"));
+        $res = SQL_Query_exec("SELECT * FROM stylesheets");
+        echo "<center><a href='admincp.php?action=style&amp;do=add'>".T_("THEME_ADD")."</a><!-- - <b>".T_("THEME_CLICK_A_THEME_TO_EDIT")."</b>--></center><br />";
+        echo T_("THEME_CURRENT").":<form id='deltheme' method='post' action='admincp.php?action=style&amp;do=del'><table width='60%' class='table_table' align='center'>".
+            "<tr><th class='table_head'>ID</th><th class='table_head'>".T_("NAME")."</th><th class='table_head'>".T_("THEME_FOLDER_NAME")."</th><th width='5%' class='table_head'><input type='checkbox' name='checkall' onclick='checkAll(this.form.id);' /></th></tr>";
+        while ($row=mysqli_fetch_assoc($res)) {
+            if (!is_dir("themes/$row[uri]"))
+                $row['uri'] .= " <b>- ".T_("THEME_DIR_DONT_EXIST")."</b>";
+            echo "<tr><td class='table_col1' align='center'>$row[id]</td><td class='table_col2' align='center'>$row[name]</td><td class='table_col1' align='center'>$row[uri]</td><td class='table_col2' align='center'><input name='ids[]' type='checkbox' value='$row[id]' /></td></tr>";
+        }
+        ((mysqli_free_result($res) || (is_object($res) && (get_class($res) == "mysqli_result"))) ? true : false);
+        echo "<tr><td colspan='4' align='right'><input type='submit' value='".T_("SELECTED_DELETE")."' /></td></tr></table></form>";
+        
+        echo "<p>".T_("THEME_IN_THEMES_BUT_NOT_IN_DB")."</p><form id='addtheme' action='admincp.php?action=style&amp;do=add2' method='post'><table width='60%' class='table_table' align='center'>".
+            "<tr><th class='table_head'>".T_("NAME")."</th><th class='table_head'>".T_("THEME_FOLDER_NAME")."</th><th width='5%' class='table_head'><input type='checkbox' name='checkall' onclick='checkAll(this.form.id);' /></th></tr>";
+        $dh = opendir("themes/");
+        $i=0;
+        while (($file = readdir($dh)) !== false) {
+            if ($file == "." || $file == ".." || !is_dir("themes/$file"))
+                continue;
+            if (is_file("themes/$file/header.php")) {
+                    $res = SQL_Query_exec("SELECT id FROM stylesheets WHERE uri = '$file' ");
+                    if (mysqli_num_rows($res) == 0) {
+                        echo "<tr><td class='table_col1' align='center'><input type='text' name='add[$i][name]' value='$file' /></td><td class='table_col2' align='center'>$file<input type='hidden' name='add[$i][uri]' value='$file' /></td><td class='table_col1' align='center'><input type='checkbox' name='add[$i][add]' value='1' /></td></tr>";
+                        $i++;
+                    }
+                }
+        }
+        if (!$i) echo "<tr><td class='table_col1' align='center' colspan='3'>".T_("THEME_NOTHING_TO_SHOW")."</td></tr>";
+        echo "</table><p align='center'>".($i?"<input type='submit' value='".T_("SELECTED_ADD")."' />":"")."</p></form>";
+        end_frame();
+        stdfoot();
+    }
 }
 
 /////////////////////// NEWS ///////////////////////
 if ($action=="news" && $do=="view"){
-	stdhead(T_("NEWS_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("NEWS_MANAGEMENT"));
+    navmenu();
 
-	begin_frame(T_("NEWS"));
-	echo "<center><a href='admincp.php?action=news&amp;do=add'><b>".T_("CP_NEWS_ADD_ITEM")."</b></a></center><br />";
+    begin_frame(T_("NEWS"));
+    echo "<center><a href='admincp.php?action=news&amp;do=add'><b>".T_("CP_NEWS_ADD_ITEM")."</b></a></center><br />";
 
-	$res = SQL_Query_exec("SELECT * FROM news ORDER BY added DESC");
-	if (mysql_num_rows($res) > 0){
-		
-		while ($arr = mysql_fetch_assoc($res)) {
-			$newsid = $arr["id"];
-			$body = format_comment($arr["body"]);
-			$title = $arr["title"];
-			$userid = $arr["userid"];
-			$added = $arr["added"] . " GMT (" . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr["added"]))) . " ago)";
+    $res = SQL_Query_exec("SELECT * FROM news ORDER BY added DESC");
+    if (mysqli_num_rows($res) > 0){
+        
+        while ($arr = mysqli_fetch_assoc($res)) {
+            $newsid = $arr["id"];
+            $body = format_comment($arr["body"]);
+            $title = $arr["title"];
+            $userid = $arr["userid"];
+            $added = $arr["added"] . " GMT (" . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr["added"]))) . " ago)";
 
-			$res2 = SQL_Query_exec("SELECT username FROM users WHERE id = $userid");
-			$arr2 = mysql_fetch_assoc($res2);
-			
-			$postername = $arr2["username"];
-			
-			if ($postername == "")
-				$by = "Unknown";
-			else
-				$by = "<a href='account-details.php?id=$userid'><b>$postername</b></a>";
-			
-			print("<table border='0' cellspacing='0' cellpadding='0'><tr><td>");
-			print("$added&nbsp;---&nbsp;by&nbsp;$by");
-			print(" - [<a href='?action=news&amp;do=edit&amp;newsid=$newsid'><b>".T_("EDIT")."</b></a>]");
-			print(" - [<a href='?action=news&amp;do=delete&amp;newsid=$newsid'><b>".T_("DEL")."</b></a>]");
-			print("</td></tr>\n");
+            $res2 = SQL_Query_exec("SELECT username FROM users WHERE id = $userid");
+            $arr2 = mysqli_fetch_assoc($res2);
+            
+            $postername = $arr2["username"];
+            
+            if ($postername == "")
+                $by = "Unknown";
+            else
+                $by = "<a href='account-details.php?id=$userid'><b>$postername</b></a>";
+            
+            print("<table border='0' cellspacing='0' cellpadding='0'><tr><td>");
+            print("$added&nbsp;---&nbsp;by&nbsp;$by");
+            print(" - [<a href='?action=news&amp;do=edit&amp;newsid=$newsid'><b>".T_("EDIT")."</b></a>]");
+            print(" - [<a href='?action=news&amp;do=delete&amp;newsid=$newsid'><b>".T_("DEL")."</b></a>]");
+            print("</td></tr>\n");
 
-			print("<tr valign='top'><td><b>$title</b><br />$body</td></tr></table><br />\n");
-		}
+            print("<tr valign='top'><td><b>$title</b><br />$body</td></tr></table><br />\n");
+        }
 
-	}else{
-	 echo "No News Posted";
-	}
+    }else{
+     echo "No News Posted";
+    }
 
-	end_frame();
-	stdfoot();
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="news" && $do=="takeadd"){
-	$body = $_POST["body"];
-	
-	if (!$body)
-		show_error_msg(T_("ERROR"),T_("ERR_NEWS_ITEM_CAN_NOT_BE_EMPTY"),1); 
+    $body = $_POST["body"];
+    
+    if (!$body)
+        show_error_msg(T_("ERROR"),T_("ERR_NEWS_ITEM_CAN_NOT_BE_EMPTY"),1); 
 
-	$title = $_POST['title'];
+    $title = $_POST['title'];
 
-	if (!$title)
-		show_error_msg(T_("ERROR"),T_("ERR_NEWS_TITLE_CAN_NOT_BE_EMPTY"),1);
-	
-	$added = $_POST["added"];
+    if (!$title)
+        show_error_msg(T_("ERROR"),T_("ERR_NEWS_TITLE_CAN_NOT_BE_EMPTY"),1);
+    
+    $added = $_POST["added"];
 
-	if (!$added)
-		$added = sqlesc(get_date_time());
+    if (!$added)
+        $added = sqlesc(get_date_time());
 
-	SQL_Query_exec("INSERT INTO news (userid, added, body, title) VALUES (".
+    SQL_Query_exec("INSERT INTO news (userid, added, body, title) VALUES (".
 
-	$CURUSER['id'] . ", $added, " . sqlesc($body) . ", " . sqlesc($title) . ")");
+    $CURUSER['id'] . ", $added, " . sqlesc($body) . ", " . sqlesc($title) . ")");
 
-	if (mysql_affected_rows() == 1)
-		show_error_msg(T_("COMPLETED"),T_("CP_NEWS_ITEM_ADDED_SUCCESS"),1);
-	else
-		show_error_msg(T_("ERROR"),T_("CP_NEWS_UNABLE_TO_ADD"),1);
+    if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) == 1)
+        show_error_msg(T_("COMPLETED"),T_("CP_NEWS_ITEM_ADDED_SUCCESS"),1);
+    else
+        show_error_msg(T_("ERROR"),T_("CP_NEWS_UNABLE_TO_ADD"),1);
 }
 
 if ($action=="news" && $do=="add"){
-	stdhead(T_("NEWS_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("NEWS_MANAGEMENT"));
+    navmenu();
 
-	begin_frame(T_("CP_NEWS_ADD"));
-	print("<center><form method='post' action='admincp.php' name='news'>\n");
-	print("<input type='hidden' name='action' value='news' />\n");
-	print("<input type='hidden' name='do' value='takeadd' />\n");
+    begin_frame(T_("CP_NEWS_ADD"));
+    print("<center><form method='post' action='admincp.php' name='news'>\n");
+    print("<input type='hidden' name='action' value='news' />\n");
+    print("<input type='hidden' name='do' value='takeadd' />\n");
 
-	print("<b>".T_("CP_NEWS_TITLE").":</b> <input type='text' name='title' /><br />\n");
+    print("<b>".T_("CP_NEWS_TITLE").":</b> <input type='text' name='title' /><br />\n");
 
-	echo "<br />".textbbcode("news","body")."<br />";
+    echo "<br />".textbbcode("news","body")."<br />";
 
-	print("<br /><br /><input type='submit' value='".T_("SUBMIT")."' />\n");
+    print("<br /><br /><input type='submit' value='".T_("SUBMIT")."' />\n");
 
-	print("</form><br /><br /></center>\n");
-	end_frame();
-	stdfoot();
+    print("</form><br /><br /></center>\n");
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="news" && $do=="edit"){
-	stdhead(T_("NEWS_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("NEWS_MANAGEMENT"));
+    navmenu();
 
-	$newsid = (int)$_GET["newsid"];
-	
-	if (!is_valid_id($newsid))
-		show_error_msg(T_("ERROR"),sprintf(T_("CP_NEWS_INVAILD_ITEM_ID"), $newsid),1);
+    $newsid = (int)$_GET["newsid"];
+    
+    if (!is_valid_id($newsid))
+        show_error_msg(T_("ERROR"),sprintf(T_("CP_NEWS_INVAILD_ITEM_ID"), $newsid),1);
                                                                                             
-	$res = SQL_Query_exec("SELECT * FROM news WHERE id=$newsid");
+    $res = SQL_Query_exec("SELECT * FROM news WHERE id=$newsid");
 
-	if (mysql_num_rows($res) != 1)
-		show_error_msg(T_("ERROR"), sprintf(T_("CP_NEWS_NO_ITEM_WITH_ID"), $newsid),1);
+    if (mysqli_num_rows($res) != 1)
+        show_error_msg(T_("ERROR"), sprintf(T_("CP_NEWS_NO_ITEM_WITH_ID"), $newsid),1);
 
-	$arr = mysql_fetch_assoc($res);
+    $arr = mysqli_fetch_assoc($res);
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-  		$body = $_POST['body'];
+    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+          $body = $_POST['body'];
 
-		if ($body == "")
-    		show_error_msg(T_("ERROR"), T_("FORUMS_BODY_CANNOT_BE_EMPTY"),1);
+        if ($body == "")
+            show_error_msg(T_("ERROR"), T_("FORUMS_BODY_CANNOT_BE_EMPTY"),1);
 
-		$title = $_POST['title'];
+        $title = $_POST['title'];
 
-		if ($title == "")
-			show_error_msg(T_("ERROR"), T_("ERR_NEWS_TITLE_CAN_NOT_BE_EMPTY"),1);
+        if ($title == "")
+            show_error_msg(T_("ERROR"), T_("ERR_NEWS_TITLE_CAN_NOT_BE_EMPTY"),1);
 
-		$body = sqlesc($body);
+        $body = sqlesc($body);
 
-		$editedat = sqlesc(get_date_time());
+        $editedat = sqlesc(get_date_time());
 
-		SQL_Query_exec("UPDATE news SET body=$body, title='$title' WHERE id=$newsid");
+        SQL_Query_exec("UPDATE news SET body=$body, title='$title' WHERE id=$newsid");
 
-		$returnto = $_POST['returnto'];
+        $returnto = $_POST['returnto'];
 
-		if ($returnto != "")
-			header("Location: $returnto");
-		else
-			autolink("admincp.php?action=news&do=view", T_("CP_NEWS_ITEM_WAS_EDITED_SUCCESS")); 
-	} else {
-		$returnto = htmlspecialchars($_GET['returnto']);
-		begin_frame(T_("CP_NEWS_EDIT"));
-		print("<form method='post' action='?action=news&amp;do=edit&amp;newsid=$newsid' name='news'>\n");
-		print("<center>");
-		print("<input type='hidden' name='returnto' value='$returnto' />\n");
-		print("<b>".T_("CP_NEWS_TITLE").": </b><input type='text' name='title' value=\"".$arr['title']."\" /><br /><br />\n");
-		echo "<br />".textbbcode("news","body",$arr["body"])."<br />";
-		print("<br /><input type='submit' value='Okay' />\n");
-		print("</center>\n");
-		print("</form>\n");
-	}
-	end_frame();
-	stdfoot();
+        if ($returnto != "")
+            header("Location: $returnto");
+        else
+            autolink("admincp.php?action=news&do=view", T_("CP_NEWS_ITEM_WAS_EDITED_SUCCESS")); 
+    } else {
+        $returnto = htmlspecialchars($_GET['returnto']);
+        begin_frame(T_("CP_NEWS_EDIT"));
+        print("<form method='post' action='?action=news&amp;do=edit&amp;newsid=$newsid' name='news'>\n");
+        print("<center>");
+        print("<input type='hidden' name='returnto' value='$returnto' />\n");
+        print("<b>".T_("CP_NEWS_TITLE").": </b><input type='text' name='title' value=\"".$arr['title']."\" /><br /><br />\n");
+        echo "<br />".textbbcode("news","body",$arr["body"])."<br />";
+        print("<br /><input type='submit' value='Okay' />\n");
+        print("</center>\n");
+        print("</form>\n");
+    }
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="news" && $do=="delete"){
 
-	$newsid = (int)$_GET["newsid"];
-	
-	if (!is_valid_id($newsid))
-		show_error_msg(T_("ERROR"),sprintf(T_("CP_NEWS_INVAILD_ITEM_ID"), $newsid),1);
+    $newsid = (int)$_GET["newsid"];
+    
+    if (!is_valid_id($newsid))
+        show_error_msg(T_("ERROR"),sprintf(T_("CP_NEWS_INVAILD_ITEM_ID"), $newsid),1);
 
-	SQL_Query_exec("DELETE FROM news WHERE id=$newsid");
+    SQL_Query_exec("DELETE FROM news WHERE id=$newsid");
     SQL_Query_exec("DELETE FROM comments WHERE news = $newsid");
-	
-	show_error_msg(T_("COMPLETED"),T_("CP_NEWS_ITEM_DEL_SUCCESS"),1);
+    
+    show_error_msg(T_("COMPLETED"),T_("CP_NEWS_ITEM_DEL_SUCCESS"),1);
 }
 
 ///////////////// BLOCKS MANAGEMENT /////////////
@@ -653,7 +653,7 @@ if ($action=="blocks" && $do=="view") {
                 "<th class=\"table_head\">Sort<br />Order</th>".
                 "<th class=\"table_head\">Preview</th>".
             "</tr>");
-        while($blocks = mysql_fetch_assoc($enabled)){
+        while($blocks = mysqli_fetch_assoc($enabled)){
         if(!$setclass){
             $class="table_col2";$setclass=true;}
         else{
@@ -687,7 +687,7 @@ if ($action=="blocks" && $do=="view") {
                 "<th class=\"table_head\">Sort<br />Order</th>".
                 "<th class=\"table_head\">Preview</th>".
             "</tr>");
-        while($blocks = mysql_fetch_assoc($disabled)){
+        while($blocks = mysqli_fetch_assoc($disabled)){
         if(!$setclass){
             $class="table_col2";$setclass=true;}
         else{
@@ -711,168 +711,168 @@ if ($action=="blocks" && $do=="view") {
 
 ////////// categories /////////////////////
 if ($action=="categories" && $do=="view"){
-	stdhead(T_("Categories Management"));
-	navmenu();
+    stdhead(T_("Categories Management"));
+    navmenu();
 
-	begin_frame(T_("TORRENT_CATEGORIES"));
-	echo "<center><a href='admincp.php?action=categories&amp;do=add'><b>Add New Category</b></a></center><br />";
+    begin_frame(T_("TORRENT_CATEGORIES"));
+    echo "<center><a href='admincp.php?action=categories&amp;do=add'><b>Add New Category</b></a></center><br />";
 
-	print("<i>Please note that if no image is specified, the category name will be displayed</i><br /><br />");
+    print("<i>Please note that if no image is specified, the category name will be displayed</i><br /><br />");
 
-	echo("<center><table width='95%' class='table_table'>");
-	echo("<tr><th width='10' class='table_head'>Sort</th><th class='table_head'>Parent Cat</th><th class='table_head'>Sub Cat</th><th class='table_head'>Image</th><th width='30' class='table_head'></th></tr>");
-	$query = "SELECT * FROM categories ORDER BY parent_cat ASC, sort_index ASC";
-	$sql = SQL_Query_exec($query);
-	while ($row = mysql_fetch_assoc($sql)) {
-		$id = $row['id'];
-		$name = $row['name'];
-		$priority = $row['sort_index'];
-		$parent = $row['parent_cat'];
+    echo("<center><table width='95%' class='table_table'>");
+    echo("<tr><th width='10' class='table_head'>Sort</th><th class='table_head'>Parent Cat</th><th class='table_head'>Sub Cat</th><th class='table_head'>Image</th><th width='30' class='table_head'></th></tr>");
+    $query = "SELECT * FROM categories ORDER BY parent_cat ASC, sort_index ASC";
+    $sql = SQL_Query_exec($query);
+    while ($row = mysqli_fetch_assoc($sql)) {
+        $id = $row['id'];
+        $name = $row['name'];
+        $priority = $row['sort_index'];
+        $parent = $row['parent_cat'];
 
-		print("<tr><td class='table_col1'>$priority</td><td class='table_col2'>$parent</td><td class='table_col1'>$name</td><td class='table_col2' align='center'>");
-		if (isset($row["image"]) && $row["image"] != "")
-			print("<img border=\"0\" src=\"" . $site_config['SITEURL'] . "/images/categories/" . $row["image"] . "\" alt=\"" . $row["name"] . "\" />");
-		else
-			print("-");	
-		print("</td><td class='table_col1'><a href='admincp.php?action=categories&amp;do=edit&amp;id=$id'>[EDIT]</a> <a href='admincp.php?action=categories&amp;do=delete&amp;id=$id'>[DELETE]</a></td></tr>");
-	}
-	echo("</table></center>");
-	end_frame();
-	stdfoot();
+        print("<tr><td class='table_col1'>$priority</td><td class='table_col2'>$parent</td><td class='table_col1'>$name</td><td class='table_col2' align='center'>");
+        if (isset($row["image"]) && $row["image"] != "")
+            print("<img border=\"0\" src=\"" . $site_config['SITEURL'] . "/images/categories/" . $row["image"] . "\" alt=\"" . $row["name"] . "\" />");
+        else
+            print("-");    
+        print("</td><td class='table_col1'><a href='admincp.php?action=categories&amp;do=edit&amp;id=$id'>[EDIT]</a> <a href='admincp.php?action=categories&amp;do=delete&amp;id=$id'>[DELETE]</a></td></tr>");
+    }
+    echo("</table></center>");
+    end_frame();
+    stdfoot();
 }
 
 
 if ($action=="categories" && $do=="edit"){
-	stdhead(T_("Categories Management"));
-	navmenu();
+    stdhead(T_("Categories Management"));
+    navmenu();
 
-	$id = (int)$_GET["id"];
-	
-	if (!is_valid_id($id))
-		show_error_msg(T_("ERROR"),T_("INVALID_ID"),1);
+    $id = (int)$_GET["id"];
+    
+    if (!is_valid_id($id))
+        show_error_msg(T_("ERROR"),T_("INVALID_ID"),1);
 
-	$res = SQL_Query_exec("SELECT * FROM categories WHERE id=$id");
+    $res = SQL_Query_exec("SELECT * FROM categories WHERE id=$id");
 
-	if (mysql_num_rows($res) != 1)
-		show_error_msg(T_("ERROR"), "No category with ID $id.",1);
+    if (mysqli_num_rows($res) != 1)
+        show_error_msg(T_("ERROR"), "No category with ID $id.",1);
 
-	$arr = mysql_fetch_assoc($res);
+    $arr = mysqli_fetch_assoc($res);
 
-	if ($_GET["save"] == '1'){
-  		$parent_cat = $_POST['parent_cat'];
-		if ($parent_cat == "")
-    		show_error_msg(T_("ERROR"), "Parent Cat cannot be empty!",1);
+    if ($_GET["save"] == '1'){
+          $parent_cat = $_POST['parent_cat'];
+        if ($parent_cat == "")
+            show_error_msg(T_("ERROR"), "Parent Cat cannot be empty!",1);
 
-		$name = $_POST['name'];
-		if ($name == "")
-			show_error_msg(T_("ERROR"), "Sub cat cannot be empty!",1);
+        $name = $_POST['name'];
+        if ($name == "")
+            show_error_msg(T_("ERROR"), "Sub cat cannot be empty!",1);
 
-		$sort_index = $_POST['sort_index'];
-		$image = $_POST['image'];
+        $sort_index = $_POST['sort_index'];
+        $image = $_POST['image'];
 
-		$parent_cat = sqlesc($parent_cat);
-		$name = sqlesc($name);
-		$sort_index = sqlesc($sort_index);
-		$image = sqlesc($image);
+        $parent_cat = sqlesc($parent_cat);
+        $name = sqlesc($name);
+        $sort_index = sqlesc($sort_index);
+        $image = sqlesc($image);
 
-		SQL_Query_exec("UPDATE categories SET parent_cat=$parent_cat, name=$name, sort_index=$sort_index, image=$image WHERE id=$id");
+        SQL_Query_exec("UPDATE categories SET parent_cat=$parent_cat, name=$name, sort_index=$sort_index, image=$image WHERE id=$id");
 
-		show_error_msg(T_("COMPLETED"),"category was edited successfully.",0);
+        show_error_msg(T_("COMPLETED"),"category was edited successfully.",0);
 
-	} else {
-		begin_frame(T_("CP_CATEGORY_EDIT"));
-		print("<form method='post' action='?action=categories&amp;do=edit&amp;id=$id&amp;save=1'>\n");
-		print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
-		print("<tr><td align='left'><b>Parent Category: </b><input type='text' name='parent_cat' value=\"".$arr['parent_cat']."\" /> All Subcats with EXACTLY the same parent cat are grouped</td></tr>\n");
-		print("<tr><td align='left'><b>Sub Category: </b><input type='text' name='name' value=\"".$arr['name']."\" /></td></tr>\n");
-		print("<tr><td align='left'><b>Sort: </b><input type='text' name='sort_index' value=\"".$arr['sort_index']."\" /></td></tr>\n");
-		print("<tr><td align='left'><b>Image: </b><input type='text' name='image' value=\"".$arr['image']."\" /> single filename</td></tr>\n");
-		print("<tr><td align='center'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
-		print("</table></center>\n");
-		print("</form>\n");
-	}
-	end_frame();
-	stdfoot();
+    } else {
+        begin_frame(T_("CP_CATEGORY_EDIT"));
+        print("<form method='post' action='?action=categories&amp;do=edit&amp;id=$id&amp;save=1'>\n");
+        print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
+        print("<tr><td align='left'><b>Parent Category: </b><input type='text' name='parent_cat' value=\"".$arr['parent_cat']."\" /> All Subcats with EXACTLY the same parent cat are grouped</td></tr>\n");
+        print("<tr><td align='left'><b>Sub Category: </b><input type='text' name='name' value=\"".$arr['name']."\" /></td></tr>\n");
+        print("<tr><td align='left'><b>Sort: </b><input type='text' name='sort_index' value=\"".$arr['sort_index']."\" /></td></tr>\n");
+        print("<tr><td align='left'><b>Image: </b><input type='text' name='image' value=\"".$arr['image']."\" /> single filename</td></tr>\n");
+        print("<tr><td align='center'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
+        print("</table></center>\n");
+        print("</form>\n");
+    }
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="categories" && $do=="delete"){
-	stdhead(T_("Categories Management"));
-	navmenu();
+    stdhead(T_("Categories Management"));
+    navmenu();
 
-	$id = (int)$_GET["id"];
+    $id = (int)$_GET["id"];
 
-	if ($_GET["sure"] == '1'){
+    if ($_GET["sure"] == '1'){
 
-		if (!is_valid_id($id))
-			show_error_msg(T_("ERROR"),sprintf(T_("CP_NEWS_INVAILD_ITEM_ID"), $newsid),1);
+        if (!is_valid_id($id))
+            show_error_msg(T_("ERROR"),sprintf(T_("CP_NEWS_INVAILD_ITEM_ID"), $newsid),1);
 
-		$newcatid = (int) $_POST["newcat"];
+        $newcatid = (int) $_POST["newcat"];
 
-		SQL_Query_exec("UPDATE torrents SET category=$newcatid WHERE category=$id"); //move torrents to a new cat
+        SQL_Query_exec("UPDATE torrents SET category=$newcatid WHERE category=$id"); //move torrents to a new cat
 
-		SQL_Query_exec("DELETE FROM categories WHERE id=$id"); //delete old cat
-		
-		show_error_msg(T_("COMPLETED"),"Category Deleted OK",1);
+        SQL_Query_exec("DELETE FROM categories WHERE id=$id"); //delete old cat
+        
+        show_error_msg(T_("COMPLETED"),"Category Deleted OK",1);
 
-	}else{
-		begin_frame(T_("CATEGORY_DEL"));
-		print("<form method='post' action='?action=categories&amp;do=delete&amp;id=$id&amp;sure=1'>\n");
-		print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
-		print("<tr><td align='left'><b>Category ID to move all Torrents To: </b><input type='text' name='newcat' /> (Cat ID)</td></tr>\n");
-		print("<tr><td align='center'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
-		print("</table></center>\n");
-		print("</form>\n");
-	}
-	end_frame();
-	stdfoot();
+    }else{
+        begin_frame(T_("CATEGORY_DEL"));
+        print("<form method='post' action='?action=categories&amp;do=delete&amp;id=$id&amp;sure=1'>\n");
+        print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
+        print("<tr><td align='left'><b>Category ID to move all Torrents To: </b><input type='text' name='newcat' /> (Cat ID)</td></tr>\n");
+        print("<tr><td align='center'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
+        print("</table></center>\n");
+        print("</form>\n");
+    }
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="categories" && $do=="takeadd"){
-  		$name = $_POST['name'];
-		if ($name == "")
-    		show_error_msg(T_("ERROR"), "Sub Cat cannot be empty!",1);
+          $name = $_POST['name'];
+        if ($name == "")
+            show_error_msg(T_("ERROR"), "Sub Cat cannot be empty!",1);
 
-		$parent_cat = $_POST['parent_cat'];
-		if ($parent_cat == "")
-			show_error_msg(T_("ERROR"), "Parent Cat cannot be empty!",1);
+        $parent_cat = $_POST['parent_cat'];
+        if ($parent_cat == "")
+            show_error_msg(T_("ERROR"), "Parent Cat cannot be empty!",1);
 
-		$sort_index = $_POST['sort_index'];
-		$image = $_POST['image'];
+        $sort_index = $_POST['sort_index'];
+        $image = $_POST['image'];
 
-		$parent_cat = sqlesc($parent_cat);
-		$name = sqlesc($name);
-		$sort_index = sqlesc($sort_index);
-		$image = sqlesc($image);
+        $parent_cat = sqlesc($parent_cat);
+        $name = sqlesc($name);
+        $sort_index = sqlesc($sort_index);
+        $image = sqlesc($image);
 
-	SQL_Query_exec("INSERT INTO categories (name, parent_cat, sort_index, image) VALUES ($name, $parent_cat, $sort_index, $image)");
+    SQL_Query_exec("INSERT INTO categories (name, parent_cat, sort_index, image) VALUES ($name, $parent_cat, $sort_index, $image)");
 
-	if (mysql_affected_rows() == 1)
-		show_error_msg(T_("COMPLETED"),"Category was added successfully.",1);
-	else
-		show_error_msg(T_("ERROR"),"Unable to add category",1);
+    if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) == 1)
+        show_error_msg(T_("COMPLETED"),"Category was added successfully.",1);
+    else
+        show_error_msg(T_("ERROR"),"Unable to add category",1);
 }
 
 if ($action=="categories" && $do=="add"){
-	stdhead(T_("CATEGORY_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("CATEGORY_MANAGEMENT"));
+    navmenu();
 
-	begin_frame(T_("CATEGORY_ADD"));
-	print("<center><form method='post' action='admincp.php'>\n");
-	print("<input type='hidden' name='action' value='categories' />\n");
-	print("<input type='hidden' name='do' value='takeadd' />\n");
+    begin_frame(T_("CATEGORY_ADD"));
+    print("<center><form method='post' action='admincp.php'>\n");
+    print("<input type='hidden' name='action' value='categories' />\n");
+    print("<input type='hidden' name='do' value='takeadd' />\n");
                        
-	print("<table border='0' cellspacing='0' cellpadding='5'>\n");
+    print("<table border='0' cellspacing='0' cellpadding='5'>\n");
 
-	print("<tr><td align='left'><b>Parent Category:</b> <input type='text' name='parent_cat' /></td></tr>\n");
-	print("<tr><td align='left'><b>Sub Category:</b> <input type='text' name='name' /></td></tr>\n");
-	print("<tr><td align='left'><b>Sort:</b> <input type='text' name='sort_index' /></td></tr>\n");
-	print("<tr><td align='left'><b>Image:</b> <input type='text' name='image' /></td></tr>\n");
+    print("<tr><td align='left'><b>Parent Category:</b> <input type='text' name='parent_cat' /></td></tr>\n");
+    print("<tr><td align='left'><b>Sub Category:</b> <input type='text' name='name' /></td></tr>\n");
+    print("<tr><td align='left'><b>Sort:</b> <input type='text' name='sort_index' /></td></tr>\n");
+    print("<tr><td align='left'><b>Image:</b> <input type='text' name='image' /></td></tr>\n");
 
-	print("<tr><td colspan='2'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
+    print("<tr><td colspan='2'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
 
-	print("</table></form></center>\n");
-	end_frame();
-	stdfoot();
+    print("</table></form></center>\n");
+    end_frame();
+    stdfoot();
 }
 
 if ($action == "whoswhere")
@@ -891,7 +891,7 @@ if ($action == "whoswhere")
         <th class="table_head">Page</th>
         <th class="table_head">Accessed</th>
     </tr>
-    <?php while ($row = mysql_fetch_assoc($res)): ?>
+    <?php while ($row = mysqli_fetch_assoc($res)): ?>
     <tr>
         <td class="table_col1" align="center"><a href="account-details.php?id=<?php echo $row["id"]; ?>"><b><?php echo $row["username"]; ?></b></a></td>
         <td class="table_col2" align="center"><?php echo htmlspecialchars($row["page"]); ?></td>
@@ -906,97 +906,97 @@ if ($action == "whoswhere")
 }
 
 if ($action=="peers"){
-	stdhead("Peers List");
-	navmenu();
+    stdhead("Peers List");
+    navmenu();
 
-	begin_frame("Peers List");
+    begin_frame("Peers List");
 
-	$count1 = number_format(get_row_count("peers"));
+    $count1 = number_format(get_row_count("peers"));
 
-	print("<center>We have $count1 peers</center><br />");
+    print("<center>We have $count1 peers</center><br />");
 
-	$res4 = SQL_Query_exec("SELECT COUNT(*) FROM peers $limit");
-	$row4 = mysql_fetch_array($res4);
+    $res4 = SQL_Query_exec("SELECT COUNT(*) FROM peers $limit");
+    $row4 = mysqli_fetch_array($res4);
 
-	$count = $row4[0];
-	$peersperpage = 50;
+    $count = $row4[0];
+    $peersperpage = 50;
 
-	list($pagertop, $pagerbottom, $limit) = pager($peersperpage, $count, "admincp.php?action=peers&amp;");
+    list($pagertop, $pagerbottom, $limit) = pager($peersperpage, $count, "admincp.php?action=peers&amp;");
 
-	print("$pagertop");
+    print("$pagertop");
 
-	$sql = "SELECT * FROM peers ORDER BY started DESC $limit";
-	$result = SQL_Query_exec($sql);
+    $sql = "SELECT * FROM peers ORDER BY started DESC $limit";
+    $result = SQL_Query_exec($sql);
 
-	if( mysql_num_rows($result) != 0 ) {
-		print'<center><table width="100%" border="0" cellspacing="0" cellpadding="3" class="table_table">';
-		print'<tr>';
-		print'<th class="table_head">User</th>';
-		print'<th class="table_head">Torrent</th>';
-		print'<th class="table_head">IP</th>';
-		print'<th class="table_head">Port</th>';
-		print'<th class="table_head">Upl.</th>';
-		print'<th class="table_head">Downl.</th>';
-		print'<th class="table_head">Peer-ID</th>';
-		print'<th class="table_head">Conn.</th>';
-		print'<th class="table_head">Seeding</th>';
-		print'<th class="table_head">Started</th>';
-		print'<th class="table_head">Last<br />Action</th>';
-		print'</tr>';
+    if( mysqli_num_rows($result) != 0 ) {
+        print'<center><table width="100%" border="0" cellspacing="0" cellpadding="3" class="table_table">';
+        print'<tr>';
+        print'<th class="table_head">User</th>';
+        print'<th class="table_head">Torrent</th>';
+        print'<th class="table_head">IP</th>';
+        print'<th class="table_head">Port</th>';
+        print'<th class="table_head">Upl.</th>';
+        print'<th class="table_head">Downl.</th>';
+        print'<th class="table_head">Peer-ID</th>';
+        print'<th class="table_head">Conn.</th>';
+        print'<th class="table_head">Seeding</th>';
+        print'<th class="table_head">Started</th>';
+        print'<th class="table_head">Last<br />Action</th>';
+        print'</tr>';
 
-		while($row = mysql_fetch_assoc($result)) {
-			if ($site_config['MEMBERSONLY']) {
-				$sql1 = "SELECT id, username FROM users WHERE id = $row[userid]";
-				$result1 = SQL_Query_exec($sql1);
-				$row1 = mysql_fetch_assoc($result1);
-			}
+        while($row = mysqli_fetch_assoc($result)) {
+            if ($site_config['MEMBERSONLY']) {
+                $sql1 = "SELECT id, username FROM users WHERE id = $row[userid]";
+                $result1 = SQL_Query_exec($sql1);
+                $row1 = mysqli_fetch_assoc($result1);
+            }
 
-			if ($row1['username'])
-				print'<tr><td class="table_col1"><a href="account-details.php?id=' . $row['userid'] . '">' . $row1['username'] . '</a></td>';
-			else
-				print'<tr><td class="table_col1">'.$row["ip"].'</td>';
+            if ($row1['username'])
+                print'<tr><td class="table_col1"><a href="account-details.php?id=' . $row['userid'] . '">' . $row1['username'] . '</a></td>';
+            else
+                print'<tr><td class="table_col1">'.$row["ip"].'</td>';
 
-			$sql2 = "SELECT id, name FROM torrents WHERE id = $row[torrent]";
-			$result2 = SQL_Query_exec($sql2);
+            $sql2 = "SELECT id, name FROM torrents WHERE id = $row[torrent]";
+            $result2 = SQL_Query_exec($sql2);
 
-			while ($row2 = mysql_fetch_assoc($result2)) {
+            while ($row2 = mysqli_fetch_assoc($result2)) {
 
                 $smallname = CutName(htmlspecialchars($row2["name"]), 40);
                 
-				print'<td class="table_col2"><a href="torrents-details.php?id=' . $row['torrent'] . '">' . $smallname . '</a></td>';
-				print'<td align="center" class="table_col1">' . $row['ip'] . '</td>';
-				print'<td align="center" class="table_col2">' . $row['port'] . '</td>';
+                print'<td class="table_col2"><a href="torrents-details.php?id=' . $row['torrent'] . '">' . $smallname . '</a></td>';
+                print'<td align="center" class="table_col1">' . $row['ip'] . '</td>';
+                print'<td align="center" class="table_col2">' . $row['port'] . '</td>';
 
-				if ($row['uploaded'] < $row['downloaded'])
-					print'<td align="center" class="table_col1"><font class="error">' . mksize($row['uploaded']) . '</font></td>';
-				else
-					if ($row['uploaded'] == '0')
-						print'<td align="center" class="table_col1">' . mksize($row['uploaded']) . '</td>';
-					else
-						print'<td align="center" class="table_col1"><font color="green">' . mksize($row['uploaded']) . '</font></td>';
-				print'<td align="center" class="table_col2">' . mksize($row['downloaded']) . '</td>';
-				print'<td align="center" class="table_col1">' . substr($row["peer_id"], 0, 8) . '</td>';
-				if ($row['connectable'] == 'yes')
-					print'<td align="center" class="table_col2"><font color="green">' . $row['connectable'] . '</font></td>';
-				else
-					print'<td align="center" class="table_col2"><font class="error">' . $row['connectable'] . '</font></td>';
-				if ($row['seeder'] == 'yes')
-					print'<td align="center" class="table_col1"><font color="green">' . $row['seeder'] . '</font></td>';
-				else
-					print'<td align="center" class="table_col1"><font class="error">' . $row['seeder'] . '</font></td>';
-				print'<td align="center" class="table_col2">' . utc_to_tz($row['started']) . '</td>';
-				print'<td align="center" class="table_col1">' . utc_to_tz($row['last_action']) . '</td>';
-				print'</tr>';
-			}
-		}
-		print'</table>';
-		print("$pagerbottom</center>");
-	}else{
-		print'<center><b>No Peers</b></center><br />';
-	}
-	end_frame();
+                if ($row['uploaded'] < $row['downloaded'])
+                    print'<td align="center" class="table_col1"><font class="error">' . mksize($row['uploaded']) . '</font></td>';
+                else
+                    if ($row['uploaded'] == '0')
+                        print'<td align="center" class="table_col1">' . mksize($row['uploaded']) . '</td>';
+                    else
+                        print'<td align="center" class="table_col1"><font color="green">' . mksize($row['uploaded']) . '</font></td>';
+                print'<td align="center" class="table_col2">' . mksize($row['downloaded']) . '</td>';
+                print'<td align="center" class="table_col1">' . substr($row["peer_id"], 0, 8) . '</td>';
+                if ($row['connectable'] == 'yes')
+                    print'<td align="center" class="table_col2"><font color="green">' . $row['connectable'] . '</font></td>';
+                else
+                    print'<td align="center" class="table_col2"><font class="error">' . $row['connectable'] . '</font></td>';
+                if ($row['seeder'] == 'yes')
+                    print'<td align="center" class="table_col1"><font color="green">' . $row['seeder'] . '</font></td>';
+                else
+                    print'<td align="center" class="table_col1"><font class="error">' . $row['seeder'] . '</font></td>';
+                print'<td align="center" class="table_col2">' . utc_to_tz($row['started']) . '</td>';
+                print'<td align="center" class="table_col1">' . utc_to_tz($row['last_action']) . '</td>';
+                print'</tr>';
+            }
+        }
+        print'</table>';
+        print("$pagerbottom</center>");
+    }else{
+        print'<center><b>No Peers</b></center><br />';
+    }
+    end_frame();
 
-	stdfoot();
+    stdfoot();
 }
                            
 
@@ -1006,109 +1006,112 @@ if ($action=="lastcomm"){
     
     list($pagertop, $pagerbottom, $limit) = pager(10, $count, "admincp.php?action=lastcomm&amp;");
                  
-	stdhead("Latest Comments");
-	navmenu();
+    stdhead("Latest Comments");
+    navmenu();
 
-	begin_frame("Last Comments");
+    begin_frame("Last Comments");
 
-	$res = SQL_Query_exec("SELECT c.id, c.text, c.user, c.torrent, c.news, t.name, n.title, u.username, c.added FROM comments c LEFT JOIN torrents t ON c.torrent = t.id LEFT JOIN news n ON c.news = n.id LEFT JOIN users u ON c.user = u.id ORDER BY c.added DESC $limit");
+    if ($count == "0"){
+		echo "No comments...";
+	} else {
+		$res = SQL_Query_exec("SELECT c.id, c.text, c.user, c.torrent, c.news, t.name, n.title, u.username, c.added FROM comments c LEFT JOIN torrents t ON c.torrent = t.id LEFT JOIN news n ON c.news = n.id LEFT JOIN users u ON c.user = u.id ORDER BY c.added DESC $limit");
     
-	while ($arr = mysql_fetch_assoc($res)) {
-		$userid = $arr["user"];
-		$username = $arr["username"];
-		$data = $arr["added"];
-		$tid = $arr["torrent"];
-        $nid = $arr["news"];
-		$title = ( $arr['title'] ) ? $arr['title'] : $arr['name'];
-		$comentario = stripslashes(format_comment($arr["text"]));
-		$cid = $arr["id"];    
+		while ($arr = mysqli_fetch_assoc($res)) {
+			$userid = $arr["user"];
+			$username = $arr["username"];
+			$data = $arr["added"];
+			$tid = $arr["torrent"];
+			$nid = $arr["news"];
+			$title = ( $arr['title'] ) ? $arr['title'] : $arr['name'];
+			$comentario = stripslashes(format_comment($arr["text"]));
+			$cid = $arr["id"];    
         
-        $type = 'Torrent: <a href="torrents-details.php?id='.$tid.'">'.$title.'</a>';
+			$type = 'Torrent: <a href="torrents-details.php?id='.$tid.'">'.$title.'</a>';
         
-        if ( $nid > 0 )
-        {
-             $type = 'News: <a href="comments.php?id='.$nid.'&amp;type=news">'.$title.'</a>';
-        }
-                       
-		echo "<table class='table_table' align='center' cellspacing='0' width='100%'><tr><th class='table_head' align='center'>".$type."</td></tr><tr><td class='table_col2'>".$comentario."</th></tr><tr><td class='table_col1' align='center'>Posted in <b>".$data."</b> by <a href=\"account-details.php?id=".$userid."\">".$username."</a><!--  [ <a href=\"edit-comments.php?cid=".$cid."\">edit</a> | <a href=\"edit-comments.php?action=delete&amp;cid=".$cid."\">delete</a> ] --></td></tr></table><br />";
-        #$rows[] = $arr;
+			if ( $nid > 0 ){
+				$type = 'News: <a href="comments.php?id='.$nid.'&amp;type=news">'.$title.'</a>';
+			}
+                      
+			echo "<table class='table_table' align='center' cellspacing='0' width='100%'><tr><th class='table_head' align='center'>".$type."</td></tr><tr><td class='table_col2'>".$comentario."</th></tr><tr><td class='table_col1' align='center'>Posted in <b>".$data."</b> by <a href=\"account-details.php?id=".$userid."\">".$username."</a><!--  [ <a href=\"edit-comments.php?cid=".$cid."\">edit</a> | <a href=\"edit-comments.php?action=delete&amp;cid=".$cid."\">delete</a> ] --></td></tr></table><br />";
+			#$rows[] = $arr;
+		}
+    
+		if ($count > 10) echo $pagerbottom;
 	}
     
-    if ($count > 10) echo $pagerbottom;
-    
-	end_frame();
-	stdfoot();
+    end_frame();
+    stdfoot();
 }
 
 
 if ($action=="messagespy"){                                    
-	if ($do == "del") {
-		if ($_POST["delall"])
-			SQL_Query_exec("DELETE FROM `messages`");
-		else {
-			if (!@count($_POST["del"])) show_error_msg(T_("ERROR"), T_("NOTHING_SELECTED"), 1);
-			$ids = array_map("intval", $_POST["del"]);
-			$ids = implode(", ", $ids);
-			SQL_Query_exec("DELETE FROM `messages` WHERE `id` IN ($ids)");
-		}
-		autolink("admincp.php?action=messagespy", T_("CP_DELETED_ENTRIES")); 
-		stdhead();
-		show_error_msg(T_("SUCCESS"), T_("CP_DELETED_ENTRIES"), 0);
-		stdfoot();
-		die;
-	}
+    if ($do == "del") {
+        if ($_POST["delall"])
+            SQL_Query_exec("DELETE FROM `messages`");
+        else {
+            if (!@count($_POST["del"])) show_error_msg(T_("ERROR"), T_("NOTHING_SELECTED"), 1);
+            $ids = array_map("intval", $_POST["del"]);
+            $ids = implode(", ", $ids);
+            SQL_Query_exec("DELETE FROM `messages` WHERE `id` IN ($ids)");
+        }
+        autolink("admincp.php?action=messagespy", T_("CP_DELETED_ENTRIES")); 
+        stdhead();
+        show_error_msg(T_("SUCCESS"), T_("CP_DELETED_ENTRIES"), 0);
+        stdfoot();
+        die;
+    }
 
 
-	stdhead("Message Spy");
-	navmenu();
+    stdhead("Message Spy");
+    navmenu();
 
-	$res2 = SQL_Query_exec("SELECT COUNT(*) FROM messages WHERE location in ('in', 'both')");
-	$row = mysql_fetch_array($res2);
-	$count = $row[0];
+    $res2 = SQL_Query_exec("SELECT COUNT(*) FROM messages WHERE location in ('in', 'both')");
+    $row = mysqli_fetch_array($res2);
+    $count = $row[0];
 
-	$perpage = 50;
+    $perpage = 50;
 
-	list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=messagespy&amp;");
+    list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=messagespy&amp;");
 
-	begin_frame("Message Spy");
+    begin_frame("Message Spy");
 
-	echo $pagertop;
+    echo $pagertop;
 
-	$res = SQL_Query_exec("SELECT * FROM messages WHERE location in ('in', 'both') ORDER BY id DESC $limit");
+    $res = SQL_Query_exec("SELECT * FROM messages WHERE location in ('in', 'both') ORDER BY id DESC $limit");
 
-	print("<form id='messagespy' method='post' action='?action=messagespy&amp;do=del'><table border='0' cellspacing='0' cellpadding='3' align='center' class='table_table'>\n");
+    print("<form id='messagespy' method='post' action='?action=messagespy&amp;do=del'><table border='0' cellspacing='0' cellpadding='3' align='center' class='table_table'>\n");
 
-	print("<tr><th class='table_head' align='left'><input type='checkbox' name='checkall' onclick='checkAll(this.form.id);' /></th><th class='table_head' align='left'>Sender</th><th class='table_head' align='left'>Receiver</th><th class='table_head' align='left'>Text</th><th class='table_head' align='left'>Date</th></tr>\n");
+    print("<tr><th class='table_head' align='left'><input type='checkbox' name='checkall' onclick='checkAll(this.form.id);' /></th><th class='table_head' align='left'>Sender</th><th class='table_head' align='left'>Receiver</th><th class='table_head' align='left'>Text</th><th class='table_head' align='left'>Date</th></tr>\n");
 
-	while ($arr = mysql_fetch_assoc($res)){
-		$res2 = SQL_Query_exec("SELECT username FROM users WHERE id=" . $arr["receiver"]);
+    while ($arr = mysqli_fetch_assoc($res)){
+        $res2 = SQL_Query_exec("SELECT username FROM users WHERE id=" . $arr["receiver"]);
 
-		if ($arr2 = mysql_fetch_assoc($res2))
-			$receiver = "<a href='account-details.php?id=" . $arr["receiver"] . "'><b>" . $arr2["username"] . "</b></a>";
-		else
-			$receiver = "<i>Deleted</i>";
+        if ($arr2 = mysqli_fetch_assoc($res2))
+            $receiver = "<a href='account-details.php?id=" . $arr["receiver"] . "'><b>" . $arr2["username"] . "</b></a>";
+        else
+            $receiver = "<i>Deleted</i>";
 
-		$res3 = SQL_Query_exec("SELECT username FROM users WHERE id=" . $arr["sender"]);
-		$arr3 = mysql_fetch_assoc($res3);
+        $res3 = SQL_Query_exec("SELECT username FROM users WHERE id=" . $arr["sender"]);
+        $arr3 = mysqli_fetch_assoc($res3);
 
-		$sender = "<a href='account-details.php?id=" . $arr["sender"] . "'><b>" . $arr3["username"] . "</b></a>";
-		if( $arr["sender"] == 0 )
-			$sender = "<font class='error'><b>System</b></font>";
-		$msg = format_comment($arr["msg"]);
+        $sender = "<a href='account-details.php?id=" . $arr["sender"] . "'><b>" . $arr3["username"] . "</b></a>";
+        if( $arr["sender"] == 0 )
+            $sender = "<font class='error'><b>System</b></font>";
+        $msg = format_comment($arr["msg"]);
 
-		$added = utc_to_tz($arr["added"]);
+        $added = utc_to_tz($arr["added"]);
 
-		print("<tr><td class='table_col2'><input type='checkbox' name='del[]' value='$arr[id]' /></td><td align='left' class='table_col1'>$sender</td><td align='left' class='table_col2'>$receiver</td><td align='left' class='table_col1'>$msg</td><td align='left' class='table_col2'>$added</td></tr>");
-	}
+        print("<tr><td class='table_col2'><input type='checkbox' name='del[]' value='$arr[id]' /></td><td align='left' class='table_col1'>$sender</td><td align='left' class='table_col2'>$receiver</td><td align='left' class='table_col1'>$msg</td><td align='left' class='table_col2'>$added</td></tr>");
+    }
 
-	print("</table><br />");
-	echo "<input type='submit' value='Delete Checked' /> <input type='submit' value='Delete All' name='delall' /></form>";
+    print("</table><br />");
+    echo "<input type='submit' value='Delete Checked' /> <input type='submit' value='Delete All' name='delall' /></form>";
 
 
-	print($pagerbottom);
+    print($pagerbottom);
 
-	end_frame();
-	stdfoot();
+    end_frame();
+    stdfoot();
 }
 
 
@@ -1162,7 +1165,7 @@ if ($action=="messagespy"){
             <th class='table_head'><input type='checkbox' name='checkall' onclick='checkAll(this.form.id);' /></th>
         </tr>
         
-        <?php while ($row = mysql_fetch_array($res)) { ?>
+        <?php while ($row = mysqli_fetch_array($res)) { ?>
         
         <tr>
             <td class='table_col1'><a href='torrents-details.php?id=<?php echo $row["id"]; ?>'><?php echo CutName(htmlspecialchars($row["name"]), 40); ?></a></td>
@@ -1193,49 +1196,49 @@ if ($action=="messagespy"){
     }
 
 if ($action == "sitelog") {
-	if ($do == "del") {
-		if ($_POST["delall"])
-			SQL_Query_exec("DELETE FROM `log`");
-		else {
-			if (!@count($_POST["del"])) show_error_msg(T_("ERROR"), T_("NOTHING_SELECTED"), 1);
-			$ids = array_map("intval", $_POST["del"]);
-			$ids = implode(", ", $ids);
-			SQL_Query_exec("DELETE FROM `log` WHERE `id` IN ($ids)");
-		}
-		autolink("admincp.php?action=sitelog", T_("CP_DELETED_ENTRIES"));
-		stdhead();
-		show_error_msg(T_("SUCCESS"), T_("CP_DELETED_ENTRIES"), 0);
-		stdfoot();
-		die;
-	}
+    if ($do == "del") {
+        if ($_POST["delall"])
+            SQL_Query_exec("DELETE FROM `log`");
+        else {
+            if (!@count($_POST["del"])) show_error_msg(T_("ERROR"), T_("NOTHING_SELECTED"), 1);
+            $ids = array_map("intval", $_POST["del"]);
+            $ids = implode(", ", $ids);
+            SQL_Query_exec("DELETE FROM `log` WHERE `id` IN ($ids)");
+        }
+        autolink("admincp.php?action=sitelog", T_("CP_DELETED_ENTRIES"));
+        stdhead();
+        show_error_msg(T_("SUCCESS"), T_("CP_DELETED_ENTRIES"), 0);
+        stdfoot();
+        die;
+    }
 
-	stdhead("Site Log");
-	navmenu();
+    stdhead("Site Log");
+    navmenu();
 
     $search = trim($_GET['search']);
-	
-	if ($search != '' ){
-		$where = "WHERE txt LIKE " . sqlesc("%$search%") . "";
-	}
+    
+    if ($search != '' ){
+        $where = "WHERE txt LIKE " . sqlesc("%$search%") . "";
+    }
 
-	$res2 = SQL_Query_exec("SELECT COUNT(*) FROM log $where");
-	$row = mysql_fetch_array($res2);
-	$count = $row[0];
+    $res2 = SQL_Query_exec("SELECT COUNT(*) FROM log $where");
+    $row = mysqli_fetch_array($res2);
+    $count = $row[0];
 
-	$perpage = 50;
+    $perpage = 50;
 
-	list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=sitelog&amp;");
+    list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=sitelog&amp;");
 
-	begin_frame("Site Log");
+    begin_frame("Site Log");
 
-	print("<form method='get' action='?'><center>");
-	print("<input type='hidden' name='action' value='sitelog' />\n");
-	print(T_("SEARCH").": <input type='text' size='30' name='search' />\n");
-	print("<input type='submit' value='Search' />\n");
-	print("</center></form><br />\n");
+    print("<form method='get' action='?'><center>");
+    print("<input type='hidden' name='action' value='sitelog' />\n");
+    print(T_("SEARCH").": <input type='text' size='30' name='search' />\n");
+    print("<input type='submit' value='Search' />\n");
+    print("</center></form><br />\n");
 
-	echo $pagertop;
-	?>
+    echo $pagertop;
+    ?>
                            
     <form id='sitelog' action='admincp.php?action=sitelog&amp;do=del' method='post'>
     <table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" class="table_table">
@@ -1246,306 +1249,306 @@ if ($action == "sitelog") {
         <th class="table_head">Event</th>
     </tr>
 
-	<?php
-	
-	$rqq = "SELECT id, added, txt FROM log $where ORDER BY id DESC $limit";
-	$res = SQL_Query_exec($rqq);
+    <?php
+    
+    $rqq = "SELECT id, added, txt FROM log $where ORDER BY id DESC $limit";
+    $res = SQL_Query_exec($rqq);
 
-	 while ($arr = mysql_fetch_array($res)){
-		$arr['added'] = utc_to_tz($arr['added']);
-		$date = substr($arr['added'], 0, strpos($arr['added'], " "));
-		$time = substr($arr['added'], strpos($arr['added'], " ") + 1);
-		print("<tr><td class='table_col2' align='center'><input type='checkbox' name='del[]' value='$arr[id]' /></td><td class='table_col1' align='center'>$date</td><td class='table_col2' align='center'>$time</td><td class='table_col1' align='left'>".stripslashes($arr["txt"])."</td><!--<td class='table_col2'><a href='staffcp.php?act=view_log&amp;do=del_log&amp;lid=$arr[id]' title='delete this entry'>delete</a></td>--></tr>\n");
-	 }
-	echo "<tr><td class='table_head' align='center' colspan='4'>\n";
-	echo "<input type='submit' value='Delete Checked' /> <input type='submit' value='Delete All' name='delall' /></td></tr></table></form>";
+     while ($arr = mysqli_fetch_array($res)){
+        $arr['added'] = utc_to_tz($arr['added']);
+        $date = substr($arr['added'], 0, strpos($arr['added'], " "));
+        $time = substr($arr['added'], strpos($arr['added'], " ") + 1);
+        print("<tr><td class='table_col2' align='center'><input type='checkbox' name='del[]' value='$arr[id]' /></td><td class='table_col1' align='center'>$date</td><td class='table_col2' align='center'>$time</td><td class='table_col1' align='left'>".stripslashes($arr["txt"])."</td><!--<td class='table_col2'><a href='staffcp.php?act=view_log&amp;do=del_log&amp;lid=$arr[id]' title='delete this entry'>delete</a></td>--></tr>\n");
+     }
+    echo "<tr><td class='table_head' align='center' colspan='4'>\n";
+    echo "<input type='submit' value='Delete Checked' /> <input type='submit' value='Delete All' name='delall' /></td></tr></table></form>";
 
-	print($pagerbottom);
+    print($pagerbottom);
 
-	end_frame();
-	stdfoot();
+    end_frame();
+    stdfoot();
 }
 
 if ($action == "cheats") {
-	stdhead("Possible Cheater Detection");
-	navmenu();
+    stdhead("Possible Cheater Detection");
+    navmenu();
 
     $megabts = (int) $_POST['megabts'];
     $daysago = (int) $_POST['daysago'];
 
-	if ($daysago && $megabts){
+    if ($daysago && $megabts){
 
-		$timeago = 84600 * $daysago; //last 7 days
-		$bytesover = 1048576 * $megabts; //over 500MB Upped
+        $timeago = 84600 * $daysago; //last 7 days
+        $bytesover = 1048576 * $megabts; //over 500MB Upped
 
-		$result = SQL_Query_exec("select * FROM users WHERE UNIX_TIMESTAMP('" . get_date_time() . "') - UNIX_TIMESTAMP(added) < '$timeago' AND status='confirmed' AND uploaded > '$bytesover' ORDER BY uploaded DESC "); 
-		$num = mysql_num_rows($result); // how many uploaders
+        $result = SQL_Query_exec("select * FROM users WHERE UNIX_TIMESTAMP('" . get_date_time() . "') - UNIX_TIMESTAMP(added) < '$timeago' AND status='confirmed' AND uploaded > '$bytesover' ORDER BY uploaded DESC "); 
+        $num = mysqli_num_rows($result); // how many uploaders
 
-		begin_frame("Possible Cheater Detection");
-		echo "<p>" . $num . " Users with found over last ".$daysago." days with more than ".$megabts." MB (".$bytesover.") Bytes Uploaded.</p>";
+        begin_frame("Possible Cheater Detection");
+        echo "<p>" . $num . " Users with found over last ".$daysago." days with more than ".$megabts." MB (".$bytesover.") Bytes Uploaded.</p>";
 
-		$zerofix = $num - 1; // remove one row because mysql starts at zero
+        $zerofix = $num - 1; // remove one row because mysql starts at zero
 
-		if ($num > 0){
-		echo "<table align='center' class='table_table'>";
-		echo "<tr>";
-		 echo "<th class='table_head'>No.</th>";
-		 echo "<th class='table_head'>" .T_("USERNAME"). "</th>";
-		 echo "<th class='table_head'>" .T_("UPLOADED"). "</th>";
-		 echo "<th class='table_head'>" .T_("DOWNLOADED"). "</th>";
-		 echo "<th class='table_head'>" .T_("RATIO"). "</th>";
-		 echo "<th class='table_head'>" .T_("TORRENTS_POSTED"). "</th>";
-		 echo "<th class='table_head'>AVG Daily Upload</th>";
-		 echo "<th class='table_head'>" .T_("ACCOUNT_SEND_MSG"). "</th>";
-		 echo "<th class='table_head'>Joined</th>";
-		echo "</tr>";
+        if ($num > 0){
+        echo "<table align='center' class='table_table'>";
+        echo "<tr>";
+         echo "<th class='table_head'>No.</th>";
+         echo "<th class='table_head'>" .T_("USERNAME"). "</th>";
+         echo "<th class='table_head'>" .T_("UPLOADED"). "</th>";
+         echo "<th class='table_head'>" .T_("DOWNLOADED"). "</th>";
+         echo "<th class='table_head'>" .T_("RATIO"). "</th>";
+         echo "<th class='table_head'>" .T_("TORRENTS_POSTED"). "</th>";
+         echo "<th class='table_head'>AVG Daily Upload</th>";
+         echo "<th class='table_head'>" .T_("ACCOUNT_SEND_MSG"). "</th>";
+         echo "<th class='table_head'>Joined</th>";
+        echo "</tr>";
 
-		for ($i = 0; $i <= $zerofix; $i++) {
-			 $id = mysql_result($result, $i, "id");
-			 $username = mysql_result($result, $i, "username");
-			 $added = mysql_result($result, $i, "added");
-			 $uploaded = mysql_result($result, $i, "uploaded");
-			 $downloaded = mysql_result($result, $i, "downloaded");
-			 $donated = mysql_result($result, $i, "donated");
-			 $warned = mysql_result($result, $i, "warned");
-			 $joindate = "" . get_elapsed_time(sql_timestamp_to_unix_timestamp($added)) . " ago";
-			 $upperquery = "SELECT added FROM torrents WHERE owner = $id";
-			 $upperresult = SQL_Query_exec($upperquery);
-			 $seconds = mkprettytime(utc_to_tz_time() - utc_to_tz_time($added));
-			 $days = explode("d ", $seconds);
+        for ($i = 0; $i <= $zerofix; $i++) {
+             $id = mysql_result($result, $i, "id");
+             $username = mysql_result($result, $i, "username");
+             $added = mysql_result($result, $i, "added");
+             $uploaded = mysql_result($result, $i, "uploaded");
+             $downloaded = mysql_result($result, $i, "downloaded");
+             $donated = mysql_result($result, $i, "donated");
+             $warned = mysql_result($result, $i, "warned");
+             $joindate = "" . get_elapsed_time(sql_timestamp_to_unix_timestamp($added)) . " ago";
+             $upperquery = "SELECT added FROM torrents WHERE owner = $id";
+             $upperresult = SQL_Query_exec($upperquery);
+             $seconds = mkprettytime(utc_to_tz_time() - utc_to_tz_time($added));
+             $days = explode("d ", $seconds);
 
-			 if(sizeof($days) > 1) {
-				 $dayUpload  = $uploaded / $days[0];
-				 $dayDownload = $downloaded / $days[0];
-			}
-		 
-		  $torrentinfo = mysql_fetch_array($upperresult);
-		 
-		  $numtorrents = mysql_num_rows($upperresult);
-		   
-		  if ($downloaded > 0){
-		   $ratio = $uploaded / $downloaded;
-		   $ratio = number_format($ratio, 3);
-		   $color = get_ratio_color($ratio);
-		   if ($color)
-		   $ratio = "<font color='$color'>$ratio</font>";
-		   }
-		  else
-		   if ($uploaded > 0)
-			$ratio = "Inf.";
-		   else
-			$ratio = "---";
-		  
-		 
-		 $counter = $i + 1;
-		 
-		 echo "<tr>";
-		  echo "<td align='center class='table_col1'>$counter.</td>";
-		  echo "<td class='table_col2'><a href='account-details.php?id=$id'>$username</a></td>";
-		  echo "<td class='table_col1'>" . mksize($uploaded). "</td>";
-		  echo "<td class='table_col2'>" . mksize($downloaded) . "</td>";
-		  echo "<td class='table_col1'>$ratio</td>";
-		  if ($numtorrents == 0) echo "<td class='table_col2'><font color='red'>$numtorrents torrents</font></td>";
-		  else echo "<td class=table_col2>$numtorrents torrents</td>";
+             if(sizeof($days) > 1) {
+                 $dayUpload  = $uploaded / $days[0];
+                 $dayDownload = $downloaded / $days[0];
+            }
+         
+          $torrentinfo = mysqli_fetch_array($upperresult);
+         
+          $numtorrents = mysqli_num_rows($upperresult);
+           
+          if ($downloaded > 0){
+           $ratio = $uploaded / $downloaded;
+           $ratio = number_format($ratio, 3);
+           $color = get_ratio_color($ratio);
+           if ($color)
+           $ratio = "<font color='$color'>$ratio</font>";
+           }
+          else
+           if ($uploaded > 0)
+            $ratio = "Inf.";
+           else
+            $ratio = "---";
+          
+         
+         $counter = $i + 1;
+         
+         echo "<tr>";
+          echo "<td align='center class='table_col1'>$counter.</td>";
+          echo "<td class='table_col2'><a href='account-details.php?id=$id'>$username</a></td>";
+          echo "<td class='table_col1'>" . mksize($uploaded). "</td>";
+          echo "<td class='table_col2'>" . mksize($downloaded) . "</td>";
+          echo "<td class='table_col1'>$ratio</td>";
+          if ($numtorrents == 0) echo "<td class='table_col2'><font color='red'>$numtorrents torrents</font></td>";
+          else echo "<td class=table_col2>$numtorrents torrents</td>";
 
-		  echo "<td class='table_col1'>" . mksize($dayUpload) . "</td>";
+          echo "<td class='table_col1'>" . mksize($dayUpload) . "</td>";
 
-		  echo "<td align='center' class='table_col2'><a href='mailbox.php?compose&amp;id=$id'>PM</a></td>";
-		  echo "<td class='table_col1'>" . $joindate . "</td>";
-		 echo "</tr>";
+          echo "<td align='center' class='table_col2'><a href='mailbox.php?compose&amp;id=$id'>PM</a></td>";
+          echo "<td class='table_col1'>" . $joindate . "</td>";
+         echo "</tr>";
 
-		 
-		 }
-		echo "</table><br /><br />";
-		end_frame();
-		}
+         
+         }
+        echo "</table><br /><br />";
+        end_frame();
+        }
 
-		if ($num == 0)
-		{
-		end_frame();
-		}
+        if ($num == 0)
+        {
+        end_frame();
+        }
 
-	}else{
-	begin_frame("Possible Cheater Detection");?>
-	<center><form action='admincp.php?action=cheats' method='post'>
-		Number of days joined: <input type='text' size='4' maxlength='4' name='daysago' /> Days<br /><br />
-		MB Uploaded: <input type='text' size='6' maxlength='6' name='megabts' /> MB<br />
-		<input type='submit' value='<?php echo T_("SUBMIT"); ?>' />
-		</form></center><?php
-	end_frame();
-	}
-	stdfoot();
+    }else{
+    begin_frame("Possible Cheater Detection");?>
+    <center><form action='admincp.php?action=cheats' method='post'>
+        Number of days joined: <input type='text' size='4' maxlength='4' name='daysago' /> Days<br /><br />
+        MB Uploaded: <input type='text' size='6' maxlength='6' name='megabts' /> MB<br />
+        <input type='submit' value='<?php echo T_("SUBMIT"); ?>' />
+        </form></center><?php
+    end_frame();
+    }
+    stdfoot();
 }
 
 
 if ($action=="emailbans"){
-	stdhead(T_("EMAIL_BANS"));
-	navmenu();
+    stdhead(T_("EMAIL_BANS"));
+    navmenu();
 
-	$remove = (int) $_GET['remove'];
+    $remove = (int) $_GET['remove'];
 
-	if (is_valid_id($remove)){
-		SQL_Query_exec("DELETE FROM email_bans WHERE id=$remove");
-		write_log(sprintf(T_("EMAIL_BANS_REM"), $remove, $CURUSER["username"]));
-	}
+    if (is_valid_id($remove)){
+        SQL_Query_exec("DELETE FROM email_bans WHERE id=$remove");
+        write_log(sprintf(T_("EMAIL_BANS_REM"), $remove, $CURUSER["username"]));
+    }
 
-	if ($_GET["add"] == '1'){
-		$mail_domain = trim($_POST["mail_domain"]);
-		$comment = trim($_POST["comment"]);
+    if ($_GET["add"] == '1'){
+        $mail_domain = trim($_POST["mail_domain"]);
+        $comment = trim($_POST["comment"]);
 
-		if (!$mail_domain || !$comment){
-			show_error_msg(T_("ERROR"), T_("MISSING_FORM_DATA").".",0);
-			stdfoot();
-			die;
-		}
-		$mail_domain= sqlesc($mail_domain);
-		$comment = sqlesc($comment);
-		$added = sqlesc(get_date_time());
+        if (!$mail_domain || !$comment){
+            show_error_msg(T_("ERROR"), T_("MISSING_FORM_DATA").".",0);
+            stdfoot();
+            die;
+        }
+        $mail_domain= sqlesc($mail_domain);
+        $comment = sqlesc($comment);
+        $added = sqlesc(get_date_time());
 
-		SQL_Query_exec("INSERT INTO email_bans (added, addedby, mail_domain, comment) VALUES($added, $CURUSER[id], $mail_domain, $comment)");
+        SQL_Query_exec("INSERT INTO email_bans (added, addedby, mail_domain, comment) VALUES($added, $CURUSER[id], $mail_domain, $comment)");
 
-		write_log(sprintf(T_("EMAIL_BANS_ADD"), $mail_domain, $CURUSER["username"]));
-		show_error_msg(T_("COMPLETE"), T_("EMAIL_BAN_ADDED"), 0);
-		stdfoot();
-		die;
-	}
+        write_log(sprintf(T_("EMAIL_BANS_ADD"), $mail_domain, $CURUSER["username"]));
+        show_error_msg(T_("COMPLETE"), T_("EMAIL_BAN_ADDED"), 0);
+        stdfoot();
+        die;
+    }
 
-	begin_frame(T_("EMAILS_OR_DOMAINS_BANS"));
-	print(T_("EMAIL_BANS_INFO") . "<br /><br /><br /><b>".T_("ADD_EMAIL_BANS")."</b>\n");
-	print("<form method='post' action='admincp.php?action=emailbans&amp;add=1'>\n"); 
+    begin_frame(T_("EMAILS_OR_DOMAINS_BANS"));
+    print(T_("EMAIL_BANS_INFO") . "<br /><br /><br /><b>".T_("ADD_EMAIL_BANS")."</b>\n");
+    print("<form method='post' action='admincp.php?action=emailbans&amp;add=1'>\n"); 
     print("<table border='0' cellspacing='0' cellpadding='5' align='center'>\n");
-	print("<tr><td align='right'>".T_("EMAIL_ADDRESS") . T_("DOMAIN_BANS")."</td><td><input type='text' name='mail_domain' size='40' /></td></tr>\n");
-	print("<tr><td align='right'>".T_("ADDCOMMENT")."</td><td><input type='text' name='comment' size='40' /></td></tr>\n");
-	print("<tr><td colspan='2' align='center'><input type='submit' value='".T_("ADD_BAN")."' /></td></tr>\n");
-	print("\n</table></form>\n<br />");
-	//}
+    print("<tr><td align='right'>".T_("EMAIL_ADDRESS") . T_("DOMAIN_BANS")."</td><td><input type='text' name='mail_domain' size='40' /></td></tr>\n");
+    print("<tr><td align='right'>".T_("ADDCOMMENT")."</td><td><input type='text' name='comment' size='40' /></td></tr>\n");
+    print("<tr><td colspan='2' align='center'><input type='submit' value='".T_("ADD_BAN")."' /></td></tr>\n");
+    print("\n</table></form>\n<br />");
+    //}
 
-	$res2 = SQL_Query_exec("SELECT count(id) FROM email_bans");
-	$row = mysql_fetch_array($res2);
-	$count = $row[0];
-	$perpage = 40;list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, basename(__FILE__)."?action=emailbans&amp;");
-	print("<br /><b>".T_("EMAIL_BANS")." ($count)</b>\n");
+    $res2 = SQL_Query_exec("SELECT count(id) FROM email_bans");
+    $row = mysqli_fetch_array($res2);
+    $count = $row[0];
+    $perpage = 40;list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, basename(__FILE__)."?action=emailbans&amp;");
+    print("<br /><b>".T_("EMAIL_BANS")." ($count)</b>\n");
 
-	if ($count == 0){
-		print("<p align='center'><b>".T_("NOTHING_FOUND")."</b></p><br />\n");
-	}else{
-		echo $pagertop;
-		print("<table border='0' cellspacing='0' cellpadding='5' width='90%' align='center' class='table_table'>\n");
-		print("<tr><th class='table_head'>Added</th><th class='table_head'>Mail Address Or Domain</th><th class='table_head'>Banned By</th><th class='table_head'>Comment</th><th class='table_head'>Remove</th></tr>\n");
-		$res = SQL_Query_exec("SELECT * FROM email_bans ORDER BY added DESC $limit");
+    if ($count == 0){
+        print("<p align='center'><b>".T_("NOTHING_FOUND")."</b></p><br />\n");
+    }else{
+        echo $pagertop;
+        print("<table border='0' cellspacing='0' cellpadding='5' width='90%' align='center' class='table_table'>\n");
+        print("<tr><th class='table_head'>Added</th><th class='table_head'>Mail Address Or Domain</th><th class='table_head'>Banned By</th><th class='table_head'>Comment</th><th class='table_head'>Remove</th></tr>\n");
+        $res = SQL_Query_exec("SELECT * FROM email_bans ORDER BY added DESC $limit");
 
-		while ($arr = mysql_fetch_assoc($res)){
-			$r2 = SQL_Query_exec("SELECT username FROM users WHERE id=$arr[userid]");
-			$a2 = mysql_fetch_assoc($r2);
+        while ($arr = mysqli_fetch_assoc($res)){
+            $r2 = SQL_Query_exec("SELECT username FROM users WHERE id=$arr[userid]");
+            $a2 = mysqli_fetch_assoc($r2);
 
-			$r4 = SQL_Query_exec("SELECT username,id FROM users WHERE id=$arr[addedby]");
-			$a4 = mysql_fetch_assoc($r4);
-			print("<tr><td class='table_col1'>".utc_to_tz($arr['added'])."</td><td align='left' class='table_col2'>$arr[mail_domain]</td><td align='left' class='table_col1'><a href='account-details.php?id=$a4[id]'>$a4[username]"."</a></td><td align='left' class='table_col2'>$arr[comment]</td><td class='table_col1'><a href='admincp.php?action=emailbans&amp;remove=$arr[id]'>Remove</a></td></tr>\n");
-		}
+            $r4 = SQL_Query_exec("SELECT username,id FROM users WHERE id=$arr[addedby]");
+            $a4 = mysqli_fetch_assoc($r4);
+            print("<tr><td class='table_col1'>".utc_to_tz($arr['added'])."</td><td align='left' class='table_col2'>$arr[mail_domain]</td><td align='left' class='table_col1'><a href='account-details.php?id=$a4[id]'>$a4[username]"."</a></td><td align='left' class='table_col2'>$arr[comment]</td><td class='table_col1'><a href='admincp.php?action=emailbans&amp;remove=$arr[id]'>Remove</a></td></tr>\n");
+        }
 
-		print("</table>\n");
+        print("</table>\n");
 
-		echo $pagerbottom;
-		echo "<br />";
-	}
-	end_frame();
-	stdfoot();
+        echo $pagerbottom;
+        echo "<br />";
+    }
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="polls" && $do=="view"){
-	stdhead(T_("POLLS_MANAGEMENT"));
-	navmenu();
-	begin_frame(T_("POLLS_MANAGEMENT"));
+    stdhead(T_("POLLS_MANAGEMENT"));
+    navmenu();
+    begin_frame(T_("POLLS_MANAGEMENT"));
 
-	echo "<center><a href='admincp.php?action=polls&amp;do=add'>Add New Poll</a>";
-	echo "<a href='admincp.php?action=polls&amp;do=results'>View Poll Results</a></center>";
+    echo "<center><a href='admincp.php?action=polls&amp;do=add'>Add New Poll</a>";
+    echo "<a href='admincp.php?action=polls&amp;do=results'>View Poll Results</a></center>";
 
-	echo "<br /><br /><b>Polls</b> (Top poll is current)<br />";
+    echo "<br /><br /><b>Polls</b> (Top poll is current)<br />";
 
-	$query = SQL_Query_exec("SELECT id,question,added FROM polls ORDER BY added DESC");
+    $query = SQL_Query_exec("SELECT id,question,added FROM polls ORDER BY added DESC");
 
-	while($row = mysql_fetch_assoc($query)){
-		echo "<a href='admincp.php?action=polls&amp;do=add&amp;subact=edit&amp;pollid=$row[id]'>".stripslashes($row["question"])."</a> - ".utc_to_tz($row['added'])." - <a href='admincp.php?action=polls&amp;do=delete&amp;id=$row[id]'>Delete</a><br />\n\n";
-	}
+    while($row = mysqli_fetch_assoc($query)){
+        echo "<a href='admincp.php?action=polls&amp;do=add&amp;subact=edit&amp;pollid=$row[id]'>".stripslashes($row["question"])."</a> - ".utc_to_tz($row['added'])." - <a href='admincp.php?action=polls&amp;do=delete&amp;id=$row[id]'>Delete</a><br />\n\n";
+    }
 
-	end_frame();
+    end_frame();
 
-	stdfoot();
+    stdfoot();
 }
 
 
 /////////////
 if ($action=="polls" && $do=="results"){
-	stdhead("Polls");
-	navmenu();
-	begin_frame("Results");
-	echo "<table class=\"table_table\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"95%\">";
-	echo '<tr>';
-	echo '<th class="table_head">Username</th>';
-	echo '<th class="table_head">Question</th>';
-	echo '<th class="table_head">Voted</th>';
-	echo '</tr>';
+    stdhead("Polls");
+    navmenu();
+    begin_frame("Results");
+    echo "<table class=\"table_table\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"95%\">";
+    echo '<tr>';
+    echo '<th class="table_head">Username</th>';
+    echo '<th class="table_head">Question</th>';
+    echo '<th class="table_head">Voted</th>';
+    echo '</tr>';
 
-	$poll = SQL_Query_exec("SELECT * FROM pollanswers ORDER BY pollid DESC");
+    $poll = SQL_Query_exec("SELECT * FROM pollanswers ORDER BY pollid DESC");
 
-	while ($res = mysql_fetch_assoc($poll)) {
-		$user = mysql_fetch_assoc(SQL_Query_exec("SELECT username,id FROM users WHERE id = '".$res['userid']."'"));
-		$option = "option".$res["selection"];
-		if ($res["selection"] < 255) {
-			$vote = mysql_fetch_assoc(SQL_Query_exec("SELECT ".$option." FROM polls WHERE id = '".$res['pollid']."'"));
-		} else {
-			$vote["option255"] = "Blank vote";
-		}
-		$sond = mysql_fetch_assoc(SQL_Query_exec("SELECT question FROM polls WHERE id = '".$res['pollid']."'"));
-		
-		echo '<tr>';
-		echo '<td class="table_col1" align="left"><b>';
-		echo '<a href="account-details.php?id='.$user["id"].'">';
-		echo '&nbsp;&nbsp;'.$user['username'];
-		echo '</a>';
-		echo '</b></td>';
-		echo '<td class="table_col2" align="center">';
-		echo '&nbsp;&nbsp;'.$sond['question'];
-		echo '</td>';
-		echo '<td class="table_col1" align="center">';
-		echo $vote["$option"];
-		echo '</td>';
-		echo '</tr>';
-	}
+    while ($res = mysqli_fetch_assoc($poll)) {
+        $user = mysqli_fetch_assoc(SQL_Query_exec("SELECT username,id FROM users WHERE id = '".$res['userid']."'"));
+        $option = "option".$res["selection"];
+        if ($res["selection"] < 255) {
+            $vote = mysqli_fetch_assoc(SQL_Query_exec("SELECT ".$option." FROM polls WHERE id = '".$res['pollid']."'"));
+        } else {
+            $vote["option255"] = "Blank vote";
+        }
+        $sond = mysqli_fetch_assoc(SQL_Query_exec("SELECT question FROM polls WHERE id = '".$res['pollid']."'"));
+        
+        echo '<tr>';
+        echo '<td class="table_col1" align="left"><b>';
+        echo '<a href="account-details.php?id='.$user["id"].'">';
+        echo '&nbsp;&nbsp;'.$user['username'];
+        echo '</a>';
+        echo '</b></td>';
+        echo '<td class="table_col2" align="center">';
+        echo '&nbsp;&nbsp;'.$sond['question'];
+        echo '</td>';
+        echo '<td class="table_col1" align="center">';
+        echo $vote["$option"];
+        echo '</td>';
+        echo '</tr>';
+    }
 
-	echo '</table>';
-	end_frame();
-	stdfoot();
+    echo '</table>';
+    end_frame();
+    stdfoot();
 }
 
 
 if ($action=="polls" && $do=="delete"){
-	$id = (int)$_GET["id"];
-	
-	if (!is_valid_id($id))
-		show_error_msg(T_("ERROR"),sprintf(T_("CP_NEWS_INVAILD_ITEM_ID"), $newsid),1);
+    $id = (int)$_GET["id"];
+    
+    if (!is_valid_id($id))
+        show_error_msg(T_("ERROR"),sprintf(T_("CP_NEWS_INVAILD_ITEM_ID"), $newsid),1);
 
-	SQL_Query_exec("DELETE FROM polls WHERE id=$id");
-	SQL_Query_exec("DELETE FROM pollanswers WHERE  pollid=$id");
-	
-	show_error_msg(T_("COMPLETED"),"Poll and answers deleted",1);
+    SQL_Query_exec("DELETE FROM polls WHERE id=$id");
+    SQL_Query_exec("DELETE FROM pollanswers WHERE  pollid=$id");
+    
+    show_error_msg(T_("COMPLETED"),"Poll and answers deleted",1);
 }
 
 if ($action=="polls" && $do=="add"){
-	stdhead("Polls");
-	navmenu();
+    stdhead("Polls");
+    navmenu();
 
-	$pollid = (int)$_GET["pollid"];
+    $pollid = (int)$_GET["pollid"];
 
-	if ($_GET["subact"] == "edit"){
-		$res = SQL_Query_exec("SELECT * FROM polls WHERE id = $pollid");
-		$poll = mysql_fetch_array($res);
-	}
+    if ($_GET["subact"] == "edit"){
+        $res = SQL_Query_exec("SELECT * FROM polls WHERE id = $pollid");
+        $poll = mysqli_fetch_array($res);
+    }
                                 
-	begin_frame("Polls");
-	?>                                                
+    begin_frame("Polls");
+    ?>                                                
     <form method="post" action="admincp.php?action=polls&amp;do=save"> 
-	<table border="0" cellspacing="0" class="table_table" align="center">
+    <table border="0" cellspacing="0" class="table_table" align="center">
     <tr><td class="table_col1">Question <font class="error">*</font></td><td class="table_col2" align="left"><input name="question" size="60" maxlength="255" value="<?php echo $poll['question']; ?>" /></td></tr>
     <tr><td class="table_col1">Option 1 <font class="error">*</font></td><td class="table_col2" align="left"><input name="option0" size="60" maxlength="40" value="<?php echo $poll['option0']; ?>" /><br /></td></tr>
     <tr><td class="table_col1">Option 2 <font class="error">*</font></td><td class="table_col2" align="left"><input name="option1" size="60" maxlength="40" value="<?php echo $poll['option1']; ?>" /><br /></td></tr>
@@ -1577,74 +1580,74 @@ if ($action=="polls" && $do=="add"){
     <input type="hidden" name="pollid" value="<?php echo $poll["id"]?>" />
     <input type="hidden" name="subact" value="<?php echo $pollid?'edit':'create'?>" />
     </form>
-	<?php
-	end_frame();
-	stdfoot();
+    <?php
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="polls" && $do=="save"){
 
-	$subact = $_POST["subact"];
-	$pollid = (int)$_POST["pollid"];
+    $subact = $_POST["subact"];
+    $pollid = (int)$_POST["pollid"];
 
-	$question = $_POST["question"];
-	$option0 = $_POST["option0"];
-	$option1 = $_POST["option1"];
-	$option2 = $_POST["option2"];
-	$option3 = $_POST["option3"];
-	$option4 = $_POST["option4"];
-	$option5 = $_POST["option5"];
-	$option6 = $_POST["option6"];
-	$option7 = $_POST["option7"];
-	$option8 = $_POST["option8"];
-	$option9 = $_POST["option9"];
-	$option10 = $_POST["option10"];
-	$option11 = $_POST["option11"];
-	$option12 = $_POST["option12"];
-	$option13 = $_POST["option13"];
-	$option14 = $_POST["option14"];
-	$option15 = $_POST["option15"];
-	$option16 = $_POST["option16"];
-	$option17 = $_POST["option17"];
-	$option18 = $_POST["option18"];
-	$option19 = $_POST["option19"];
-	$sort = (int)$_POST["sort"];
+    $question = $_POST["question"];
+    $option0 = $_POST["option0"];
+    $option1 = $_POST["option1"];
+    $option2 = $_POST["option2"];
+    $option3 = $_POST["option3"];
+    $option4 = $_POST["option4"];
+    $option5 = $_POST["option5"];
+    $option6 = $_POST["option6"];
+    $option7 = $_POST["option7"];
+    $option8 = $_POST["option8"];
+    $option9 = $_POST["option9"];
+    $option10 = $_POST["option10"];
+    $option11 = $_POST["option11"];
+    $option12 = $_POST["option12"];
+    $option13 = $_POST["option13"];
+    $option14 = $_POST["option14"];
+    $option15 = $_POST["option15"];
+    $option16 = $_POST["option16"];
+    $option17 = $_POST["option17"];
+    $option18 = $_POST["option18"];
+    $option19 = $_POST["option19"];
+    $sort = (int)$_POST["sort"];
 
-	if (!$question || !$option0 || !$option1)
-		show_error_msg(T_("ERROR"), T_("MISSING_FORM_DATA")."!", 1);
+    if (!$question || !$option0 || !$option1)
+        show_error_msg(T_("ERROR"), T_("MISSING_FORM_DATA")."!", 1);
 
-	if ($subact == "edit"){
+    if ($subact == "edit"){
 
-		if (!is_valid_id($pollid))
-			show_error_msg(T_("ERROR"),T_("INVALID_ID"),1);
+        if (!is_valid_id($pollid))
+            show_error_msg(T_("ERROR"),T_("INVALID_ID"),1);
 
-		SQL_Query_exec("UPDATE polls SET " .
-		"question = " . sqlesc($question) . ", " .
-		"option0 = " . sqlesc($option0) . ", " .
-		"option1 = " . sqlesc($option1) . ", " .
-		"option2 = " . sqlesc($option2) . ", " .
-		"option3 = " . sqlesc($option3) . ", " .
-		"option4 = " . sqlesc($option4) . ", " .
-		"option5 = " . sqlesc($option5) . ", " .
-		"option6 = " . sqlesc($option6) . ", " .
-		"option7 = " . sqlesc($option7) . ", " .
-		"option8 = " . sqlesc($option8) . ", " .
-		"option9 = " . sqlesc($option9) . ", " .
-		"option10 = " . sqlesc($option10) . ", " .
-		"option11 = " . sqlesc($option11) . ", " .
-		"option12 = " . sqlesc($option12) . ", " .
-		"option13 = " . sqlesc($option13) . ", " .
-		"option14 = " . sqlesc($option14) . ", " .
-		"option15 = " . sqlesc($option15) . ", " .
-		"option16 = " . sqlesc($option16) . ", " .
-		"option17 = " . sqlesc($option17) . ", " .
-		"option18 = " . sqlesc($option18) . ", " .
-		"option19 = " . sqlesc($option19) . ", " .
-		"sort = " . sqlesc($sort) . " " .
+        SQL_Query_exec("UPDATE polls SET " .
+        "question = " . sqlesc($question) . ", " .
+        "option0 = " . sqlesc($option0) . ", " .
+        "option1 = " . sqlesc($option1) . ", " .
+        "option2 = " . sqlesc($option2) . ", " .
+        "option3 = " . sqlesc($option3) . ", " .
+        "option4 = " . sqlesc($option4) . ", " .
+        "option5 = " . sqlesc($option5) . ", " .
+        "option6 = " . sqlesc($option6) . ", " .
+        "option7 = " . sqlesc($option7) . ", " .
+        "option8 = " . sqlesc($option8) . ", " .
+        "option9 = " . sqlesc($option9) . ", " .
+        "option10 = " . sqlesc($option10) . ", " .
+        "option11 = " . sqlesc($option11) . ", " .
+        "option12 = " . sqlesc($option12) . ", " .
+        "option13 = " . sqlesc($option13) . ", " .
+        "option14 = " . sqlesc($option14) . ", " .
+        "option15 = " . sqlesc($option15) . ", " .
+        "option16 = " . sqlesc($option16) . ", " .
+        "option17 = " . sqlesc($option17) . ", " .
+        "option18 = " . sqlesc($option18) . ", " .
+        "option19 = " . sqlesc($option19) . ", " .
+        "sort = " . sqlesc($sort) . " " .
     "WHERE id = $pollid");
-	}else{
-  	SQL_Query_exec("INSERT INTO polls VALUES(0" .
-		", '" . get_date_time() . "'" .
+    }else{
+      SQL_Query_exec("INSERT INTO polls VALUES(0" .
+        ", '" . get_date_time() . "'" .
     ", " . sqlesc($question) .
     ", " . sqlesc($option0) .
     ", " . sqlesc($option1) .
@@ -1656,229 +1659,229 @@ if ($action=="polls" && $do=="save"){
     ", " . sqlesc($option7) .
     ", " . sqlesc($option8) .
     ", " . sqlesc($option9) .
- 		", " . sqlesc($option10) .
-		", " . sqlesc($option11) .
-		", " . sqlesc($option12) .
-		", " . sqlesc($option13) .
-		", " . sqlesc($option14) .
-		", " . sqlesc($option15) .
-		", " . sqlesc($option16) .
-		", " . sqlesc($option17) .
-		", " . sqlesc($option18) .
-		", " . sqlesc($option19) . 
+         ", " . sqlesc($option10) .
+        ", " . sqlesc($option11) .
+        ", " . sqlesc($option12) .
+        ", " . sqlesc($option13) .
+        ", " . sqlesc($option14) .
+        ", " . sqlesc($option15) .
+        ", " . sqlesc($option16) .
+        ", " . sqlesc($option17) .
+        ", " . sqlesc($option18) .
+        ", " . sqlesc($option19) . 
     ", " . sqlesc($sort) .
-  	")");
-	}
+      ")");
+    }
 
-	show_error_msg("OK","Poll Updates ".T_("COMPLETE"), 1);
+    show_error_msg("OK","Poll Updates ".T_("COMPLETE"), 1);
 }
 
 if ($action=="backups"){
-	stdhead("Backups");
-	navmenu();
-	begin_frame("Backups");
-	echo "<a href='backup-database.php'>Backup Database</a> (or create a CRON task on ".$site_config["SITEURL"]."/backup-database.php)";
-	end_frame();
-	stdfoot();
+    stdhead("Backups");
+    navmenu();
+    begin_frame("Backups");
+    echo "<a href='backup-database.php'>Backup Database</a> (or create a CRON task on ".$site_config["SITEURL"]."/backup-database.php)";
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="forceclean"){
-	$now = gmtime();
-	SQL_Query_exec("UPDATE tasks SET last_time=$now WHERE task='cleanup'");
-	require_once("backend/cleanup.php");
-	do_cleanup();
+    $now = gmtime();
+    SQL_Query_exec("UPDATE tasks SET last_time=$now WHERE task='cleanup'");
+    require_once("backend/cleanup.php");
+    do_cleanup();
     
     autolink('admincp.php', T_("FORCE_CLEAN_COMPLETED"));
 }
 
 if ($action=="torrentlangs" && $do=="view"){
-	stdhead(T_("TORRENT_LANGUAGES"));
-	navmenu();
-	begin_frame(T_("TORRENT_LANGUAGES"));
-	echo "<center><a href='admincp.php?action=torrentlangs&amp;do=add'><b>Add New Language</b></a></center><br />";
+    stdhead(T_("TORRENT_LANGUAGES"));
+    navmenu();
+    begin_frame(T_("TORRENT_LANGUAGES"));
+    echo "<center><a href='admincp.php?action=torrentlangs&amp;do=add'><b>Add New Language</b></a></center><br />";
 
-	print("<i>Please note that language image is optional</i><br /><br />");
+    print("<i>Please note that language image is optional</i><br /><br />");
 
-	echo("<center><table width='650' class='table_table'><tr>");
-	echo("<th width='10' class='table_head'><b>Sort</b></th><th class='table_head'><b>".T_("NAME")."</b></th><th class='table_head'><b>Image</b></th><th width='30' class='table_head'></th></tr>");
-	$query = "SELECT * FROM torrentlang ORDER BY sort_index ASC";
-	$sql = SQL_Query_exec($query);
-	while ($row = mysql_fetch_array($sql)) {
-		$id = $row['id'];
-		$name = $row['name'];
-		$priority = $row['sort_index'];
+    echo("<center><table width='650' class='table_table'><tr>");
+    echo("<th width='10' class='table_head'><b>Sort</b></th><th class='table_head'><b>".T_("NAME")."</b></th><th class='table_head'><b>Image</b></th><th width='30' class='table_head'></th></tr>");
+    $query = "SELECT * FROM torrentlang ORDER BY sort_index ASC";
+    $sql = SQL_Query_exec($query);
+    while ($row = mysqli_fetch_array($sql)) {
+        $id = $row['id'];
+        $name = $row['name'];
+        $priority = $row['sort_index'];
 
-		print("<tr><td class='table_col1' align='center'>$priority</td><td class='table_col2'>$name</td><td class='table_col1' width='50' align='center'>");
-		if (isset($row["image"]) && $row["image"] != "")
-			print("<img border=\"0\" src=\"" . $site_config['SITEURL'] . "/images/languages/" . $row["image"] . "\" alt=\"" . $row["name"] . "\" />");
-		else
-			print("-");	
-		print("</td><td class='table_col1'><a href='admincp.php?action=torrentlangs&amp;do=edit&amp;id=$id'>[EDIT]</a> <a href='admincp.php?action=torrentlangs&amp;do=delete&amp;id=$id'>[DELETE]</a></td></tr>");
-	}
-	echo("</table></center>");
-	end_frame();
-	stdfoot();
+        print("<tr><td class='table_col1' align='center'>$priority</td><td class='table_col2'>$name</td><td class='table_col1' width='50' align='center'>");
+        if (isset($row["image"]) && $row["image"] != "")
+            print("<img border=\"0\" src=\"" . $site_config['SITEURL'] . "/images/languages/" . $row["image"] . "\" alt=\"" . $row["name"] . "\" />");
+        else
+            print("-");    
+        print("</td><td class='table_col1'><a href='admincp.php?action=torrentlangs&amp;do=edit&amp;id=$id'>[EDIT]</a> <a href='admincp.php?action=torrentlangs&amp;do=delete&amp;id=$id'>[DELETE]</a></td></tr>");
+    }
+    echo("</table></center>");
+    end_frame();
+    stdfoot();
 }
 
 
 if ($action=="torrentlangs" && $do=="edit"){
-	stdhead(T_("TORRENT_LANG_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("TORRENT_LANG_MANAGEMENT"));
+    navmenu();
 
-	$id = (int)$_GET["id"];
-	
-	if (!is_valid_id($id))
-		show_error_msg(T_("ERROR"),T_("INVALID_ID"),1);
+    $id = (int)$_GET["id"];
+    
+    if (!is_valid_id($id))
+        show_error_msg(T_("ERROR"),T_("INVALID_ID"),1);
 
-	$res = SQL_Query_exec("SELECT * FROM torrentlang WHERE id=$id");
+    $res = SQL_Query_exec("SELECT * FROM torrentlang WHERE id=$id");
 
-	if (mysql_num_rows($res) != 1)
-		show_error_msg(T_("ERROR"), "No Language with ID $id.",1);
+    if (mysqli_num_rows($res) != 1)
+        show_error_msg(T_("ERROR"), "No Language with ID $id.",1);
 
-	$arr = mysql_fetch_array($res);
+    $arr = mysqli_fetch_array($res);
 
-	if ($_GET["save"] == '1'){
-  	
-		$name = $_POST['name'];
-		if ($name == "")
-			show_error_msg(T_("ERROR"), "Language cat cannot be empty!",1);
+    if ($_GET["save"] == '1'){
+      
+        $name = $_POST['name'];
+        if ($name == "")
+            show_error_msg(T_("ERROR"), "Language cat cannot be empty!",1);
 
-		$sort_index = $_POST['sort_index'];
-		$image = $_POST['image'];
+        $sort_index = $_POST['sort_index'];
+        $image = $_POST['image'];
 
-		$name = sqlesc($name);
-		$sort_index = sqlesc($sort_index);
-		$image = sqlesc($image);
+        $name = sqlesc($name);
+        $sort_index = sqlesc($sort_index);
+        $image = sqlesc($image);
 
-		SQL_Query_exec("UPDATE torrentlang SET name=$name, sort_index=$sort_index, image=$image WHERE id=$id");
+        SQL_Query_exec("UPDATE torrentlang SET name=$name, sort_index=$sort_index, image=$image WHERE id=$id");
 
-		show_error_msg(T_("COMPLETED"),"Language was edited successfully.",0);
+        show_error_msg(T_("COMPLETED"),"Language was edited successfully.",0);
 
-	} else {
-		begin_frame("Edit Language");
-		print("<form method='post' action='?action=torrentlangs&amp;do=edit&amp;id=$id&amp;save=1'>\n");
-		print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
-		print("<tr><td align='left'><b>Name: </b><input type='text' name='name' value=\"".$arr['name']."\" /></td></tr>\n");
-		print("<tr><td align='left'><b>Sort: </b><input type='text' name='sort_index' value=\"".$arr['sort_index']."\" /></td></tr>\n");
-		print("<tr><td align='left'><b>Image: </b><input type='text' name='image' value=\"".$arr['image']."\" /> single filename</td></tr>\n");
-		print("<tr><td align='center'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
-		print("</table></center>\n");
-		print("</form>\n");
+    } else {
+        begin_frame("Edit Language");
+        print("<form method='post' action='?action=torrentlangs&amp;do=edit&amp;id=$id&amp;save=1'>\n");
+        print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
+        print("<tr><td align='left'><b>Name: </b><input type='text' name='name' value=\"".$arr['name']."\" /></td></tr>\n");
+        print("<tr><td align='left'><b>Sort: </b><input type='text' name='sort_index' value=\"".$arr['sort_index']."\" /></td></tr>\n");
+        print("<tr><td align='left'><b>Image: </b><input type='text' name='image' value=\"".$arr['image']."\" /> single filename</td></tr>\n");
+        print("<tr><td align='center'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
+        print("</table></center>\n");
+        print("</form>\n");
         end_frame();
-	}
-	stdfoot();
+    }
+    stdfoot();
 }
 
 if ($action=="torrentlangs" && $do=="delete"){
-	stdhead(T_("TORRENT_LANG_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("TORRENT_LANG_MANAGEMENT"));
+    navmenu();
 
-	$id = (int)$_GET["id"];
+    $id = (int)$_GET["id"];
 
-	if ($_GET["sure"] == '1'){
+    if ($_GET["sure"] == '1'){
 
-		if (!is_valid_id($id))
-			show_error_msg(T_("ERROR"),"Invalid Language item ID",1);
+        if (!is_valid_id($id))
+            show_error_msg(T_("ERROR"),"Invalid Language item ID",1);
 
-		$newlangid = (int) $_POST["newlangid"];
+        $newlangid = (int) $_POST["newlangid"];
 
-		SQL_Query_exec("UPDATE torrents SET torrentlang=$newlangid WHERE torrentlang=$id"); //move torrents to a new cat
+        SQL_Query_exec("UPDATE torrents SET torrentlang=$newlangid WHERE torrentlang=$id"); //move torrents to a new cat
 
-		SQL_Query_exec("DELETE FROM torrentlang WHERE id=$id"); //delete old cat
-		
-		show_error_msg(T_("COMPLETED"),"Language Deleted OK",1);
+        SQL_Query_exec("DELETE FROM torrentlang WHERE id=$id"); //delete old cat
+        
+        show_error_msg(T_("COMPLETED"),"Language Deleted OK",1);
 
-	}else{
-		begin_frame("Delete Language");
-		print("<form method='post' action='?action=torrentlangs&amp;do=delete&amp;id=$id&amp;sure=1'>\n");
-		print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
-		print("<tr><td align='left'><b>Language ID to move all Languages To: </b><input type='text' name='newlangid' /> (Lang ID)</td></tr>\n");
-		print("<tr><td align='center'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
-		print("</table></center>\n");
-		print("</form>\n");
-	}
-	end_frame();
-	stdfoot();
+    }else{
+        begin_frame("Delete Language");
+        print("<form method='post' action='?action=torrentlangs&amp;do=delete&amp;id=$id&amp;sure=1'>\n");
+        print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
+        print("<tr><td align='left'><b>Language ID to move all Languages To: </b><input type='text' name='newlangid' /> (Lang ID)</td></tr>\n");
+        print("<tr><td align='center'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
+        print("</table></center>\n");
+        print("</form>\n");
+    }
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="torrentlangs" && $do=="takeadd"){
-  		$name = $_POST['name'];
-		if ($name == "")
-    		show_error_msg(T_("ERROR"), "Name cannot be empty!",1);
+          $name = $_POST['name'];
+        if ($name == "")
+            show_error_msg(T_("ERROR"), "Name cannot be empty!",1);
 
-		$sort_index = $_POST['sort_index'];
-		$image = $_POST['image'];
+        $sort_index = $_POST['sort_index'];
+        $image = $_POST['image'];
 
-		$name = sqlesc($name);
-		$sort_index = sqlesc($sort_index);
-		$image = sqlesc($image);
+        $name = sqlesc($name);
+        $sort_index = sqlesc($sort_index);
+        $image = sqlesc($image);
 
-	SQL_Query_exec("INSERT INTO torrentlang (name, sort_index, image) VALUES ($name, $sort_index, $image)");
+    SQL_Query_exec("INSERT INTO torrentlang (name, sort_index, image) VALUES ($name, $sort_index, $image)");
 
-	if (mysql_affected_rows() == 1)
-		show_error_msg(T_("COMPLETED"),"Language was added successfully.",1);
-	else
-		show_error_msg(T_("ERROR"),"Unable to add Language",1);
+    if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) == 1)
+        show_error_msg(T_("COMPLETED"),"Language was added successfully.",1);
+    else
+        show_error_msg(T_("ERROR"),"Unable to add Language",1);
 }
 
 if ($action=="torrentlangs" && $do=="add"){
-	stdhead(T_("TORRENT_LANG_MANAGEMENT"));
-	navmenu();
+    stdhead(T_("TORRENT_LANG_MANAGEMENT"));
+    navmenu();
 
-	begin_frame("Add Language");
-	print("<center><form method='post' action='admincp.php'>\n");
-	print("<input type='hidden' name='action' value='torrentlangs' />\n");
-	print("<input type='hidden' name='do' value='takeadd' />\n");
+    begin_frame("Add Language");
+    print("<center><form method='post' action='admincp.php'>\n");
+    print("<input type='hidden' name='action' value='torrentlangs' />\n");
+    print("<input type='hidden' name='do' value='takeadd' />\n");
 
-	print("<table border='0' cellspacing='0' cellpadding='5'>\n");
+    print("<table border='0' cellspacing='0' cellpadding='5'>\n");
 
-	print("<tr><td align='left'><b>Name:</b> <input type='text' name='name' /></td></tr>\n");
-	print("<tr><td align='left'><b>Sort:</b> <input type='text' name='sort_index' /></td></tr>\n");
-	print("<tr><td align='left'><b>Image:</b> <input type='text' name='image' /></td></tr>\n");
+    print("<tr><td align='left'><b>Name:</b> <input type='text' name='name' /></td></tr>\n");
+    print("<tr><td align='left'><b>Sort:</b> <input type='text' name='sort_index' /></td></tr>\n");
+    print("<tr><td align='left'><b>Image:</b> <input type='text' name='image' /></td></tr>\n");
 
-	print("<tr><td colspan='2'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
+    print("<tr><td colspan='2'><input type='submit' value='".T_("SUBMIT")."' /></td></tr>\n");
 
-	print("</table></form><br /><br /></center>\n");
-	end_frame();
-	stdfoot();
+    print("</table></form><br /><br /></center>\n");
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="avatars"){
-	stdhead("Avatar Log");
-	navmenu();
+    stdhead("Avatar Log");
+    navmenu();
 
-	begin_frame("Avatar Log");
+    begin_frame("Avatar Log");
 
-	$query = SQL_Query_exec("SELECT count(*) FROM users WHERE enabled='yes' AND avatar !=''");
-	$count = mysql_fetch_row($query);
-	$count = $count[0];
+    $query = SQL_Query_exec("SELECT count(*) FROM users WHERE enabled='yes' AND avatar !=''");
+    $count = mysqli_fetch_row($query);
+    $count = $count[0];
 
-	list($pagertop, $pagerbottom, $limit) = pager(50, $count, 'admincp.php?action=avatars&amp;');
-	echo ($pagertop);
-	?>
-	<table border="0" class="table_table" align="center">
-	<tr>
-	<th class="table_head"><?php echo T_("USER")?></th>
-	<th class="table_head">Avatar</th>
-	</tr><?php
+    list($pagertop, $pagerbottom, $limit) = pager(50, $count, 'admincp.php?action=avatars&amp;');
+    echo ($pagertop);
+    ?>
+    <table border="0" class="table_table" align="center">
+    <tr>
+    <th class="table_head"><?php echo T_("USER")?></th>
+    <th class="table_head">Avatar</th>
+    </tr><?php
 
-	$query = "SELECT username, id, avatar FROM users WHERE enabled='yes' AND avatar !='' $limit";
-	$res = SQL_Query_exec($query);
+    $query = "SELECT username, id, avatar FROM users WHERE enabled='yes' AND avatar !='' $limit";
+    $res = SQL_Query_exec($query);
 
-	while($arr = mysql_fetch_assoc($res)){
-			echo("<tr><td class='table_col1'><b><a href=\"account-details.php?id=" . $arr['id'] . "\">" . $arr['username'] . "</a></b></td><td class='table_col2'>");
+    while($arr = mysqli_fetch_assoc($res)){
+            echo("<tr><td class='table_col1'><b><a href=\"account-details.php?id=" . $arr['id'] . "\">" . $arr['username'] . "</a></b></td><td class='table_col2'>");
 
-			if (!$arr['avatar'])
-				echo "<img width=\"80\" src='images/default_avatar.png' alt='' /></td></tr>";
-			else
-				echo "<img width=\"80\" src=\"".htmlspecialchars($arr["avatar"])."\" alt='' /></td></tr>";
-	}
-	?>
-	</table>
-	<?php
-	echo ($pagerbottom);
-	end_frame();
-	stdfoot();
+            if (!$arr['avatar'])
+                echo "<img width=\"80\" src='images/default_avatar.png' alt='' /></td></tr>";
+            else
+                echo "<img width=\"80\" src=\"".htmlspecialchars($arr["avatar"])."\" alt='' /></td></tr>";
+    }
+    ?>
+    </table>
+    <?php
+    echo ($pagerbottom);
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="freetorrents"){
@@ -1888,268 +1891,268 @@ if ($action=="freetorrents"){
     *  Optimize Query show freeleech ONLY!
     */
     
-	stdhead("Free Leech ".T_("TORRENT_MANAGEMENT"));
-	navmenu();
+    stdhead("Free Leech ".T_("TORRENT_MANAGEMENT"));
+    navmenu();
 
-	$search = trim($_GET['search']);
+    $search = trim($_GET['search']);
 
-	if ($search != '' ){
-		$whereand = "AND name LIKE " . sqlesc("%$search%") . "";
-	}
+    if ($search != '' ){
+        $whereand = "AND name LIKE " . sqlesc("%$search%") . "";
+    }
 
-	$res2 = SQL_Query_exec("SELECT COUNT(*) FROM torrents WHERE freeleech='1' $whereand");
-	$row = mysql_fetch_array($res2);
-	$count = $row[0];
+    $res2 = SQL_Query_exec("SELECT COUNT(*) FROM torrents WHERE freeleech='1' $whereand");
+    $row = mysqli_fetch_array($res2);
+    $count = $row[0];
 
-	$perpage = 50;
+    $perpage = 50;
 
-	list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=freetorrents&amp;");
+    list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=freetorrents&amp;");
 
-	begin_frame(T_("TORRENTS_FREE_LEECH"));
+    begin_frame(T_("TORRENTS_FREE_LEECH"));
 
-	print("<center><form method='get' action='?'>\n");
-	print("<input type='hidden' name='action' value='freetorrents' />\n");
-	print(T_("SEARCH").": <input type='text' size='30' name='search' />\n");
-	print("<input type='submit' value='Search' />\n");
-	print("</form></center>\n");
+    print("<center><form method='get' action='?'>\n");
+    print("<input type='hidden' name='action' value='freetorrents' />\n");
+    print(T_("SEARCH").": <input type='text' size='30' name='search' />\n");
+    print("<input type='submit' value='Search' />\n");
+    print("</form></center>\n");
 
-	echo $pagertop;
-	?>
-	<table align="center" cellpadding="0" cellspacing="0" class="table_table" width="100%" border="0">
-	<tr> 
+    echo $pagertop;
+    ?>
+    <table align="center" cellpadding="0" cellspacing="0" class="table_table" width="100%" border="0">
+    <tr> 
         <th class="table_head"><?php echo T_("NAME"); ?></th>
         <th class="table_head"><?php echo T_("VISIBLE"); ?></th>
         <th class="table_head"><?php echo T_("BANNED"); ?></th>
         <th class="table_head"><?php echo T_("SEEDERS"); ?></th>
         <th class="table_head"><?php echo T_("LEECHERS"); ?></th>
         <th class="table_head"><?php echo T_("EDIT"); ?></th>
-	</tr>
-	<?php
-	$rqq = "SELECT id, name, seeders, leechers, visible, banned FROM torrents WHERE freeleech='1' $whereand ORDER BY name $limit";
-	$resqq = SQL_Query_exec($rqq);
+    </tr>
+    <?php
+    $rqq = "SELECT id, name, seeders, leechers, visible, banned FROM torrents WHERE freeleech='1' $whereand ORDER BY name $limit";
+    $resqq = SQL_Query_exec($rqq);
 
-	while ($row = mysql_fetch_array($resqq)){
-		
-		$char1 = 35; //cut name length 
-		$smallname = CutName(htmlspecialchars($row["name"]), $char1);
+    while ($row = mysqli_fetch_array($resqq)){
+        
+        $char1 = 35; //cut name length 
+        $smallname = CutName(htmlspecialchars($row["name"]), $char1);
 
-		echo "<tr><td class='table_col1'>" . $smallname . "</td><td class='table_col2'>$row[visible]</td><td class='table_col1'>$row[banned]</td><td class='table_col2'>".number_format($row["seeders"])."</td><td class='table_col1'>".number_format($row["leechers"])."</td><td class='table_col2'><a href=\"torrents-edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=" . $row["id"] . "\"><font size='1' face='verdana'>EDIT</font></a></td></tr>\n";
-	}
+        echo "<tr><td class='table_col1'>" . $smallname . "</td><td class='table_col2'>$row[visible]</td><td class='table_col1'>$row[banned]</td><td class='table_col2'>".number_format($row["seeders"])."</td><td class='table_col1'>".number_format($row["leechers"])."</td><td class='table_col2'><a href=\"torrents-edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=" . $row["id"] . "\"><font size='1' face='verdana'>EDIT</font></a></td></tr>\n";
+    }
 
-	echo "</table>\n";
+    echo "</table>\n";
 
-	print($pagerbottom);
+    print($pagerbottom);
 
-	end_frame();
-	stdfoot();
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="bannedtorrents"){
-	stdhead("Banned Torrents");
-	navmenu();
-		
-	$res2 = SQL_Query_exec("SELECT COUNT(*) FROM torrents WHERE banned='yes'");
-	$row = mysql_fetch_array($res2);
-	$count = $row[0];
+    stdhead("Banned Torrents");
+    navmenu();
+        
+    $res2 = SQL_Query_exec("SELECT COUNT(*) FROM torrents WHERE banned='yes'");
+    $row = mysqli_fetch_array($res2);
+    $count = $row[0];
 
-	$perpage = 50;
+    $perpage = 50;
 
-	list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=bannedtorrents&amp;");
+    list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=bannedtorrents&amp;");
 
-	begin_frame("Banned ".T_("TORRENT_MANAGEMENT"));
+    begin_frame("Banned ".T_("TORRENT_MANAGEMENT"));
 
-	print("<center><form method='get' action='?'>\n");
-	print("<input type='hidden' name='action' value='bannedtorrents' />\n");
-	print(T_("SEARCH").": <input type='text' size='30' name='search' />\n");
-	print("<input type='submit' value='Search' />\n");
-	print("</form></center>\n");
+    print("<center><form method='get' action='?'>\n");
+    print("<input type='hidden' name='action' value='bannedtorrents' />\n");
+    print(T_("SEARCH").": <input type='text' size='30' name='search' />\n");
+    print("<input type='submit' value='Search' />\n");
+    print("</form></center>\n");
 
-	echo $pagertop;
-	?>
-	<table align="center" cellpadding="0" cellspacing="0" class="table_table" width="100%" border="0">
-	<tr>
-	<th class="table_head"><?php echo T_("NAME"); ?></th>
-	<th class="table_head">Visible</th>
-	<th class="table_head">Seeders</th>
-	<th class="table_head">Leechers</th>
-	<th class="table_head">External?</th>
-	<th class="table_head">Edit?</th>
-	</tr>
-	<?php
-	$rqq = "SELECT id, name, seeders, leechers, visible, banned, external FROM torrents WHERE banned='yes' ORDER BY name";
-	$resqq = SQL_Query_exec($rqq);
+    echo $pagertop;
+    ?>
+    <table align="center" cellpadding="0" cellspacing="0" class="table_table" width="100%" border="0">
+    <tr>
+    <th class="table_head"><?php echo T_("NAME"); ?></th>
+    <th class="table_head">Visible</th>
+    <th class="table_head">Seeders</th>
+    <th class="table_head">Leechers</th>
+    <th class="table_head">External?</th>
+    <th class="table_head">Edit?</th>
+    </tr>
+    <?php
+    $rqq = "SELECT id, name, seeders, leechers, visible, banned, external FROM torrents WHERE banned='yes' ORDER BY name";
+    $resqq = SQL_Query_exec($rqq);
 
-	while ($row = mysql_fetch_assoc($resqq)){
+    while ($row = mysqli_fetch_assoc($resqq)){
 
-		$char1 = 35; //cut name length 
-		$smallname = CutName(htmlspecialchars($row["name"]), $char1);
+        $char1 = 35; //cut name length 
+        $smallname = CutName(htmlspecialchars($row["name"]), $char1);
 
-		echo "<tr><td class='table_col1'>" . $smallname . "</td><td class='table_col2'>$row[visible]</td><td class='table_col1'>".number_format($row["seeders"])."</td><td class='table_col2'>".number_format($row["leechers"])."</td><td class='table_col1'>$row[external]</td><td class='table_col2'><a href=\"torrents-edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=" . $row["id"] . "\"><font size='1' face='verdana'>EDIT</font></a></td></tr>\n";
-	}
+        echo "<tr><td class='table_col1'>" . $smallname . "</td><td class='table_col2'>$row[visible]</td><td class='table_col1'>".number_format($row["seeders"])."</td><td class='table_col2'>".number_format($row["leechers"])."</td><td class='table_col1'>$row[external]</td><td class='table_col2'><a href=\"torrents-edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=" . $row["id"] . "\"><font size='1' face='verdana'>EDIT</font></a></td></tr>\n";
+    }
 
-	echo "</table>\n";
+    echo "</table>\n";
 
-	print($pagerbottom);
+    print($pagerbottom);
 
-	end_frame();
-	stdfoot();
+    end_frame();
+    stdfoot();
 }
 
 
 if ($action=="masspm"){
-	stdhead("Mass Private Message");
-	navmenu();
+    stdhead("Mass Private Message");
+    navmenu();
 
     # Tidy Up...
     
 
-	//send pm
-	if ($_GET["send"] == '1'){
+    //send pm
+    if ($_GET["send"] == '1'){
 
-		$sender_id = ($_POST['sender'] == 'system' ? 0 : $CURUSER['id']);
+        $sender_id = ($_POST['sender'] == 'system' ? 0 : $CURUSER['id']);
 
-		$dt = sqlesc(get_date_time());
-		$msg = $_POST['msg'];
+        $dt = sqlesc(get_date_time());
+        $msg = $_POST['msg'];
         $subject = $_POST["subject"];
 
-		if (!$msg)
-			show_error_msg(T_("ERROR"),"Please Enter Something!",1);
+        if (!$msg)
+            show_error_msg(T_("ERROR"),"Please Enter Something!",1);
 
-		$updateset = array_map("intval", $_POST['clases']);
+        $updateset = array_map("intval", $_POST['clases']);
 
-		$query = SQL_Query_exec("SELECT id FROM users WHERE class IN (".implode(",", $updateset).") AND enabled = 'yes' AND status = 'confirmed'");
-		while($dat=mysql_fetch_assoc($query)){
-			SQL_Query_exec("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES ($sender_id, $dat[id], '" . get_date_time() . "', " . sqlesc($msg) .", ".sqlesc($subject).")");
-		}
+        $query = SQL_Query_exec("SELECT id FROM users WHERE class IN (".implode(",", $updateset).") AND enabled = 'yes' AND status = 'confirmed'");
+        while($dat=mysqli_fetch_assoc($query)){
+            SQL_Query_exec("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES ($sender_id, $dat[id], '" . get_date_time() . "', " . sqlesc($msg) .", ".sqlesc($subject).")");
+        }
 
-		write_log("A Mass PM was sent by ($CURUSER[username])");
-		show_error_msg(T_("COMPLETE"), "Mass PM Sent",1);
-		die;
-	}
+        write_log("A Mass PM was sent by ($CURUSER[username])");
+        show_error_msg(T_("COMPLETE"), "Mass PM Sent",1);
+        die;
+    }
 
-	begin_frame("Mass Private Message");
+    begin_frame("Mass Private Message");
     
     print("<form name='masspm' method='post' action='admincp.php?action=masspm&amp;send=1'>\n"); 
-	print("<table border='0' cellspacing='0' cellpadding='5' align='center' width='90%'>\n");
-	
+    print("<table border='0' cellspacing='0' cellpadding='5' align='center' width='90%'>\n");
+    
 
-	$query = "SELECT group_id, level FROM groups";
-	$res = SQL_Query_exec($query);
+    $query = "SELECT group_id, level FROM groups";
+    $res = SQL_Query_exec($query);
 
     echo "<tr><td><b>Send to:</b></td></tr>";
-	while ($row = mysql_fetch_array($res)){
+    while ($row = mysqli_fetch_array($res)){
 
-		echo "<tr><td><input type='checkbox' name='clases[]' value='$row[group_id]' /> $row[level]<br /></td></tr>\n";
-	}
+        echo "<tr><td><input type='checkbox' name='clases[]' value='$row[group_id]' /> $row[level]<br /></td></tr>\n";
+    }
                            
-	?>   
+    ?>   
     <tr>
     <td><b>Subject:</b><br /><input type="text" name="subject" size="30" /></td>
     </tr>
-	<tr>
-	<td><br /><b>Message: </b><br /> <?php print textbbcode("masspm", "msg"); ?></td>
-	</tr>
+    <tr>
+    <td><br /><b>Message: </b><br /> <?php print textbbcode("masspm", "msg"); ?></td>
+    </tr>
     
-	<tr>
-	<td><b><?php echo T_("SENDER");?></b>
-	<?php echo $CURUSER['username']?> <input name="sender" type="radio" value="self" checked="checked" />
-	System <input name="sender" type="radio" value="system" /></td>
-	</tr>
+    <tr>
+    <td><b><?php echo T_("SENDER");?></b>
+    <?php echo $CURUSER['username']?> <input name="sender" type="radio" value="self" checked="checked" />
+    System <input name="sender" type="radio" value="system" /></td>
+    </tr>
 
-	<tr>
-	<td><input type="submit" value="Send" /></td>
-	</tr>
-	</table></form>
-	<?php
-	end_frame();
-	stdfoot();
+    <tr>
+    <td><input type="submit" value="Send" /></td>
+    </tr>
+    </table></form>
+    <?php
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="rules" && $do=="view"){
-	stdhead(T_("SITE_RULES_EDITOR"));
-	navmenu();
+    stdhead(T_("SITE_RULES_EDITOR"));
+    navmenu();
 
-	begin_frame(T_("SITE_RULES_EDITOR"));
+    begin_frame(T_("SITE_RULES_EDITOR"));
 
-	$res = SQL_Query_exec("SELECT * FROM rules ORDER BY id");
+    $res = SQL_Query_exec("SELECT * FROM rules ORDER BY id");
 
-	print("<center><a href='admincp.php?action=rules&amp;do=addsect'>Add New Rules Section</a></center><br />\n");	
+    print("<center><a href='admincp.php?action=rules&amp;do=addsect'>Add New Rules Section</a></center><br />\n");    
 
-	while ($arr=mysql_fetch_assoc($res)){
-		
-		print("<table width='100%' cellspacing='0' class='table_table'><tr>");
+    while ($arr=mysqli_fetch_assoc($res)){
+        
+        print("<table width='100%' cellspacing='0' class='table_table'><tr>");
         print("<th class='table_head'>".$arr["title"]."</th>");
         print("</tr><tr><td class='table_col1'>");
         print("<form method='post' action='admincp.php?action=rules&amp;do=edit'>");
-		print(format_comment($arr["text"]));
-		print("</td></tr><tr><td class='table_head' align='center'><input type='hidden' value='$arr[id]' name='id' /><input type='submit' value='Edit' /></form>");
-		print("</td>");
+        print(format_comment($arr["text"]));
+        print("</td></tr><tr><td class='table_head' align='center'><input type='hidden' value='$arr[id]' name='id' /><input type='submit' value='Edit' /></form>");
+        print("</td>");
         print("</tr></table>");
         print("<br />");
-	}
-	end_frame();
-	stdfoot();
+    }
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="rules" && $do=="edit"){
 
-	if ($_GET["save"]=="1"){
-		$id = (int)$_POST["id"];
-		$title = sqlesc($_POST["title"]);
-		$text = sqlesc($_POST["text"]);
-		$public = sqlesc($_POST["public"]);
-		$class = sqlesc($_POST["class"]);
-		SQL_Query_exec("update rules set title=$title, text=$text, public=$public, class=$class where id=$id");
-		write_log("Rules have been changed by ($CURUSER[username])");
-		show_error_msg(T_("COMPLETE"), "Rules edited ok<br /><br /><a href='admincp.php?action=rules&amp;do=view'>Back To Rules</a>",1);
-		die;
-	}
+    if ($_GET["save"]=="1"){
+        $id = (int)$_POST["id"];
+        $title = sqlesc($_POST["title"]);
+        $text = sqlesc($_POST["text"]);
+        $public = sqlesc($_POST["public"]);
+        $class = sqlesc($_POST["class"]);
+        SQL_Query_exec("update rules set title=$title, text=$text, public=$public, class=$class where id=$id");
+        write_log("Rules have been changed by ($CURUSER[username])");
+        show_error_msg(T_("COMPLETE"), "Rules edited ok<br /><br /><a href='admincp.php?action=rules&amp;do=view'>Back To Rules</a>",1);
+        die;
+    }
 
 
-	stdhead(T_("SITE_RULES_EDITOR"));
-	navmenu();
-	
-	begin_frame("Edit Rule Section");
-	$id = (int)$_POST["id"];
-	$res = @mysql_fetch_array(@SQL_Query_exec("select * from rules where id='$id'"));
+    stdhead(T_("SITE_RULES_EDITOR"));
+    navmenu();
+    
+    begin_frame("Edit Rule Section");
+    $id = (int)$_POST["id"];
+    $res = @mysqli_fetch_array(@SQL_Query_exec("select * from rules where id='$id'"));
 
-	print("<form method=\"post\" action=\"admincp.php?action=rules&amp;do=edit&amp;save=1\">");
-	print("<table border=\"0\" cellspacing=\"0\" cellpadding=\"10\" align=\"center\">\n");
-	print("<tr><td>Section Title:</td><td><input style=\"width: 400px;\" type=\"text\" name=\"title\" value=\"$res[title]\" /></td></tr>\n");
-	print("<tr><td style=\"vertical-align: top;\">Rules:</td><td><textarea cols=\"60\" rows=\"15\" name=\"text\">" . stripslashes($res["text"]) . "</textarea><br />NOTE: Remember that BB can be used (NO HTML)</td></tr>\n");
+    print("<form method=\"post\" action=\"admincp.php?action=rules&amp;do=edit&amp;save=1\">");
+    print("<table border=\"0\" cellspacing=\"0\" cellpadding=\"10\" align=\"center\">\n");
+    print("<tr><td>Section Title:</td><td><input style=\"width: 400px;\" type=\"text\" name=\"title\" value=\"$res[title]\" /></td></tr>\n");
+    print("<tr><td style=\"vertical-align: top;\">Rules:</td><td><textarea cols=\"60\" rows=\"15\" name=\"text\">" . stripslashes($res["text"]) . "</textarea><br />NOTE: Remember that BB can be used (NO HTML)</td></tr>\n");
 
-	print("<tr><td colspan=\"2\" align=\"center\"><input type=\"radio\" name='public' value=\"yes\" ".($res["public"]=="yes"?"checked='checked'":"")." />For everybody<input type=\"radio\" name='public' value=\"no\" ".($res["public"]=="no"?"checked='checked'":"")." />Members Only (Min User Class: <input type=\"text\" name='class' value=\"$res[class]\" size=\"1\" />)</td></tr>\n");
-	print("<tr><td colspan=\"2\" align=\"center\"><input type=\"hidden\" value=\"$res[id]\" name=\"id\" /><input type=\"submit\" value=\"".T_("SAVE")."\" style=\"width: 60px;\" /></td></tr>\n");
-	print("</table></form>");
-	end_frame();
-	stdfoot();
+    print("<tr><td colspan=\"2\" align=\"center\"><input type=\"radio\" name='public' value=\"yes\" ".($res["public"]=="yes"?"checked='checked'":"")." />For everybody<input type=\"radio\" name='public' value=\"no\" ".($res["public"]=="no"?"checked='checked'":"")." />Members Only (Min User Class: <input type=\"text\" name='class' value=\"$res[class]\" size=\"1\" />)</td></tr>\n");
+    print("<tr><td colspan=\"2\" align=\"center\"><input type=\"hidden\" value=\"$res[id]\" name=\"id\" /><input type=\"submit\" value=\"".T_("SAVE")."\" style=\"width: 60px;\" /></td></tr>\n");
+    print("</table></form>");
+    end_frame();
+    stdfoot();
 }
 
 if ($action=="rules" && $do=="addsect"){
 
-	if ($_GET["save"]=="1"){
-		$title = sqlesc($_POST["title"]);
-		$text = sqlesc($_POST["text"]);
-		$public = sqlesc($_POST["public"]);
-		$class = sqlesc($_POST["class"]);
-		SQL_Query_exec("insert into rules (title, text, public, class) values($title, $text, $public, $class)");
-		show_error_msg(T_("COMPLETE"), "New Section Added<br /><br /><a href='admincp.php?action=rules&amp;do=view'>Back To Rules</a>",1);
-		die();
-	}
-	stdhead(T_("SITE_RULES_EDITOR"));
-	navmenu();
-	begin_frame(T_("ADD_NEW_RULES_SECTION"));
-	print("<form method=\"post\" action=\"admincp.php?action=rules&amp;do=addsect&amp;save=1\">");
-	print("<table border=\"0\" cellspacing=\"0\" cellpadding=\"10\" align=\"center\">\n");
-	print("<tr><td>Section Title:</td><td><input style=\"width: 400px;\" type=\"text\" name=\"title\" /></td></tr>\n");
-	print("<tr><td style=\"vertical-align: top;\">Rules:</td><td><textarea cols=\"60\" rows=\"15\" name=\"text\"></textarea><br />\n");
-	print("<br />NOTE: Remember that BB can be used (NO HTML)</td></tr>\n");
+    if ($_GET["save"]=="1"){
+        $title = sqlesc($_POST["title"]);
+        $text = sqlesc($_POST["text"]);
+        $public = sqlesc($_POST["public"]);
+        $class = sqlesc($_POST["class"]);
+        SQL_Query_exec("insert into rules (title, text, public, class) values($title, $text, $public, $class)");
+        show_error_msg(T_("COMPLETE"), "New Section Added<br /><br /><a href='admincp.php?action=rules&amp;do=view'>Back To Rules</a>",1);
+        die();
+    }
+    stdhead(T_("SITE_RULES_EDITOR"));
+    navmenu();
+    begin_frame(T_("ADD_NEW_RULES_SECTION"));
+    print("<form method=\"post\" action=\"admincp.php?action=rules&amp;do=addsect&amp;save=1\">");
+    print("<table border=\"0\" cellspacing=\"0\" cellpadding=\"10\" align=\"center\">\n");
+    print("<tr><td>Section Title:</td><td><input style=\"width: 400px;\" type=\"text\" name=\"title\" /></td></tr>\n");
+    print("<tr><td style=\"vertical-align: top;\">Rules:</td><td><textarea cols=\"60\" rows=\"15\" name=\"text\"></textarea><br />\n");
+    print("<br />NOTE: Remember that BB can be used (NO HTML)</td></tr>\n");
 
-	print("<tr><td colspan=\"2\" align=\"center\"><input type=\"radio\" name='public' value=\"yes\" checked=\"checked\" />For everybody<input type=\"radio\" name='public' value=\"no\" />&nbsp;Members Only - (Min User Class: <input type=\"text\" name='class' value=\"0\" size=\"1\" />)</td></tr>\n");
-	print("<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Add\" style=\"width: 60px;\" /></td></tr>\n");
-	print("</table></form>");
-	end_frame();
-	stdfoot();
+    print("<tr><td colspan=\"2\" align=\"center\"><input type=\"radio\" name='public' value=\"yes\" checked=\"checked\" />For everybody<input type=\"radio\" name='public' value=\"no\" />&nbsp;Members Only - (Min User Class: <input type=\"text\" name='class' value=\"0\" size=\"1\" />)</td></tr>\n");
+    print("<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Add\" style=\"width: 60px;\" /></td></tr>\n");
+    print("</table></form>");
+    end_frame();
+    stdfoot();
 }
 
 #======================================================================#
@@ -2168,7 +2171,7 @@ if ($action=="rules" && $do=="addsect"){
      stdhead("Site Configuration");
      navmenu();
      
-     begin_frame("Site Configuration - Incompleted!");
+     begin_frame("Site Configuration - Incompleted! Need to be finnished !!");
      ?>
      
      <!-- CSS to be moved... -->
@@ -2303,7 +2306,7 @@ jQuery(document).ready(function() {
          <td>
          <select name="site_config[default_theme]">
          <?php $res = SQL_Query_exec("SELECT * FROM `stylesheets`");
-               while ($row = mysql_fetch_assoc($res)): ?>
+               while ($row = mysqli_fetch_assoc($res)): ?>
          <option value="<?php echo $row["id"]; ?>" <?php echo ( $row["id"] == $site_config["default_theme"] ? 'selected="selected"' : null ); ?>><?php echo $row["name"]; ?></option>
          <?php endwhile; ?>
          </select>
@@ -2314,7 +2317,7 @@ jQuery(document).ready(function() {
          <td>
          <select name="site_config[default_language]">
          <?php $res = SQL_Query_exec("SELECT * FROM `languages`");
-               while ($row = mysql_fetch_assoc($res)): ?>
+               while ($row = mysqli_fetch_assoc($res)): ?>
          <option value="<?php echo $row["id"]; ?>" <?php echo ( $row["id"] == $site_config["default_language"] ? 'selected="selected"' : null ); ?>><?php echo $row["name"]; ?></option>
          <?php endwhile; ?>
          </select>
@@ -2678,21 +2681,21 @@ if ($action == "reports" && $do == "view") {
           <th class="table_head"><input type="checkbox" name="checkall" onclick="checkAll(this.form.id);" /></th>
       </tr>
       
-      <?php if (!mysql_num_rows($res)): ?>
+      <?php if (!mysqli_num_rows($res)): ?>
       <tr>
           <td class="table_col1" colspan="6" align="center">No reports found.</td>
       </tr>
       <?php endif; ?>
       
       <?php
-      while ($row = mysql_fetch_assoc($res)):  
+      while ($row = mysqli_fetch_assoc($res)):  
           
       
       $dealtwith = '<b>No</b>';
       if ($row["dealtby"] > 0)
       {
           $q = SQL_Query_exec("SELECT username FROM users WHERE id = '$row[dealtby]'");
-          $r = mysql_fetch_assoc($q);
+          $r = mysqli_fetch_assoc($q);
           $dealtwith = 'By <a href="account-details.php?id='.$row['dealtby'].'">'.$r['username'].'</a>';
       }    
       
@@ -2712,7 +2715,7 @@ if ($action == "reports" && $do == "view") {
             break;
       }
       
-      $r = mysql_fetch_row($q);
+      $r = mysqli_fetch_row($q);
       
       if ($row["type"] == "user")
           $link = "account-details.php?id=$row[votedfor]";
@@ -2762,7 +2765,7 @@ if ($action == "warned")
         if ($_POST["removeall"])
         {
             $res = SQL_Query_exec("SELECT `id` FROM `users` WHERE `enabled` = 'yes' AND `status` = 'confirmed' AND `warned` = 'yes'");
-            while ($row = mysql_fetch_assoc($res))
+            while ($row = mysqli_fetch_assoc($res))
             {
                 SQL_Query_exec("DELETE FROM `warnings` WHERE `active` = 'yes' AND `userid` = '$row[id]'");
                 SQL_Query_exec("UPDATE `users` SET `warned` = 'no' WHERE `id` = '$row[id]'");
@@ -2812,7 +2815,7 @@ if ($action == "warned")
         <th class="table_head">Warnings</th>
         <th class="table_head"><input type="checkbox" name="checkall" onclick="checkAll(this.form.id);" /></th>
     </tr>
-    <?php while ($row = mysql_fetch_assoc($res)): ?>
+    <?php while ($row = mysqli_fetch_assoc($res)): ?>
     <tr>
         <td class="table_col1" align="center"><a href="account-details.php?id=<?php echo $row["id"]; ?>"><?php echo $row["username"]; ?></a></td>
         <td class="table_col2" align="center"><?php echo get_user_class_name($row["class"]); ?></td>  
@@ -2888,7 +2891,7 @@ if ($action == "confirmreg")
         <th class="table_head">IP</th>
         <th class="table_head"><input type="checkbox" name="checkall" onclick="checkAll(this.form.id);" /></th>
     </tr>
-    <?php while ($row = mysql_fetch_assoc($res)): ?>
+    <?php while ($row = mysqli_fetch_assoc($res)): ?>
     <tr>
         <td class="table_col1" align="center"><?php echo $row["username"]; ?></td>
         <td class="table_col2" align="center"><?php echo $row["email"]; ?></td>
@@ -2927,7 +2930,7 @@ if ($action == "pendinginvite")
         $ids = implode(", ", $ids);
         
         $res = SQL_Query_exec("SELECT u.id, u.invited_by, i.invitees FROM users u LEFT JOIN users i ON u.invited_by = i.id WHERE u.status = 'pending' AND u.invited_by != '0' AND u.id IN ($ids)");
-        while ($row = mysql_fetch_assoc($res))
+        while ($row = mysqli_fetch_assoc($res))
         {    
              # We remove the invitee from the inviter and give them back there invite.
              $invitees = str_replace("$row[id] ", "", $row["invitees"]);
@@ -2966,7 +2969,7 @@ if ($action == "pendinginvite")
         <th class="table_head">Invited By</th>
         <th class="table_head"><input type="checkbox" name="checkall" onclick="checkAll(this.form.id);" /></th>
     </tr>
-    <?php while ($row = mysql_fetch_assoc($res)): ?>
+    <?php while ($row = mysqli_fetch_assoc($res)): ?>
     <tr>
         <td class="table_col1" align="center"><?php echo $row["username"]; ?></td>
         <td class="table_col2" align="center"><?php echo $row["email"]; ?></td>
@@ -3004,7 +3007,7 @@ if ($action == "invited")
         $ids = implode(", ", $ids);
         
         $res = SQL_Query_exec("SELECT u.id, u.invited_by, i.invitees FROM users u LEFT JOIN users i ON u.invited_by = i.id WHERE u.status = 'pending' AND u.invited_by != '0' AND u.id IN ($ids)");
-        while ($row = mysql_fetch_assoc($res))
+        while ($row = mysqli_fetch_assoc($res))
         {    
              # We remove the invitee from the inviter and give them back there invite.
              $invitees = str_replace("$row[id] ", "", $row["invitees"]);
@@ -3045,7 +3048,7 @@ if ($action == "invited")
         <th class="table_head">Invited By</th>
         <th class="table_head"><input type="checkbox" name="checkall" onclick="checkAll(this.form.id);" /></th>
     </tr>
-    <?php while ($row = mysql_fetch_assoc($res)): ?>
+    <?php while ($row = mysqli_fetch_assoc($res)): ?>
     <tr>
         <td class="table_col1" align="center"><a href="account-details.php?id=<?php echo $row["id"]; ?>"><?php echo $row["username"]; ?></a></td>
         <td class="table_col2" align="center"><?php echo $row["email"]; ?></td>
@@ -3088,7 +3091,7 @@ if ($action == "users")
         $ids = implode(", ", $ids);
 
         $res = SQL_Query_exec("SELECT `id`, `username` FROM `users` WHERE `id` IN ($ids)");
-        while ($row = mysql_fetch_row($res))
+        while ($row = mysqli_fetch_row($res))
         {
             write_log("Account '$row[1]' (ID: $row[0]) was deleted by $CURUSER[username]");  
             deleteaccount($row[0]); 
@@ -3097,7 +3100,7 @@ if ($action == "users")
         if ($_POST['inc']) 
         {
             $res = SQL_Query_exec("SELECT `id`, `name` FROM `torrents` WHERE `owner` IN ($ids)");
-            while ($row = mysql_fetch_row($res))
+            while ($row = mysqli_fetch_row($res))
             {
                 write_log("Torrent '$row[1]' (ID: $row[0]) was deleted by $CURUSER[username]");    
                 deletetorrent($row["id"]);
@@ -3156,7 +3159,7 @@ if ($action == "users")
         <th class="table_head">Last Visited</th>  
         <th class="table_head"><input type="checkbox" name="checkall" onclick="checkAll(this.form.id);" /></th>
     </tr>
-    <?php while ($row = mysql_fetch_assoc($res)): ?>
+    <?php while ($row = mysqli_fetch_assoc($res)): ?>
     <tr>
         <td class="table_col1" align="center"><a href="account-details.php?id=<?php echo $row["id"]; ?>"><?php echo $row["username"]; ?></a></td>
         <td class="table_col2" align="center"><?php echo get_user_class_name($row["class"]); ?></td>
@@ -3221,7 +3224,7 @@ if ($action == "users")
           <th class="table_head">Message</th>
           <th class="table_head">Added</th>
       </tr>
-      <?php while ($row = mysql_fetch_assoc($res)): ?>
+      <?php while ($row = mysqli_fetch_assoc($res)): ?>
       <tr>
           <td class="table_col1"><input type="checkbox" name="ids[]" value="<?php echo $row['id']; ?>" /></td>
           <td class="table_col2"><?php echo $row['txt']; ?></td>
@@ -3316,7 +3319,7 @@ if ($action == "privacylevel")
         <th class="table_head">Added</th>
         <th class="table_head">Last Visited</th>  
     </tr>
-    <?php while ($row = mysql_fetch_assoc($res)): ?>
+    <?php while ($row = mysqli_fetch_assoc($res)): ?>
     <tr>
         <td class="table_col1" align="center"><a href="account-details.php?id=<?php echo $row["id"]; ?>"><?php echo $row["username"]; ?></a></td>
         <td class="table_col2" align="center"><?php echo get_user_class_name($row["class"]); ?></td>
@@ -3384,7 +3387,7 @@ begin_frame(T_("WORD_CENSOR"));
 
 $select = "SELECT word FROM censor ORDER BY word";
 $sres = SQL_Query_exec($select);
-while ($srow = mysql_fetch_array($sres))
+while ($srow = mysqli_fetch_array($sres))
 {
         echo "<option>" . $srow[0] . "</option>\n";
         }
@@ -3405,7 +3408,7 @@ switch ($to)
             @fwrite($f,$_POST["badwords"]);
             fclose($f);
             }
-			show_error_msg(T_("SUCCESS"),"Censor Updated!",0);
+            show_error_msg(T_("SUCCESS"),"Censor Updated!",0);
          break;
 
 
@@ -3415,7 +3418,7 @@ switch ($to)
       $f=@fopen("censor.txt","r");
       $badwords=@fread($f,filesize("censor.txt"));
       @fclose($f);
-	  begin_frame($LANG['ACP_CENSORED']);
+      begin_frame($LANG['ACP_CENSORED']);
       echo'<form action="admincp.php?action=censor&to=write" method="post" enctype="multipart/form-data">
   <table width="100%" align="center">
     <tr>
@@ -3451,7 +3454,7 @@ if ($action == "ipbans") {
         $delids = array_map('intval', $_POST["delids"]);
         $delids = implode(', ', $delids);
         $res = SQL_Query_exec("SELECT * FROM bans WHERE id IN ($delids)");
-        while ($row = mysql_fetch_assoc($res)) {
+        while ($row = mysqli_fetch_assoc($res)) {
             SQL_Query_exec("DELETE FROM bans WHERE id=$row[id]");
             
             # Needs to be tested...
@@ -3475,12 +3478,12 @@ if ($action == "ipbans") {
         if ($first == "" || $last == "" || $comment == "")
             show_error_msg(T_("ERROR"), T_("MISSING_FORM_DATA").". Go back and try again", 1);
 
-	if (!validip($first) || !validip($last))
+    if (!validip($first) || !validip($last))
             show_error_msg(T_("ERROR"), "Bad IP address.");
         $comment = sqlesc($comment);
         $added = sqlesc(get_date_time());
         SQL_Query_exec("INSERT INTO bans (added, addedby, first, last, comment) VALUES($added, $CURUSER[id], '$first', '$last', $comment)");
-        switch (mysql_errno()) {
+        switch (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false))) {
             case 1062:
                 show_error_msg(T_("ERROR"), "Duplicate ban.", 0);
             break;
@@ -3488,7 +3491,7 @@ if ($action == "ipbans") {
                 show_error_msg(T_("SUCCESS"), "Ban added.", 0);
             break;
             default:
-                show_error_msg(T_("ERROR"), T_("THEME_DATEBASE_ERROR")." ".htmlspecialchars(mysql_error()), 0);
+                show_error_msg(T_("ERROR"), T_("THEME_DATEBASE_ERROR")." ".htmlspecialchars(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false))), 0);
         }
     }
 
@@ -3514,7 +3517,7 @@ if ($action == "ipbans") {
         </tr>";
 
         $res = SQL_Query_exec("SELECT bans.*, users.username FROM bans LEFT JOIN users ON bans.addedby=users.id ORDER BY added $limit");
-        while ($arr = mysql_fetch_assoc($res)) {
+        while ($arr = mysqli_fetch_assoc($res)) {
             echo "<tr>
                 <td align='center' class='table_col1'>".date('d/m/Y H:i:s', utc_to_tz_time($arr["added"]))."</td>
                 <td align='center' class='table_col2'>$arr[first]</td>
@@ -3547,764 +3550,764 @@ if ($action == "ipbans") {
 
 // Advanced User Search (Ported from v1 - TorrentialStorm)
 if ($action == "usersearch") {
-	if ($do == "warndisable") {
-		if (empty($_POST["warndisable"]))
-			show_error_msg(T_("ERROR"), "You must select a user to edit.", 1);
+    if ($do == "warndisable") {
+        if (empty($_POST["warndisable"]))
+            show_error_msg(T_("ERROR"), "You must select a user to edit.", 1);
 
-		if (!empty($_POST["warndisable"])){
-			$enable = $_POST["enable"];
-			$disable = $_POST["disable"];
-			$unwarn = $_POST["unwarn"];
-			$warnlength = (int) $_POST["warnlength"];
-			$warnpm = $_POST["warnpm"];
-			$_POST['warndisable'] = array_map("intval", $_POST['warndisable']);
-			$userid = implode(", ", $_POST['warndisable']);
+        if (!empty($_POST["warndisable"])){
+            $enable = $_POST["enable"];
+            $disable = $_POST["disable"];
+            $unwarn = $_POST["unwarn"];
+            $warnlength = (int) $_POST["warnlength"];
+            $warnpm = $_POST["warnpm"];
+            $_POST['warndisable'] = array_map("intval", $_POST['warndisable']);
+            $userid = implode(", ", $_POST['warndisable']);
 
-			if ($disable != '') {
-				SQL_Query_exec("UPDATE users SET enabled='no' WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")");
-			}
+            if ($disable != '') {
+                SQL_Query_exec("UPDATE users SET enabled='no' WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")");
+            }
 
-			if ($enable != '') {
-				SQL_Query_exec("UPDATE users SET enabled='yes' WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")");
-			}
+            if ($enable != '') {
+                SQL_Query_exec("UPDATE users SET enabled='yes' WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")");
+            }
 
-			if ($unwarn != '') {
-				$msg = "Your Warning Has Been Removed";
-				foreach ($_POST["warndisable"] as $userid) {
-					SQL_Query_exec("INSERT INTO messages (poster, sender, receiver, added, msg) VALUES ('0', '0', '".$userid."', '" . get_date_time() . "', " . sqlesc($msg) . ")") or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . mysql_errno() . ") " . mysql_error());
-				}
+            if ($unwarn != '') {
+                $msg = "Your Warning Has Been Removed";
+                foreach ($_POST["warndisable"] as $userid) {
+                    SQL_Query_exec("INSERT INTO messages (poster, sender, receiver, added, msg) VALUES ('0', '0', '".$userid."', '" . get_date_time() . "', " . sqlesc($msg) . ")") or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) . ") " . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+                }
 
-				$r = SQL_Query_exec("SELECT modcomment FROM users WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")")or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . mysql_errno() . ") " . mysql_error());
-				$user = mysql_fetch_array($r);
-				$exmodcomment = $user["modcomment"];
-				$modcomment = gmdate("Y-m-d") . " - Warning Removed By " . $CURUSER['username'] . ".\n". $modcomment . $exmodcomment;
-				SQL_Query_exec("UPDATE users SET modcomment=" . sqlesc($modcomment) . " WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")") or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . mysql_errno() . ") " . mysql_error());
+                $r = SQL_Query_exec("SELECT modcomment FROM users WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")")or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) . ") " . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+                $user = mysqli_fetch_array($r);
+                $exmodcomment = $user["modcomment"];
+                $modcomment = gmdate("Y-m-d") . " - Warning Removed By " . $CURUSER['username'] . ".\n". $modcomment . $exmodcomment;
+                SQL_Query_exec("UPDATE users SET modcomment=" . sqlesc($modcomment) . " WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")") or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) . ") " . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
 
-				SQL_Query_exec("UPDATE users SET warned='no' WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")");
-			}
+                SQL_Query_exec("UPDATE users SET warned='no' WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")");
+            }
 
-			if ($warn != '') {
-				if (empty($_POST["warnpm"]))
-					show_error_msg(T_("ERROR"), "You must type a reason/mod comment.", 1);
+            if ($warn != '') {
+                if (empty($_POST["warnpm"]))
+                    show_error_msg(T_("ERROR"), "You must type a reason/mod comment.", 1);
 
-					$msg = "You have received a warning, Reason: $warnpm";
+                    $msg = "You have received a warning, Reason: $warnpm";
 
-					$r = SQL_Query_exec("SELECT modcomment FROM users WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")")or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . mysql_errno() . ") " . mysql_error());
-					$user = mysql_fetch_array($r);
-					$exmodcomment = $user["modcomment"];
-					$modcomment = gmdate("Y-m-d") . " - Warned by " . $CURUSER['username'] . ".\nReason: $warnpm\n" . $modcomment . $exmodcomment;
-					SQL_Query_exec("UPDATE users SET modcomment=" . sqlesc($modcomment) . " WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")") or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . mysql_errno() . ") " . mysql_error());
+                    $r = SQL_Query_exec("SELECT modcomment FROM users WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")")or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) . ") " . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+                    $user = mysqli_fetch_array($r);
+                    $exmodcomment = $user["modcomment"];
+                    $modcomment = gmdate("Y-m-d") . " - Warned by " . $CURUSER['username'] . ".\nReason: $warnpm\n" . $modcomment . $exmodcomment;
+                    SQL_Query_exec("UPDATE users SET modcomment=" . sqlesc($modcomment) . " WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")") or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) . ") " . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
 
-					SQL_Query_exec("UPDATE users SET warned='yes' WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")");
-					foreach ($_POST["warndisable"] as $userid) {
-						SQL_Query_exec("INSERT INTO messages (poster, sender, receiver, added, msg) VALUES ('0', '0', '".$userid."', '" . get_date_time() . "', " . sqlesc($msg) . ")") or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . mysql_errno() . ") " . mysql_error());
-					}
-			}
+                    SQL_Query_exec("UPDATE users SET warned='yes' WHERE id IN (" . implode(", ", $_POST['warndisable']) . ")");
+                    foreach ($_POST["warndisable"] as $userid) {
+                        SQL_Query_exec("INSERT INTO messages (poster, sender, receiver, added, msg) VALUES ('0', '0', '".$userid."', '" . get_date_time() . "', " . sqlesc($msg) . ")") or die("<b>A fatal MySQL error occured</b>.\n<br />Query: " . $query . "<br />\n".T_("ERROR").": (" . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) . ") " . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+                    }
+            }
 
-		}
+        }
 
-		autolink("$_POST[referer]", "Redirecting back");
-		die;
-	}
-	stdhead(T_("ADVANCED_USER_SEARCH"));
-	navmenu();
-	begin_frame("Search");
+        autolink("$_POST[referer]", "Redirecting back");
+        die;
+    }
+    stdhead(T_("ADVANCED_USER_SEARCH"));
+    navmenu();
+    begin_frame("Search");
 
-	if ($_GET['h']) {
-		echo "<table width='65%' border='0' align='center'><tr><td align='left'>\n
-			Fields left blank will be ignored;\n
-			Wildcards * and ? may be used in Name, ".T_("EMAIL")." and Comments, as well as multiple values\n
-			separated by spaces (e.g. 'wyz Max*' in Name will list both users named\n
-			'wyz' and those whose names start by 'Max'. Similarly '~' can be used for\n
-			negation, e.g. '~alfiest' in comments will restrict the search to users\n
-			that do not have 'alfiest' in their comments).<br /><br />\n
-			The Ratio field accepts 'Inf' and '---' besides the usual numeric values.<br /><br />\n
-			The subnet mask may be entered either in dotted decimal or CIDR notation\n
-			(e.g. 255.255.255.0 is the same as /24).<br /><br />\n
-			Uploaded and Downloaded should be entered in GB.<br /><br />\n
-			For search parameters with multiple text fields the second will be\n
-			ignored unless relevant for the type of search chosen. <br /><br />\n
-			The History column lists the number of forum posts and comments,\n
-			respectively, as well as linking to the history page.\n
-			</td></tr></table><br /><br />\n";
-	} else {
-		echo "<p align='center'>[<a href='admincp.php?action=usersearch&amp;h=1'>Instructions</a>]";
-		echo "&nbsp;-&nbsp;[<a href='admincp.php?action=usersearch'>Reset</a>]</p>\n";
-	}
+    if ($_GET['h']) {
+        echo "<table width='65%' border='0' align='center'><tr><td align='left'>\n
+            Fields left blank will be ignored;\n
+            Wildcards * and ? may be used in Name, ".T_("EMAIL")." and Comments, as well as multiple values\n
+            separated by spaces (e.g. 'wyz Max*' in Name will list both users named\n
+            'wyz' and those whose names start by 'Max'. Similarly '~' can be used for\n
+            negation, e.g. '~alfiest' in comments will restrict the search to users\n
+            that do not have 'alfiest' in their comments).<br /><br />\n
+            The Ratio field accepts 'Inf' and '---' besides the usual numeric values.<br /><br />\n
+            The subnet mask may be entered either in dotted decimal or CIDR notation\n
+            (e.g. 255.255.255.0 is the same as /24).<br /><br />\n
+            Uploaded and Downloaded should be entered in GB.<br /><br />\n
+            For search parameters with multiple text fields the second will be\n
+            ignored unless relevant for the type of search chosen. <br /><br />\n
+            The History column lists the number of forum posts and comments,\n
+            respectively, as well as linking to the history page.\n
+            </td></tr></table><br /><br />\n";
+    } else {
+        echo "<p align='center'>[<a href='admincp.php?action=usersearch&amp;h=1'>Instructions</a>]";
+        echo "&nbsp;-&nbsp;[<a href='admincp.php?action=usersearch'>Reset</a>]</p>\n";
+    }
 
 ?>
     <br />
-	<form method="get" action="admincp.php">
-	<input type="hidden" name="action" value="usersearch" />
-	<table border="0" class="table_table" cellspacing="0" cellpadding="0" width="100%">
+    <form method="get" action="admincp.php">
+    <input type="hidden" name="action" value="usersearch" />
+    <table border="0" class="table_table" cellspacing="0" cellpadding="0" width="100%">
     <tr>
         <th class="table_head" colspan="6">Search Filter</th>
     </tr>
-	<tr>
+    <tr>
 
-	<td class="table_col1" valign="middle">Name:</td>
-	<td class="table_col2"><input name="n" type="text" value="<?php echo $_GET['n']?>" size="35" /></td>
+    <td class="table_col1" valign="middle">Name:</td>
+    <td class="table_col2"><input name="n" type="text" value="<?php echo $_GET['n']?>" size="35" /></td>
 
-	<td class="table_col1" valign="middle">Ratio:</td>
-	<td class="table_col2"><select name="rt">
-	<?php
-	$options = array("equal","above","below","between");
-	for ($i = 0; $i < count($options); $i++){
-	echo "<option value='$i' ".(($_GET['rt']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
-	}
-	?>
-	</select>
-	<input name="r" type="text" value="<?php echo $_GET['r']?>" size="5" maxlength="4" />
-	<input name="r2" type="text" value="<?php echo $_GET['r2']?>" size="5" maxlength="4" /></td>
+    <td class="table_col1" valign="middle">Ratio:</td>
+    <td class="table_col2"><select name="rt">
+    <?php
+    $options = array("equal","above","below","between");
+    for ($i = 0; $i < count($options); $i++){
+    echo "<option value='$i' ".(($_GET['rt']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
+    }
+    ?>
+    </select>
+    <input name="r" type="text" value="<?php echo $_GET['r']?>" size="5" maxlength="4" />
+    <input name="r2" type="text" value="<?php echo $_GET['r2']?>" size="5" maxlength="4" /></td>
 
-	<td class="table_col1" valign="middle">Member status:</td>
-	<td class="table_col2"><select name="st">
-	<?php
-	$options = array("(any)","confirmed","pending");
-	for ($i = 0; $i < count($options); $i++){
-	echo "<option value='$i' ".(($_GET['st']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
-	}
-	?>
-	</select></td></tr>
-	<tr><td class="table_col1" valign="middle"><?php echo T_("EMAIL")?>:</td>
-	<td class="table_col2"><input name="em" type="text" value="<?php echo $_GET['em']?>" size="35" /></td>
-	<td class="table_col1" valign="middle">IP:</td>
-	<td class="table_col2"><input name="ip" type="text" value="<?php echo $_GET['ip']?>" maxlength="17" /></td>
+    <td class="table_col1" valign="middle">Member status:</td>
+    <td class="table_col2"><select name="st">
+    <?php
+    $options = array("(any)","confirmed","pending");
+    for ($i = 0; $i < count($options); $i++){
+    echo "<option value='$i' ".(($_GET['st']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
+    }
+    ?>
+    </select></td></tr>
+    <tr><td class="table_col1" valign="middle"><?php echo T_("EMAIL")?>:</td>
+    <td class="table_col2"><input name="em" type="text" value="<?php echo $_GET['em']?>" size="35" /></td>
+    <td class="table_col1" valign="middle">IP:</td>
+    <td class="table_col2"><input name="ip" type="text" value="<?php echo $_GET['ip']?>" maxlength="17" /></td>
 
-	<td class="table_col1" valign="middle">Account status:</td>
-	<td class="table_col2"><select name="as">
-	<?php
-	$options = array("(any)", "enabled", "disabled");
-	for ($i = 0; $i < count($options); $i++){
-	echo "<option value='$i'  ".(($_GET['as']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
-	}
-	?>
-	</select></td></tr>
-	<tr>
-	<td class="table_col1" valign="middle">Comment:</td>
-	<td class="table_col2"><input name="co" type="text" value="<?php echo $_GET['co']?>" size="35" /></td>
-	<td class="table_col1" valign="middle">Mask:</td>
-	<td class="table_col2"><input name="ma" type="text" value="<?php echo $_GET['ma']?>" maxlength="17" /></td>
-	<td class="table_col1" valign="middle">Class:</td>
-	<td class="table_col2"><select name="c"><option value='1'>(any)</option>
-	<?php
-	$class = $_GET['c'];
-	if (!is_valid_id($class)) {
-		$class = '';
-	}
-	$groups = classlist();
-	foreach ($groups as $group) {
-		$id = $group["group_id"] + 2;
-		echo "<option value='$id' ".($class == $id ? " selected='selected'" : "").">".htmlspecialchars($group["level"])."</option>\n";
-	}
-	?>
-	</select></td></tr>
-	<tr>
+    <td class="table_col1" valign="middle">Account status:</td>
+    <td class="table_col2"><select name="as">
+    <?php
+    $options = array("(any)", "enabled", "disabled");
+    for ($i = 0; $i < count($options); $i++){
+    echo "<option value='$i'  ".(($_GET['as']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
+    }
+    ?>
+    </select></td></tr>
+    <tr>
+    <td class="table_col1" valign="middle">Comment:</td>
+    <td class="table_col2"><input name="co" type="text" value="<?php echo $_GET['co']?>" size="35" /></td>
+    <td class="table_col1" valign="middle">Mask:</td>
+    <td class="table_col2"><input name="ma" type="text" value="<?php echo $_GET['ma']?>" maxlength="17" /></td>
+    <td class="table_col1" valign="middle">Class:</td>
+    <td class="table_col2"><select name="c"><option value='1'>(any)</option>
+    <?php
+    $class = $_GET['c'];
+    if (!is_valid_id($class)) {
+        $class = '';
+    }
+    $groups = classlist();
+    foreach ($groups as $group) {
+        $id = $group["group_id"] + 2;
+        echo "<option value='$id' ".($class == $id ? " selected='selected'" : "").">".htmlspecialchars($group["level"])."</option>\n";
+    }
+    ?>
+    </select></td></tr>
+    <tr>
 
-	<td class="table_col1" valign="middle">Joined:</td>
+    <td class="table_col1" valign="middle">Joined:</td>
 
-	<td class="table_col2"><select name="dt">
-	<?php
-	$options = array("on","before","after","between");
-	for ($i = 0; $i < count($options); $i++){
-	echo "<option value='$i' ".(($_GET['dt']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
-	}
-	?>
-	</select>
+    <td class="table_col2"><select name="dt">
+    <?php
+    $options = array("on","before","after","between");
+    for ($i = 0; $i < count($options); $i++){
+    echo "<option value='$i' ".(($_GET['dt']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
+    }
+    ?>
+    </select>
 
-	<input name="d" type="text" value="<?php echo $_GET['d']?>" size="12" maxlength="10" />
+    <input name="d" type="text" value="<?php echo $_GET['d']?>" size="12" maxlength="10" />
 
-	<input name="d2" type="text" value="<?php echo $_GET['d2']?>" size="12" maxlength="10" /></td>
-
-
-	<td class="table_col1" valign="middle">Uploaded (GB):</td>
-
-	<td class="table_col2"><select name="ult" id="ult">
-	<?php
-	$options = array("equal","above","below","between");
-	for ($i = 0; $i < count($options); $i++){
-	echo "<option value='$i' ".(($_GET['ult']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
-	}
-	?>
-	</select>
-
-	<input name="ul" type="text" id="ul" size="8" maxlength="7" value="<?php echo $_GET['ul']?>" />
-
-	<input name="ul2" type="text" id="ul2" size="8" maxlength="7" value="<?php echo $_GET['ul2']?>" /></td>
-	<td class="table_col1">&nbsp;</td>
-
-	<td class="table_col2">&nbsp;</td></tr>
-	<tr>
-
-	<td class="table_col1" valign="middle">Last Seen:</td>
-
-	<td class="table_col2"><select name="lst">
-	<?php
-	$options = array("on","before","after","between");
-	for ($i = 0; $i < count($options); $i++){
-	echo "<option value='$i' ".(($_GET['lst']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
-	}
-	?>
-	</select>
-
-	<input name="ls" type="text" value="<?php echo $_GET['ls']?>" size="12" maxlength="10" />
+    <input name="d2" type="text" value="<?php echo $_GET['d2']?>" size="12" maxlength="10" /></td>
 
 
-	<input name="ls2" type="text" value="<?php echo $_GET['ls2']?>" size="12" maxlength="10" /></td>
-	<td class="table_col1" valign="middle">Downloaded (GB):</td>
+    <td class="table_col1" valign="middle">Uploaded (GB):</td>
 
-	<td class="table_col2"><select name="dlt" id="dlt">
-	<?php
-	$options = array("equal","above","below","between");
-	for ($i = 0; $i < count($options); $i++){
-	echo "<option value='$i' ".(($_GET['dlt']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
-	}
-	?>
-	</select>
+    <td class="table_col2"><select name="ult" id="ult">
+    <?php
+    $options = array("equal","above","below","between");
+    for ($i = 0; $i < count($options); $i++){
+    echo "<option value='$i' ".(($_GET['ult']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
+    }
+    ?>
+    </select>
 
-	<input name="dl" type="text" id="dl" size="8" maxlength="7" value="<?php echo $_GET['dl']?>" />
+    <input name="ul" type="text" id="ul" size="8" maxlength="7" value="<?php echo $_GET['ul']?>" />
 
-	<input name="dl2" type="text" id="dl2" size="8" maxlength="7" value="<?php echo $_GET['dl2']?>" /></td>
+    <input name="ul2" type="text" id="ul2" size="8" maxlength="7" value="<?php echo $_GET['ul2']?>" /></td>
+    <td class="table_col1">&nbsp;</td>
 
-	<td class="table_col1" valign="middle">Warned:</td>
+    <td class="table_col2">&nbsp;</td></tr>
+    <tr>
 
-	<td class="table_col2"><select name="w">
-	<?php
-	$options = array("(any)","Yes","No");
-	for ($i = 0; $i < count($options); $i++){
-	echo "<option value='$i' ".(($_GET['w']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
-	}
-	?>
-	</select></td></tr>
-	<tr><td colspan="6" align="center"><input name="submit" value="Search" type="submit" /></td></tr>
-	</table>
-	<br /><br />
-	</form>
+    <td class="table_col1" valign="middle">Last Seen:</td>
+
+    <td class="table_col2"><select name="lst">
+    <?php
+    $options = array("on","before","after","between");
+    for ($i = 0; $i < count($options); $i++){
+    echo "<option value='$i' ".(($_GET['lst']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
+    }
+    ?>
+    </select>
+
+    <input name="ls" type="text" value="<?php echo $_GET['ls']?>" size="12" maxlength="10" />
+
+
+    <input name="ls2" type="text" value="<?php echo $_GET['ls2']?>" size="12" maxlength="10" /></td>
+    <td class="table_col1" valign="middle">Downloaded (GB):</td>
+
+    <td class="table_col2"><select name="dlt" id="dlt">
+    <?php
+    $options = array("equal","above","below","between");
+    for ($i = 0; $i < count($options); $i++){
+    echo "<option value='$i' ".(($_GET['dlt']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
+    }
+    ?>
+    </select>
+
+    <input name="dl" type="text" id="dl" size="8" maxlength="7" value="<?php echo $_GET['dl']?>" />
+
+    <input name="dl2" type="text" id="dl2" size="8" maxlength="7" value="<?php echo $_GET['dl2']?>" /></td>
+
+    <td class="table_col1" valign="middle">Warned:</td>
+
+    <td class="table_col2"><select name="w">
+    <?php
+    $options = array("(any)","Yes","No");
+    for ($i = 0; $i < count($options); $i++){
+    echo "<option value='$i' ".(($_GET['w']=="$i")?"selected='selected'":"").">".$options[$i]."</option>\n";
+    }
+    ?>
+    </select></td></tr>
+    <tr><td colspan="6" align="center"><input name="submit" value="Search" type="submit" /></td></tr>
+    </table>
+    <br /><br />
+    </form>
 
 <?php
 
-	// Validates date in the form [yy]yy-mm-dd;
-	// Returns date if valid, 0 otherwise.
-	function mkdate($date) {
-		if (strpos($date, '-'))
-			$a = explode('-', $date);
-		elseif (strpos($date, '/'))
-			$a = explode('/', $date);
-		else
-			return 0;
-		for ($i = 0; $i < 3; $i++) {
-			if (!is_numeric($a[$i]))
-				return 0;
-		}
-		if (checkdate($a[1], $a[2], $a[0]))
-			return date ("Y-m-d", mktime (0,0,0,$a[1],$a[2],$a[0]));
-		else
-			return 0;
-	}
+    // Validates date in the form [yy]yy-mm-dd;
+    // Returns date if valid, 0 otherwise.
+    function mkdate($date) {
+        if (strpos($date, '-'))
+            $a = explode('-', $date);
+        elseif (strpos($date, '/'))
+            $a = explode('/', $date);
+        else
+            return 0;
+        for ($i = 0; $i < 3; $i++) {
+            if (!is_numeric($a[$i]))
+                return 0;
+        }
+        if (checkdate($a[1], $a[2], $a[0]))
+            return date ("Y-m-d", mktime (0,0,0,$a[1],$a[2],$a[0]));
+        else
+            return 0;
+    }
 
-	// ratio as a string
-	function ratios ($up, $down, $color = true) {
-		if ($down > 0) {
-			$r = number_format($up / $down, 2);
-			if ($color)
-				$r = "<font color='".get_ratio_color($r)."'>$r</font>";
-		} elseif ($up > 0)
-			$r = "Inf.";
-		else
-			$r = "---";
-		return $r;
-	}
+    // ratio as a string
+    function ratios ($up, $down, $color = true) {
+        if ($down > 0) {
+            $r = number_format($up / $down, 2);
+            if ($color)
+                $r = "<font color='".get_ratio_color($r)."'>$r</font>";
+        } elseif ($up > 0)
+            $r = "Inf.";
+        else
+            $r = "---";
+        return $r;
+    }
 
-	// checks for the usual wildcards *, ? plus mySQL ones
-	function haswildcard ($text){
-		if (strpos($text, '*') === false && strpos($text, '?') === false && strpos($text,'%') === False && strpos($text,'_') === False)
-			return False;
-		else
-			return True;
-	}
+    // checks for the usual wildcards *, ? plus mySQL ones
+    function haswildcard ($text){
+        if (strpos($text, '*') === false && strpos($text, '?') === false && strpos($text,'%') === False && strpos($text,'_') === False)
+            return False;
+        else
+            return True;
+    }
 
-	///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
 
-	if (count($_GET) > 0 && !$_GET['h']) {
-		// name
-		$names = explode(' ',trim($_GET['n']));
-		if ($names[0] !== "") {
-			foreach($names as $name) {
-				if (substr($name,0,1) == '~') {
-					if ($name == '~') continue;
-					$names_exc[] = substr($name,1);
-				} else
-					$names_inc[] = $name;
-			}
+    if (count($_GET) > 0 && !$_GET['h']) {
+        // name
+        $names = explode(' ',trim($_GET['n']));
+        if ($names[0] !== "") {
+            foreach($names as $name) {
+                if (substr($name,0,1) == '~') {
+                    if ($name == '~') continue;
+                    $names_exc[] = substr($name,1);
+                } else
+                    $names_inc[] = $name;
+            }
 
-			if (is_array($names_inc)) {
-				$where_is .= isset($where_is)?" AND (":"(";
-				foreach($names_inc as $name) {
-					if (!haswildcard($name))
-						$name_is .= (isset($name_is)?" OR ":"")."u.username = ".sqlesc($name);
-					else {
-						$name = str_replace(array('?','*'), array('_','%'), $name);
-						$name_is .= (isset($name_is)?" OR ":"")."u.username LIKE ".sqlesc($name);
-					}
-				}
-				$where_is .= $name_is.")";
-				unset($name_is);
-			}
+            if (is_array($names_inc)) {
+                $where_is .= isset($where_is)?" AND (":"(";
+                foreach($names_inc as $name) {
+                    if (!haswildcard($name))
+                        $name_is .= (isset($name_is)?" OR ":"")."u.username = ".sqlesc($name);
+                    else {
+                        $name = str_replace(array('?','*'), array('_','%'), $name);
+                        $name_is .= (isset($name_is)?" OR ":"")."u.username LIKE ".sqlesc($name);
+                    }
+                }
+                $where_is .= $name_is.")";
+                unset($name_is);
+            }
 
-			if (is_array($names_exc)) {
-				$where_is .= isset($where_is)?" AND NOT (":" NOT (";
-				foreach($names_exc as $name) {
-					if (!haswildcard($name))
-						$name_is .= (isset($name_is)?" OR ":"")."u.username = ".sqlesc($name);
-					else {
-						$name = str_replace(array('?','*'), array('_','%'), $name);
-						$name_is .= (isset($name_is)?" OR ":"")."u.username LIKE ".sqlesc($name);
-					}
-				}
-				$where_is .= $name_is.")";
-			}
-			$q .= ($q ? "&amp;" : "") . "n=".urlencode(trim($_GET['n']));
-		}
+            if (is_array($names_exc)) {
+                $where_is .= isset($where_is)?" AND NOT (":" NOT (";
+                foreach($names_exc as $name) {
+                    if (!haswildcard($name))
+                        $name_is .= (isset($name_is)?" OR ":"")."u.username = ".sqlesc($name);
+                    else {
+                        $name = str_replace(array('?','*'), array('_','%'), $name);
+                        $name_is .= (isset($name_is)?" OR ":"")."u.username LIKE ".sqlesc($name);
+                    }
+                }
+                $where_is .= $name_is.")";
+            }
+            $q .= ($q ? "&amp;" : "") . "n=".urlencode(trim($_GET['n']));
+        }
 
-		// email
-		$emaila = explode(' ', trim($_GET['em']));
-		if ($emaila[0] !== "") {
-			$where_is .= isset($where_is)?" AND (":"(";
-			foreach($emaila as $email) {
-				if (strpos($email,'*') === False && strpos($email,'?') === False && strpos($email,'%') === False) {
-					if (!validemail($email)) {
-						show_error_msg(T_("ERROR"), "Bad email.");
-					}
-					$email_is .= (isset($email_is)?" OR ":"")."u.email =".sqlesc($email);
-				} else {
-					$sql_email = str_replace(array('?','*'), array('_','%'), $email);
-					$email_is .= (isset($email_is)?" OR ":"")."u.email LIKE ".sqlesc($sql_email);
-				}
-			}
-			$where_is .= $email_is.")";
-			$q .= ($q ? "&amp;" : "") . "em=".urlencode(trim($_GET['em']));
-		}
+        // email
+        $emaila = explode(' ', trim($_GET['em']));
+        if ($emaila[0] !== "") {
+            $where_is .= isset($where_is)?" AND (":"(";
+            foreach($emaila as $email) {
+                if (strpos($email,'*') === False && strpos($email,'?') === False && strpos($email,'%') === False) {
+                    if (!validemail($email)) {
+                        show_error_msg(T_("ERROR"), "Bad email.");
+                    }
+                    $email_is .= (isset($email_is)?" OR ":"")."u.email =".sqlesc($email);
+                } else {
+                    $sql_email = str_replace(array('?','*'), array('_','%'), $email);
+                    $email_is .= (isset($email_is)?" OR ":"")."u.email LIKE ".sqlesc($sql_email);
+                }
+            }
+            $where_is .= $email_is.")";
+            $q .= ($q ? "&amp;" : "") . "em=".urlencode(trim($_GET['em']));
+        }
 
-		//class
-		// NB: the c parameter is passed as two units above the real one
-		$class = $_GET['c'] - 2;
-		if (is_valid_id($class + 1)) {
-			$where_is .= (isset($where_is)?" AND ":"")."u.class=$class";
-			$q .= ($q ? "&amp;" : "") . "c=".($class+2);
-		}
+        //class
+        // NB: the c parameter is passed as two units above the real one
+        $class = $_GET['c'] - 2;
+        if (is_valid_id($class + 1)) {
+            $where_is .= (isset($where_is)?" AND ":"")."u.class=$class";
+            $q .= ($q ? "&amp;" : "") . "c=".($class+2);
+        }
 
-		// IP
-		$ip = trim($_GET['ip']);
-		if ($ip) {
-			$regex = "/^(((1?\d{1,2})|(2[0-4]\d)|(25[0-5]))(\.\b|$)){4}$/";
-			if (!preg_match($regex, $ip)) {
-				show_error_msg(T_("ERROR"), "Bad IP.");
-			}
+        // IP
+        $ip = trim($_GET['ip']);
+        if ($ip) {
+            $regex = "/^(((1?\d{1,2})|(2[0-4]\d)|(25[0-5]))(\.\b|$)){4}$/";
+            if (!preg_match($regex, $ip)) {
+                show_error_msg(T_("ERROR"), "Bad IP.");
+            }
 
-			$mask = trim($_GET['ma']);
-			if ($mask == "" || $mask == "255.255.255.255") {
-				$where_is .= (isset($where_is)?" AND ":"")."u.ip = '$ip'";
-			} else {
-				if (substr($mask,0,1) == "/") {
-					$n = substr($mask, 1, strlen($mask) - 1);
-					if (!is_numeric($n) or $n < 0 or $n > 32) {
-						show_error_msg(T_("ERROR"), "Bad subnet mask.");
-					} else {
-						$mask = long2ip(pow(2,32) - pow(2,32-$n));
-					}
-				} elseif (!preg_match($regex, $mask)) {
-					show_error_msg(T_("ERROR"), "Bad subnet mask.");
-				}
-				$where_is .= (isset($where_is)?" AND ":"")."INET_ATON(u.ip) & INET_ATON('$mask') = INET_ATON('$ip') & INET_ATON('$mask')";
-				$q .= ($q ? "&amp;" : "") . "ma=$mask";
-			}
-			$q .= ($q ? "&amp;" : "") . "ip=$ip";
-		}
+            $mask = trim($_GET['ma']);
+            if ($mask == "" || $mask == "255.255.255.255") {
+                $where_is .= (isset($where_is)?" AND ":"")."u.ip = '$ip'";
+            } else {
+                if (substr($mask,0,1) == "/") {
+                    $n = substr($mask, 1, strlen($mask) - 1);
+                    if (!is_numeric($n) or $n < 0 or $n > 32) {
+                        show_error_msg(T_("ERROR"), "Bad subnet mask.");
+                    } else {
+                        $mask = long2ip(pow(2,32) - pow(2,32-$n));
+                    }
+                } elseif (!preg_match($regex, $mask)) {
+                    show_error_msg(T_("ERROR"), "Bad subnet mask.");
+                }
+                $where_is .= (isset($where_is)?" AND ":"")."INET_ATON(u.ip) & INET_ATON('$mask') = INET_ATON('$ip') & INET_ATON('$mask')";
+                $q .= ($q ? "&amp;" : "") . "ma=$mask";
+            }
+            $q .= ($q ? "&amp;" : "") . "ip=$ip";
+        }
 
-		// ratio
-		$ratio = trim($_GET['r']);
-		if ($ratio) {
-			if ($ratio == '---') {
-				$ratio2 = "";
-				$where_is .= isset($where_is)?" AND ":"";
-				$where_is .= " u.uploaded = 0 and u.downloaded = 0";
-			} elseif (strtolower(substr($ratio,0,3)) == 'inf') {
-				$ratio2 = "";
-				$where_is .= isset($where_is)?" AND ":"";
-				$where_is .= " u.uploaded > 0 and u.downloaded = 0";
-			} else {
-				if (!is_numeric($ratio) || $ratio < 0) {
-					show_error_msg(T_("ERROR"), "Bad ratio.");
-				}
-				$where_is .= isset($where_is)?" AND ":"";
-				$where_is .= " (u.uploaded/u.downloaded)";
-				$ratiotype = $_GET['rt'];
-				$q .= ($q ? "&amp;" : "") . "rt=$ratiotype";
-				if ($ratiotype == "3") {
-					$ratio2 = trim($_GET['r2']);
-					if (!$ratio2) {
-						show_error_msg(T_("ERROR"), "Two ratios needed for this type of search.");
-					}
-					if (!is_numeric($ratio2) or $ratio2 < $ratio) {
-						show_error_msg(T_("ERROR"), "Bad second ratio.");
-					}
-					$where_is .= " BETWEEN $ratio and $ratio2";
-					$q .= ($q ? "&amp;" : "") . "r2=$ratio2";
-				} elseif ($ratiotype == "2") {
-					$where_is .= " < $ratio";
-				} elseif ($ratiotype == "1") {
-					$where_is .= " > $ratio";
-				} else {
-					$where_is .= " BETWEEN ($ratio - 0.004) and ($ratio + 0.004)";
-				}
-			}
-			$q .= ($q ? "&amp;" : "") . "r=$ratio";
-		}
+        // ratio
+        $ratio = trim($_GET['r']);
+        if ($ratio) {
+            if ($ratio == '---') {
+                $ratio2 = "";
+                $where_is .= isset($where_is)?" AND ":"";
+                $where_is .= " u.uploaded = 0 and u.downloaded = 0";
+            } elseif (strtolower(substr($ratio,0,3)) == 'inf') {
+                $ratio2 = "";
+                $where_is .= isset($where_is)?" AND ":"";
+                $where_is .= " u.uploaded > 0 and u.downloaded = 0";
+            } else {
+                if (!is_numeric($ratio) || $ratio < 0) {
+                    show_error_msg(T_("ERROR"), "Bad ratio.");
+                }
+                $where_is .= isset($where_is)?" AND ":"";
+                $where_is .= " (u.uploaded/u.downloaded)";
+                $ratiotype = $_GET['rt'];
+                $q .= ($q ? "&amp;" : "") . "rt=$ratiotype";
+                if ($ratiotype == "3") {
+                    $ratio2 = trim($_GET['r2']);
+                    if (!$ratio2) {
+                        show_error_msg(T_("ERROR"), "Two ratios needed for this type of search.");
+                    }
+                    if (!is_numeric($ratio2) or $ratio2 < $ratio) {
+                        show_error_msg(T_("ERROR"), "Bad second ratio.");
+                    }
+                    $where_is .= " BETWEEN $ratio and $ratio2";
+                    $q .= ($q ? "&amp;" : "") . "r2=$ratio2";
+                } elseif ($ratiotype == "2") {
+                    $where_is .= " < $ratio";
+                } elseif ($ratiotype == "1") {
+                    $where_is .= " > $ratio";
+                } else {
+                    $where_is .= " BETWEEN ($ratio - 0.004) and ($ratio + 0.004)";
+                }
+            }
+            $q .= ($q ? "&amp;" : "") . "r=$ratio";
+        }
 
-		// comment
-		$comments = explode(' ',trim($_GET['co']));
-		if ($comments[0] !== "") {
-			foreach($comments as $comment) {
-				if (substr($comment,0,1) == '~') {
-					if ($comment == '~') continue;
-					$comments_exc[] = substr($comment,1);
-				} else {
-					$comments_inc[] = $comment;
-				}
+        // comment
+        $comments = explode(' ',trim($_GET['co']));
+        if ($comments[0] !== "") {
+            foreach($comments as $comment) {
+                if (substr($comment,0,1) == '~') {
+                    if ($comment == '~') continue;
+                    $comments_exc[] = substr($comment,1);
+                } else {
+                    $comments_inc[] = $comment;
+                }
 
-				if (is_array($comments_inc)) {
-					$where_is .= isset($where_is)?" AND (":"(";
-					foreach($comments_inc as $comment) {
-						if (!haswildcard($comment))
-							$comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc("%".$comment."%");
-						else {
-							$comment = str_replace(array('?','*'), array('_','%'), $comment);
-							$comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc($comment);
-						}
-					}
-					$where_is .= $comment_is.")";
-					unset($comment_is);
-				}
+                if (is_array($comments_inc)) {
+                    $where_is .= isset($where_is)?" AND (":"(";
+                    foreach($comments_inc as $comment) {
+                        if (!haswildcard($comment))
+                            $comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc("%".$comment."%");
+                        else {
+                            $comment = str_replace(array('?','*'), array('_','%'), $comment);
+                            $comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc($comment);
+                        }
+                    }
+                    $where_is .= $comment_is.")";
+                    unset($comment_is);
+                }
 
-				if (is_array($comments_exc)) {
-					$where_is .= isset($where_is)?" AND NOT (":" NOT (";
-					foreach($comments_exc as $comment) {
-						if (!haswildcard($comment))
-							$comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc("%".$comment."%");
-						else {
-							$comment = str_replace(array('?','*'), array('_','%'), $comment);
-							$comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc($comment);
-						}
-					}
-					$where_is .= $comment_is.")";
-				}
-			}
-				$q .= ($q ? "&amp;" : "") . "co=".urlencode(trim($_GET['co']));
-		}
+                if (is_array($comments_exc)) {
+                    $where_is .= isset($where_is)?" AND NOT (":" NOT (";
+                    foreach($comments_exc as $comment) {
+                        if (!haswildcard($comment))
+                            $comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc("%".$comment."%");
+                        else {
+                            $comment = str_replace(array('?','*'), array('_','%'), $comment);
+                            $comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc($comment);
+                        }
+                    }
+                    $where_is .= $comment_is.")";
+                }
+            }
+                $q .= ($q ? "&amp;" : "") . "co=".urlencode(trim($_GET['co']));
+        }
 
-		$unit = 1073741824; // 1GB
+        $unit = 1073741824; // 1GB
 
-		// uploaded
-		$ul = trim($_GET['ul']);
-		if ($ul) {
-			if (!is_numeric($ul) || $ul < 0) {
-				show_error_msg(T_("ERROR"), "Bad uploaded amount.");
-			}
-			$where_is .= isset($where_is)?" AND ":"";
-			$where_is .= " u.uploaded ";
-			$ultype = $_GET['ult'];
-			$q .= ($q ? "&amp;" : "") . "ult=$ultype";
-			if ($ultype == "3") {
-				$ul2 = trim($_GET['ul2']);
-				if(!$ul2) {
-					show_error_msg(T_("ERROR"), "Two uploaded amounts needed for this type of search.");
-				}
-				if (!is_numeric($ul2) or $ul2 < $ul) {
-					show_error_msg(T_("ERROR"), "Bad second uploaded amount.");
-				}
-				$where_is .= " BETWEEN ".$ul*$unit." and ".$ul2*$unit;
-				$q .= ($q ? "&amp;" : "") . "ul2=$ul2";
-			} elseif ($ultype == "2") {
-				$where_is .= " < ".$ul*$unit;
-			} elseif ($ultype == "1") {
-				$where_is .= " >". $ul*$unit;
-			} else {
-				$where_is .= " BETWEEN ".($ul - 0.004)*$unit." and ".($ul + 0.004)*$unit;
-			}
-			$q .= ($q ? "&amp;" : "") . "ul=$ul";
-		}
+        // uploaded
+        $ul = trim($_GET['ul']);
+        if ($ul) {
+            if (!is_numeric($ul) || $ul < 0) {
+                show_error_msg(T_("ERROR"), "Bad uploaded amount.");
+            }
+            $where_is .= isset($where_is)?" AND ":"";
+            $where_is .= " u.uploaded ";
+            $ultype = $_GET['ult'];
+            $q .= ($q ? "&amp;" : "") . "ult=$ultype";
+            if ($ultype == "3") {
+                $ul2 = trim($_GET['ul2']);
+                if(!$ul2) {
+                    show_error_msg(T_("ERROR"), "Two uploaded amounts needed for this type of search.");
+                }
+                if (!is_numeric($ul2) or $ul2 < $ul) {
+                    show_error_msg(T_("ERROR"), "Bad second uploaded amount.");
+                }
+                $where_is .= " BETWEEN ".$ul*$unit." and ".$ul2*$unit;
+                $q .= ($q ? "&amp;" : "") . "ul2=$ul2";
+            } elseif ($ultype == "2") {
+                $where_is .= " < ".$ul*$unit;
+            } elseif ($ultype == "1") {
+                $where_is .= " >". $ul*$unit;
+            } else {
+                $where_is .= " BETWEEN ".($ul - 0.004)*$unit." and ".($ul + 0.004)*$unit;
+            }
+            $q .= ($q ? "&amp;" : "") . "ul=$ul";
+        }
 
-		// downloaded
-		$dl = trim($_GET['dl']);
-		if ($dl) {
-			if (!is_numeric($dl) || $dl < 0) {
-				show_error_msg(T_("ERROR"), "Bad downloaded amount.");
-			}
-			$where_is .= isset($where_is)?" AND ":"";
-			$where_is .= " u.downloaded ";
-			$dltype = $_GET['dlt'];
-			$q .= ($q ? "&amp;" : "") . "dlt=$dltype";
-			if ($dltype == "3") {
-				$dl2 = trim($_GET['dl2']);
-				if(!$dl2) {
-					show_error_msg(T_("ERROR"), "Two downloaded amounts needed for this type of search.");
-				}
-				if (!is_numeric($dl2) or $dl2 < $dl) {
-					show_error_msg(T_("ERROR"), "Bad second downloaded amount.");
-				}
-				$where_is .= " BETWEEN ".$dl*$unit." and ".$dl2*$unit;
-				$q .= ($q ? "&amp;" : "") . "dl2=$dl2";
-			} elseif ($dltype == "2") {
-				$where_is .= " < ".$dl*$unit;
-			} elseif ($dltype == "1") {
-				$where_is .= " > ".$dl*$unit;
-			} else {
-				$where_is .= " BETWEEN ".($dl - 0.004)*$unit." and ".($dl + 0.004)*$unit;
-			}
-			$q .= ($q ? "&amp;" : "") . "dl=$dl";
-		}
+        // downloaded
+        $dl = trim($_GET['dl']);
+        if ($dl) {
+            if (!is_numeric($dl) || $dl < 0) {
+                show_error_msg(T_("ERROR"), "Bad downloaded amount.");
+            }
+            $where_is .= isset($where_is)?" AND ":"";
+            $where_is .= " u.downloaded ";
+            $dltype = $_GET['dlt'];
+            $q .= ($q ? "&amp;" : "") . "dlt=$dltype";
+            if ($dltype == "3") {
+                $dl2 = trim($_GET['dl2']);
+                if(!$dl2) {
+                    show_error_msg(T_("ERROR"), "Two downloaded amounts needed for this type of search.");
+                }
+                if (!is_numeric($dl2) or $dl2 < $dl) {
+                    show_error_msg(T_("ERROR"), "Bad second downloaded amount.");
+                }
+                $where_is .= " BETWEEN ".$dl*$unit." and ".$dl2*$unit;
+                $q .= ($q ? "&amp;" : "") . "dl2=$dl2";
+            } elseif ($dltype == "2") {
+                $where_is .= " < ".$dl*$unit;
+            } elseif ($dltype == "1") {
+                $where_is .= " > ".$dl*$unit;
+            } else {
+                $where_is .= " BETWEEN ".($dl - 0.004)*$unit." and ".($dl + 0.004)*$unit;
+            }
+            $q .= ($q ? "&amp;" : "") . "dl=$dl";
+        }
 
-		// date joined
-		$date = trim($_GET['d']);
-		if ($date) {
-			if (!$date = mkdate($date)) {
-				show_error_msg(T_("ERROR"), "Invalid date.");
-			}
-			$q .= ($q ? "&amp;" : "") . "d=$date";
-			$datetype = $_GET['dt'];
-			$q .= ($q ? "&amp;" : "") . "dt=$datetype";
-			if ($datetype == "0") {
-				// For mySQL 4.1.1 or above use instead
-				// $where_is .= (isset($where_is)?" AND ":"")."DATE(added) = DATE('$date')";
-				$where_is .= (isset($where_is)?" AND ":"")."(UNIX_TIMESTAMP(added) - UNIX_TIMESTAMP('$date')) BETWEEN 0 and 86400";
-			} else {
-				$where_is .= (isset($where_is)?" AND ":"")."u.added ";
-				if ($datetype == "3") {
-					$date2 = mkdate(trim($_GET['d2']));
-					if ($date2) {
-						if (!$date = mkdate($date)) {
-							show_error_msg(T_("ERROR"), "Invalid date.");
-						}
-						$q .= ($q ? "&amp;" : "") . "d2=$date2";
-						$where_is .= " BETWEEN '$date' and '$date2'";
-					} else {
-						show_error_msg(T_("ERROR"), "Two dates needed for this type of search.");
-					}
-				} elseif ($datetype == "1") {
-					$where_is .= "< '$date'";
-				} elseif ($datetype == "2") {
-					$where_is .= "> '$date'";
-				}
-			}
-		}
+        // date joined
+        $date = trim($_GET['d']);
+        if ($date) {
+            if (!$date = mkdate($date)) {
+                show_error_msg(T_("ERROR"), "Invalid date.");
+            }
+            $q .= ($q ? "&amp;" : "") . "d=$date";
+            $datetype = $_GET['dt'];
+            $q .= ($q ? "&amp;" : "") . "dt=$datetype";
+            if ($datetype == "0") {
+                // For mySQL 4.1.1 or above use instead
+                // $where_is .= (isset($where_is)?" AND ":"")."DATE(added) = DATE('$date')";
+                $where_is .= (isset($where_is)?" AND ":"")."(UNIX_TIMESTAMP(added) - UNIX_TIMESTAMP('$date')) BETWEEN 0 and 86400";
+            } else {
+                $where_is .= (isset($where_is)?" AND ":"")."u.added ";
+                if ($datetype == "3") {
+                    $date2 = mkdate(trim($_GET['d2']));
+                    if ($date2) {
+                        if (!$date = mkdate($date)) {
+                            show_error_msg(T_("ERROR"), "Invalid date.");
+                        }
+                        $q .= ($q ? "&amp;" : "") . "d2=$date2";
+                        $where_is .= " BETWEEN '$date' and '$date2'";
+                    } else {
+                        show_error_msg(T_("ERROR"), "Two dates needed for this type of search.");
+                    }
+                } elseif ($datetype == "1") {
+                    $where_is .= "< '$date'";
+                } elseif ($datetype == "2") {
+                    $where_is .= "> '$date'";
+                }
+            }
+        }
 
-		// date last seen
-		$last = trim($_GET['ls']);
-		if ($last) {
-			if (!$last = mkdate($last)) {
-				show_error_msg(T_("ERROR"), "Invalid date.");
-			}
-			$q .= ($q ? "&amp;" : "") . "ls=$last";
-			$lasttype = $_GET['lst'];
-			$q .= ($q ? "&amp;" : "") . "lst=$lasttype";
-			if ($lasttype == "0") {
-				// For mySQL 4.1.1 or above use instead
-				// $where_is .= (isset($where_is)?" AND ":"")."DATE(added) = DATE('$date')";
-				$where_is .= (isset($where_is)?" AND ":"")."(UNIX_TIMESTAMP(last_access) - UNIX_TIMESTAMP('$last')) BETWEEN 0 and 86400";
-			} else {
-				$where_is .= (isset($where_is)?" AND ":"")."u.last_access ";
-				if ($lasttype == "3") {
-					$last2 = mkdate(trim($_GET['ls2']));
-					if ($last2) {
-						$where_is .= " BETWEEN '$last' and '$last2'";
-						$q .= ($q ? "&amp;" : "") . "ls2=$last2";
-					} else {
-						show_error_msg(T_("ERROR"), "The second date is not valid.");
-					}
-				} elseif ($lasttype == "1") {
-					$where_is .= "< '$last'";
-				} elseif ($lasttype == "2") {
-					$where_is .= "> '$last'";
-				}
-			}
-		}
+        // date last seen
+        $last = trim($_GET['ls']);
+        if ($last) {
+            if (!$last = mkdate($last)) {
+                show_error_msg(T_("ERROR"), "Invalid date.");
+            }
+            $q .= ($q ? "&amp;" : "") . "ls=$last";
+            $lasttype = $_GET['lst'];
+            $q .= ($q ? "&amp;" : "") . "lst=$lasttype";
+            if ($lasttype == "0") {
+                // For mySQL 4.1.1 or above use instead
+                // $where_is .= (isset($where_is)?" AND ":"")."DATE(added) = DATE('$date')";
+                $where_is .= (isset($where_is)?" AND ":"")."(UNIX_TIMESTAMP(last_access) - UNIX_TIMESTAMP('$last')) BETWEEN 0 and 86400";
+            } else {
+                $where_is .= (isset($where_is)?" AND ":"")."u.last_access ";
+                if ($lasttype == "3") {
+                    $last2 = mkdate(trim($_GET['ls2']));
+                    if ($last2) {
+                        $where_is .= " BETWEEN '$last' and '$last2'";
+                        $q .= ($q ? "&amp;" : "") . "ls2=$last2";
+                    } else {
+                        show_error_msg(T_("ERROR"), "The second date is not valid.");
+                    }
+                } elseif ($lasttype == "1") {
+                    $where_is .= "< '$last'";
+                } elseif ($lasttype == "2") {
+                    $where_is .= "> '$last'";
+                }
+            }
+        }
 
-		// status
-		$status = $_GET['st'];
-		if ($status) {
-			$where_is .= ((isset($where_is))?" AND ":"");
-			if ($status == "1") {
-				$where_is .= "u.status = 'confirmed'";
-			} else {
-				$where_is .= "u.status = 'pending' AND u.invited_by = '0'";
-			}
-			$q .= ($q ? "&amp;" : "") . "st=$status";
-		} 
+        // status
+        $status = $_GET['st'];
+        if ($status) {
+            $where_is .= ((isset($where_is))?" AND ":"");
+            if ($status == "1") {
+                $where_is .= "u.status = 'confirmed'";
+            } else {
+                $where_is .= "u.status = 'pending' AND u.invited_by = '0'";
+            }
+            $q .= ($q ? "&amp;" : "") . "st=$status";
+        } 
 
-		// account status
-		$accountstatus = $_GET['as'];
-		if ($accountstatus) {
-			$where_is .= (isset($where_is))?" AND ":"";
-			if ($accountstatus == "1") {
-				$where_is .= " u.enabled = 'yes'";
-			} else {
-				$where_is .= " u.enabled = 'no'";
-			}
-			$q .= ($q ? "&amp;" : "") . "as=$accountstatus";
-		}
+        // account status
+        $accountstatus = $_GET['as'];
+        if ($accountstatus) {
+            $where_is .= (isset($where_is))?" AND ":"";
+            if ($accountstatus == "1") {
+                $where_is .= " u.enabled = 'yes'";
+            } else {
+                $where_is .= " u.enabled = 'no'";
+            }
+            $q .= ($q ? "&amp;" : "") . "as=$accountstatus";
+        }
 
-		//donor
-		$donor = $_GET['do'];
-		if ($donor) {
-			$where_is .= (isset($where_is))?" AND ":"";
-			if ($donor == 1) {
-				$where_is .= " u.donated > '1'";
-			} else {
-				$where_is .= " u.donated < '1'";
-			}
-			$q .= ($q ? "&amp;" : "") . "do=$donor";
-		}
+        //donor
+        $donor = $_GET['do'];
+        if ($donor) {
+            $where_is .= (isset($where_is))?" AND ":"";
+            if ($donor == 1) {
+                $where_is .= " u.donated > '1'";
+            } else {
+                $where_is .= " u.donated < '1'";
+            }
+            $q .= ($q ? "&amp;" : "") . "do=$donor";
+        }
 
-		//warned
-		$warned = $_GET['w'];
-		if ($warned) {
-			$where_is .= (isset($where_is))?" AND ":"";
-			if ($warned == 1) {
-				$where_is .= " u.warned = 'yes'";
-			} else {
-				$where_is .= " u.warned = 'no'";
-			}
-			$q .= ($q ? "&amp;" : "") . "w=$warned";
-		}
+        //warned
+        $warned = $_GET['w'];
+        if ($warned) {
+            $where_is .= (isset($where_is))?" AND ":"";
+            if ($warned == 1) {
+                $where_is .= " u.warned = 'yes'";
+            } else {
+                $where_is .= " u.warned = 'no'";
+            }
+            $q .= ($q ? "&amp;" : "") . "w=$warned";
+        }
 
-		// disabled IP
-		$disabled = $_GET['dip'];
-		if ($disabled) {
-			$distinct = "DISTINCT ";
-			$join_is .= " LEFT JOIN users AS u2 ON u.ip = u2.ip";
-			$where_is .= ((isset($where_is))?" AND ":"")."u2.enabled = 'no'";
-			$q .= ($q ? "&amp;" : "") . "dip=$disabled";
-		}
+        // disabled IP
+        $disabled = $_GET['dip'];
+        if ($disabled) {
+            $distinct = "DISTINCT ";
+            $join_is .= " LEFT JOIN users AS u2 ON u.ip = u2.ip";
+            $where_is .= ((isset($where_is))?" AND ":"")."u2.enabled = 'no'";
+            $q .= ($q ? "&amp;" : "") . "dip=$disabled";
+        }
 
-		// active
-		$active = $_GET['ac'];
-		if ($active == "1") {
-			$distinct = "DISTINCT ";
-			$join_is .= " LEFT JOIN peers AS p ON u.id = p.userid";
-			$q .= ($q ? "&amp;" : "") . "ac=$active";
-		}
+        // active
+        $active = $_GET['ac'];
+        if ($active == "1") {
+            $distinct = "DISTINCT ";
+            $join_is .= " LEFT JOIN peers AS p ON u.id = p.userid";
+            $q .= ($q ? "&amp;" : "") . "ac=$active";
+        }
 
-		$from_is = "users AS u".$join_is;
-		$distinct = isset($distinct)?$distinct:"";
+        $from_is = "users AS u".$join_is;
+        $distinct = isset($distinct)?$distinct:"";
 
         # To Avoid Confusion we skip invite_* which are invited users which haven't confirmed yet, visit admincp.php?action=pendinginvited
         $where_is .= (isset($where_is))?" AND ":"";   
         $where_is .= "u.username NOT LIKE '%invite_%'";
         
-		$queryc = "SELECT COUNT(".$distinct."u.id) FROM ".$from_is.
-		(($where_is == "")?"":" WHERE $where_is ");
+        $queryc = "SELECT COUNT(".$distinct."u.id) FROM ".$from_is.
+        (($where_is == "")?"":" WHERE $where_is ");
 
-		$querypm = "FROM ".$from_is.(($where_is == "")?" ":" WHERE $where_is ");
+        $querypm = "FROM ".$from_is.(($where_is == "")?" ":" WHERE $where_is ");
 
-		$select_is = "u.id, u.username, u.email, u.status, u.added, u.last_access, u.ip,
-		u.class, u.uploaded, u.downloaded, u.donated, u.modcomment, u.enabled, u.warned, u.invited_by";
+        $select_is = "u.id, u.username, u.email, u.status, u.added, u.last_access, u.ip,
+        u.class, u.uploaded, u.downloaded, u.donated, u.modcomment, u.enabled, u.warned, u.invited_by";
 
-		$query = "SELECT ".$distinct." ".$select_is." ".$querypm;
+        $query = "SELECT ".$distinct." ".$select_is." ".$querypm;
 
-		$res = SQL_Query_exec($queryc);
-		$arr = mysql_fetch_row($res);
-		$count = $arr[0];
+        $res = SQL_Query_exec($queryc);
+        $arr = mysqli_fetch_row($res);
+        $count = $arr[0];
 
-		$q = isset($q)?($q."&amp;"):"";
+        $q = isset($q)?($q."&amp;"):"";
 
-		$perpage = 25;
+        $perpage = 25;
 
-		list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=usersearch&amp;$q");
+        list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, "admincp.php?action=usersearch&amp;$q");
 
-		$query .= $limit;
+        $query .= $limit;
 
-		$res = SQL_Query_exec($query);
+        $res = SQL_Query_exec($query);
 
-		if (mysql_num_rows($res) == 0) {
-		show_error_msg("Warning","No user was found.", 0);
-		} else {
-			if ($count > $perpage) {
-				echo $pagertop;
-			}
+        if (mysqli_num_rows($res) == 0) {
+        show_error_msg("Warning","No user was found.", 0);
+        } else {
+            if ($count > $perpage) {
+                echo $pagertop;
+            }
             echo "<form action='admincp.php?action=usersearch&amp;do=warndisable' method='post'>";
-			echo "<table border='0' class='table_table' cellspacing='0' cellpadding='0' width='100%'>\n";
-			echo "<tr><th class='table_head'>".T_("NAME")."</th>
-			<th class='table_head'>IP</th>
-			<th class='table_head'>".T_("EMAIL")."</th>".
-			"<th class='table_head'>Joined:</th>".
-			"<th class='table_head'>Last Seen:</th>".
-			"<th class='table_head'>Status</th>".
-			"<th class='table_head'>Enabled</th>".
-			"<th class='table_head'>Ratio</th>".
-			"<th class='table_head'>Uploaded</th>".
-			"<th class='table_head'>Downloaded</th>".
-			"<th class='table_head'>History</th>".
-			"<th class='table_head' colspan='2'>Status</th></tr>\n";
+            echo "<table border='0' class='table_table' cellspacing='0' cellpadding='0' width='100%'>\n";
+            echo "<tr><th class='table_head'>".T_("NAME")."</th>
+            <th class='table_head'>IP</th>
+            <th class='table_head'>".T_("EMAIL")."</th>".
+            "<th class='table_head'>Joined:</th>".
+            "<th class='table_head'>Last Seen:</th>".
+            "<th class='table_head'>Status</th>".
+            "<th class='table_head'>Enabled</th>".
+            "<th class='table_head'>Ratio</th>".
+            "<th class='table_head'>Uploaded</th>".
+            "<th class='table_head'>Downloaded</th>".
+            "<th class='table_head'>History</th>".
+            "<th class='table_head' colspan='2'>Status</th></tr>\n";
 
-			while ($user = mysql_fetch_array($res)) {
+            while ($user = mysqli_fetch_array($res)) {
                 
-				if ($user['added'] == '0000-00-00 00:00:00')
-					$user['added'] = '---';
-				if ($user['last_access'] == '0000-00-00 00:00:00')
-					$user['last_access'] = '---';
+                if ($user['added'] == '0000-00-00 00:00:00')
+                    $user['added'] = '---';
+                if ($user['last_access'] == '0000-00-00 00:00:00')
+                    $user['last_access'] = '---';
 
-			if ($user['ip']) {
-				$ipstr = $user['ip'];
-			} else {
-				$ipstr = "---";
-			}
+            if ($user['ip']) {
+                $ipstr = $user['ip'];
+            } else {
+                $ipstr = "---";
+            }
 
-			$pul = $user['uploaded'];
-			$pdl = $user['downloaded'];
+            $pul = $user['uploaded'];
+            $pdl = $user['downloaded'];
 
 
-			$auxres = SQL_Query_exec("SELECT COUNT(DISTINCT p.id) FROM forum_posts AS p LEFT JOIN forum_topics as t ON p.topicid = t.id
-			LEFT JOIN forum_forums AS f ON t.forumid = f.id WHERE p.userid = " . $user['id'] . " AND f.minclassread <= " .
-			$CURUSER['class']);
+            $auxres = SQL_Query_exec("SELECT COUNT(DISTINCT p.id) FROM forum_posts AS p LEFT JOIN forum_topics as t ON p.topicid = t.id
+            LEFT JOIN forum_forums AS f ON t.forumid = f.id WHERE p.userid = " . $user['id'] . " AND f.minclassread <= " .
+            $CURUSER['class']);
 
-			$n = mysql_fetch_row($auxres);
-			$n_posts = $n[0];
+            $n = mysqli_fetch_row($auxres);
+            $n_posts = $n[0];
 
-			$auxres = SQL_Query_exec("SELECT COUNT(id) FROM comments WHERE user = ".$user['id']);
-			$n = mysql_fetch_row($auxres);
-			$n_comments = $n[0];
+            $auxres = SQL_Query_exec("SELECT COUNT(id) FROM comments WHERE user = ".$user['id']);
+            $n = mysqli_fetch_row($auxres);
+            $n_comments = $n[0];
 
-			echo "<tr><td class='table_col1' align='center'><b><a href='account-details.php?id=$user[id]'>$user[username]</a></b></td>" .
-				"<td class='table_col2' align='center'>" . $ipstr . "</td><td class='table_col1' align='center'>" . $user['email'] . "</td>".
-				"<td class='table_col2' align='center'>" . utc_to_tz($user['added']) . "</td>".
-				"<td class='table_col1' align='center'>" . $user['last_access'] . "</td>".
-				"<td class='table_col2' align='center'>" . $user['status'] . "</td>".
-				"<td class='table_col1' align='center'>" . $user['enabled']."</td>".
-				"<td class='table_col2' align='center'>" . ratios($pul,$pdl) . "</td>".
-				"<td class='table_col1' align='center'>" . mksize($user['uploaded']) . "</td>".
-				"<td class='table_col2' align='center'>" . mksize($user['downloaded']) . "</td>".
-				"<td class='table_col1' align='center'>$n_posts ".P_("POST", $n_posts)."<br />$n_comments ".P_("COMMENT", $n_comments)."</td>".
-				// This line actually needs rewriting, difficult to edit.                                                                                                                                                                                                                                                                                                                                          
-				"<td class='table_col2' align='center'>".($user["enabled"] == "yes" && $user["warned"] == "no" ? "--" : ($user["enabled"] == "no" ? "<img src=\"images/disable.png\" title=\"".T_("DISABLED")."\" alt=\"Disabled\" />" : "") . ($user["warned"] == "yes" ? "<img src=\"images/warned.png\" title=\"".T_("WARNED")."\" alt=\"Warned\" />" : "")) . "</td>"."<td class='table_col1' align='center'><input type='checkbox' name=\"warndisable[]\" value='" . $user['id'] . "' /><input type='hidden' name=\"referer\" value=\"$_SERVER[REQUEST_URI]\" /></td></tr>\n";
-			}
-			echo "</table>
+            echo "<tr><td class='table_col1' align='center'><b><a href='account-details.php?id=$user[id]'>$user[username]</a></b></td>" .
+                "<td class='table_col2' align='center'>" . $ipstr . "</td><td class='table_col1' align='center'>" . $user['email'] . "</td>".
+                "<td class='table_col2' align='center'>" . utc_to_tz($user['added']) . "</td>".
+                "<td class='table_col1' align='center'>" . $user['last_access'] . "</td>".
+                "<td class='table_col2' align='center'>" . $user['status'] . "</td>".
+                "<td class='table_col1' align='center'>" . $user['enabled']."</td>".
+                "<td class='table_col2' align='center'>" . ratios($pul,$pdl) . "</td>".
+                "<td class='table_col1' align='center'>" . mksize($user['uploaded']) . "</td>".
+                "<td class='table_col2' align='center'>" . mksize($user['downloaded']) . "</td>".
+                "<td class='table_col1' align='center'>$n_posts ".P_("POST", $n_posts)."<br />$n_comments ".P_("COMMENT", $n_comments)."</td>".
+                // This line actually needs rewriting, difficult to edit.                                                                                                                                                                                                                                                                                                                                          
+                "<td class='table_col2' align='center'>".($user["enabled"] == "yes" && $user["warned"] == "no" ? "--" : ($user["enabled"] == "no" ? "<img src=\"images/disable.png\" title=\"".T_("DISABLED")."\" alt=\"Disabled\" />" : "") . ($user["warned"] == "yes" ? "<img src=\"images/warned.png\" title=\"".T_("WARNED")."\" alt=\"Warned\" />" : "")) . "</td>"."<td class='table_col1' align='center'><input type='checkbox' name=\"warndisable[]\" value='" . $user['id'] . "' /><input type='hidden' name=\"referer\" value=\"$_SERVER[REQUEST_URI]\" /></td></tr>\n";
+            }
+            echo "</table>
             <br />
-			<table border='0' align='center' cellspacing='0' cellpadding='0'>
-			<tr><td colspan='2'></td></tr>
-			<tr><td align='right'><img src=\"images/disable.png\" alt=\"Disabled\" /> <input type='submit' name='disable' value=\"Disable Selected Accounts\" /></td><td style=\"border: none; padding: 2px;\" align='left'><input type='submit' name='enable' value=\"Enable Selected Accounts\" /> <img src=\"images/disable.png\" alt=\"Disabled\" /> <img src=\"images/check.gif\" alt=\"Ok\" /></td></tr>
-			<tr><td colspan='2'><br /><br /></td></tr>
-			<tr><td align='center'><img src=\"images/warned.png\" alt=\"Warned\" /> <input type='submit' name='warn' value=\"Warn Selected\" /></td><td align='left'><input type='submit' name='unwarn' value=\"Remove Warning Selected\" /> <img src=\"images/warned.png\" alt=\"Warned\" /> <img src=\"images/check.gif\" alt=\"Ok\" /></td></tr>
-			<tr><td align='center' colspan='2'>Mod Comment (reason):<input type='text' size='30' name='warnpm' /></td></tr>
-			</table></form>\n";
+            <table border='0' align='center' cellspacing='0' cellpadding='0'>
+            <tr><td colspan='2'></td></tr>
+            <tr><td align='right'><img src=\"images/disable.png\" alt=\"Disabled\" /> <input type='submit' name='disable' value=\"Disable Selected Accounts\" /></td><td style=\"border: none; padding: 2px;\" align='left'><input type='submit' name='enable' value=\"Enable Selected Accounts\" /> <img src=\"images/disable.png\" alt=\"Disabled\" /> <img src=\"images/check.gif\" alt=\"Ok\" /></td></tr>
+            <tr><td colspan='2'><br /><br /></td></tr>
+            <tr><td align='center'><img src=\"images/warned.png\" alt=\"Warned\" /> <input type='submit' name='warn' value=\"Warn Selected\" /></td><td align='left'><input type='submit' name='unwarn' value=\"Remove Warning Selected\" /> <img src=\"images/warned.png\" alt=\"Warned\" /> <img src=\"images/check.gif\" alt=\"Ok\" /></td></tr>
+            <tr><td align='center' colspan='2'>Mod Comment (reason):<input type='text' size='30' name='warnpm' /></td></tr>
+            </table></form>\n";
    
-			if ($count > $perpage) {
-				echo $pagerbottom;
-			}
-		}
-	}
+            if ($count > $perpage) {
+                echo $pagerbottom;
+            }
+        }
+    }
 
-	end_frame();
-	stdfoot();
+    end_frame();
+    stdfoot();
 }
 // End Advanced User Search
 
@@ -4396,11 +4399,11 @@ if ($action == "forum") {
         
         $res = SQL_Query_exec("SELECT id FROM forum_forums WHERE category = $_POST[id]");
         
-        while ( $row = mysql_fetch_assoc($res) )
+        while ( $row = mysqli_fetch_assoc($res) )
         {
             $res2 = SQL_Query_exec("SELECT id FROM forum_topics WHERE forumid = $row[id]");
             
-            while ( $arr = mysql_fetch_assoc($res2) )
+            while ( $arr = mysqli_fetch_assoc($res2) )
             {
                 SQL_Query_exec("DELETE FROM forum_posts WHERE topicid = $arr[id]");
                 SQL_Query_exec("DELETE FROM forum_readposts WHERE topicid = $arr[id]");
@@ -4416,7 +4419,7 @@ if ($action == "forum") {
     stdhead(T_("FORUM_MANAGEMENT"));
     
     $groupsres = SQL_Query_exec("SELECT group_id, level FROM groups ORDER BY group_id ASC");
-    while ($groupsrow = mysql_fetch_row($groupsres))
+    while ($groupsrow = mysqli_fetch_row($groupsres))
         $groups[$groupsrow[0]] = $groupsrow[1];
 
     if ($_GET["do"] == "edit_forum") {
@@ -4424,7 +4427,7 @@ if ($action == "forum") {
         $id = (int) $_GET["id"];
         
         $q = SQL_Query_exec("SELECT * FROM forum_forums WHERE id = '$id'");
-        $r = mysql_fetch_array($q);
+        $r = mysqli_fetch_array($q);
         
         if (!$r)
              autolink("admincp.php?action=forum", T_("FORUM_INVALID"));
@@ -4449,7 +4452,7 @@ if ($action == "forum") {
           <td align='right'><select name='changed_forum_cat'>
     <?php
     $query = SQL_Query_exec("SELECT * FROM forumcats ORDER BY sort, name");
-    while ($row = mysql_fetch_array($query))
+    while ($row = mysqli_fetch_array($query))
         echo "<option value='{$row['id']}'>{$row['name']}</option>";
 
     echo "</select></td></tr>
@@ -4484,7 +4487,7 @@ if ($_GET["do"] == "del_forum") {
     $id = (int) $_GET["id"];
     
     $t = SQL_Query_exec("SELECT * FROM forum_forums WHERE id = '$id'");
-    $v = mysql_fetch_array($t);
+    $v = mysqli_fetch_array($t);
     
     if (!$v)
          autolink("admincp.php?action=forum", T_("FORUM_INVALID"));
@@ -4507,7 +4510,7 @@ if ($_GET["do"] == "del_forumcat") {
     $id = (int) $_GET["id"];
 
     $t = SQL_Query_exec("SELECT * FROM forumcats WHERE id = '$id'");
-    $v = mysql_fetch_array($t);
+    $v = mysqli_fetch_array($t);
     
     if (!$v)
          autolink("admincp.php?action=forum", T_("FORUM_INVALID_CAT"));
@@ -4530,7 +4533,7 @@ if ($_GET["do"] == "edit_forumcat") {
     $id = (int) $_GET["id"];
 
     $q = SQL_Query_exec("SELECT * FROM forumcats WHERE id = '$id'");
-    $r = mysql_fetch_array($q);
+    $r = mysqli_fetch_array($q);
     
     if (!$r)
          autolink("admincp.php?action=forum", T_("FORUM_INVALID_CAT")); 
@@ -4557,9 +4560,9 @@ if ($_GET["do"] == "edit_forumcat") {
         navmenu();
         begin_frame(T_("FORUM_MANAGEMENT"));
         $query = SQL_Query_exec("SELECT * FROM forumcats ORDER BY sort, name");
-        $allcat = mysql_num_rows($query);
+        $allcat = mysqli_num_rows($query);
         $forumcat = array();
-        while ($row = mysql_fetch_array($query))
+        while ($row = mysqli_fetch_array($query))
             $forumcat[] = $row;
 
         echo "
@@ -4629,11 +4632,11 @@ echo "</table>
 
 echo "<tr><th class='table_head' width='60'><font size='2'><b>".T_("ID")."</b></font></th><th class='table_head' width='120'>".T_("NAME")."</th><th class='table_head' width='250'>DESC</th><th class='table_head' width='45'>".T_("SORT")."</th><th class='table_head' width='45'>CATEGORY</th><th class='table_head' width='18'>".T_("EDIT")."</th><th class='table_head' width='18'>".T_("DEL")."</th></tr>\n";
 $query = SQL_Query_exec("SELECT * FROM forum_forums ORDER BY sort, name");
-$allforums = mysql_num_rows($query);
+$allforums = mysqli_num_rows($query);
 if ($allforums == 0) {
     echo "<tr><td class='table_col1' colspan='7' align='center'>No Forums found</td></tr>\n";
 } else {
-    while($row = mysql_fetch_array($query)) {
+    while($row = mysqli_fetch_array($query)) {
         foreach ($forumcat as $cat)
             if ($cat['id'] == $row['category'])
                 $category = $cat['name'];

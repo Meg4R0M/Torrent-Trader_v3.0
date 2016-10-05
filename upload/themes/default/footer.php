@@ -1,8 +1,8 @@
               <?php
-				if ($site_config["MIDDLENAV"]){
-					middleblocks();
-				} //MIDDLENAV ON/OFF END
-			  ?>
+                if ($site_config["MIDDLENAV"]){
+                    middleblocks();
+                } //MIDDLENAV ON/OFF END
+              ?>
               <!-- END MAIN COLUM -->
             </td>
             <!-- START RIGHT COLUMN -->
@@ -11,7 +11,7 @@
     // Most users online
 $monli = "SELECT * FROM mostonline";
 $result = SQL_Query_exec($monli);
-$details = mysql_fetch_array($result);
+$details = mysqli_fetch_array($result);
 
 if ($totalonline > $details['amount'])
 {
@@ -48,7 +48,7 @@ $date1=date("D, d M Y H:i:s", strtotime($details['date']));
     <div id="col-switch">
     <?php echo $link; ?>
     
-	<?php endif; # Changed. ?> 
+    <?php endif; # Changed. ?> 
     
     </div>
      <?php
@@ -67,13 +67,13 @@ $members = number_format(get_row_count("users", "WHERE UNIX_TIMESTAMP('" . get_d
 $totalonline = $members + $guests;
 
 $result = SQL_Query_exec("SELECT SUM(downloaded) AS totaldl FROM users"); 
-while ($row = mysql_fetch_array ($result)) { 
-	$totaldownloaded = $row["totaldl"]; 
+while ($row = mysqli_fetch_array($result)) { 
+    $totaldownloaded = $row["totaldl"]; 
 } 
 
 $result = SQL_Query_exec("SELECT SUM(uploaded) AS totalul FROM users"); 
-while ($row = mysql_fetch_array ($result)) { 
-	$totaluploaded      = $row["totalul"]; 
+while ($row = mysqli_fetch_array($result)) { 
+    $totaluploaded      = $row["totalul"]; 
 }
 $localpeers = $leechers+$seeders;
 
@@ -81,7 +81,7 @@ $localpeers = $leechers+$seeders;
 begin_frame("Stats");
 $monli = "SELECT * FROM mostonline";
 $result = SQL_Query_exec($monli);
-$details = mysql_fetch_array($result);
+$details = mysqli_fetch_array($result);
 
 if ($totalonline > $details['amount'])
 {
@@ -95,7 +95,7 @@ $expire = 10; // time in seconds
 $guests = number_format(getguests());
 $members = number_format(get_row_count("users", "WHERE UNIX_TIMESTAMP('" . get_date_time() . "') - UNIX_TIMESTAMP(users.last_access) < 900"));
 echo "<b> " . $guests . "</b> Guests - <b> " . $members . "</b> Members<br>";
-$a = @mysql_fetch_assoc(@mysql_query("SELECT id,username FROM users WHERE status='confirmed' ORDER BY id DESC LIMIT 1"));
+$a = @mysqli_fetch_assoc(@mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id,username FROM users WHERE status='confirmed' ORDER BY id DESC LIMIT 1"));
 if ($CURUSER)
 $latestuser = "<a href=../user/?id=" . $a["id"] . ">" . $a["username"] . "</a>";
 else
@@ -105,9 +105,9 @@ if (file_exists($file) &&
 filemtime($file) > (time() - $expire)) {
 $usersonlinerecords = unserialize(file_get_contents($file));
 }else{
-$usersonlinequery = mysql_query("SELECT id, username, class FROM users WHERE privacy !='strong' AND UNIX_TIMESTAMP('" . get_date_time() . "') - UNIX_TIMESTAMP(users.last_access) < 900") or die(mysql_error());
+$usersonlinequery = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id, username, class FROM users WHERE privacy !='strong' AND UNIX_TIMESTAMP('" . get_date_time() . "') - UNIX_TIMESTAMP(users.last_access) < 900") or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
 
-while ($usersonlinerecord = mysql_fetch_array($usersonlinequery) ) {
+while ($usersonlinerecord = mysqli_fetch_array($usersonlinequery) ) {
 $usersonlinerecords[] = $usersonlinerecord;
 }
 $OUTPUT = serialize($usersonlinerecords);
@@ -120,27 +120,27 @@ echo "No members OnLine";
 }else{
 foreach ($usersonlinerecords as $user) {
 switch($user["class"]){
-		case 1:
-			$color = "#00FFFF";// user
-			break;
-		case 2:
-			$color = "#FF7519";// power user
-			break;
-		case 3:
-			$color = "#990099";// VIP
-			break;
-		case 4:
-			$color = "#0000FF";// uploader
-			break;
-		case 5:
-			$color = "#009900";//moderator
-			break;
-		case 6:
-			$color = "#00FF00";//super moderator
-			break;
-		case 7:
-			$color = "#FF0000";// you and most trusted 
-			break;
+        case 1:
+            $color = "#00FFFF";// user
+            break;
+        case 2:
+            $color = "#FF7519";// power user
+            break;
+        case 3:
+            $color = "#990099";// VIP
+            break;
+        case 4:
+            $color = "#0000FF";// uploader
+            break;
+        case 5:
+            $color = "#009900";//moderator
+            break;
+        case 6:
+            $color = "#00FF00";//super moderator
+            break;
+        case 7:
+            $color = "#FF0000";// you and most trusted 
+            break;
 }
 print("<a href=\"../user/?id=".$user["id"]."\"><font style=\" color: ".$color."\">".class_user($user["username"])."</font></a>, ");
 }
@@ -162,66 +162,66 @@ end_frame();
 begin_frame("$members2 Users Online Last 24 Hours");
 
 $resew = SQL_Query_exec("SELECT id, username, class, donated, warned FROM users WHERE UNIX_TIMESTAMP('".get_date_time()."') - UNIX_TIMESTAMP(users.last_access) <= 86400 ORDER BY username");
-while ($arr = mysql_fetch_assoc($resew))
+while ($arr = mysqli_fetch_assoc($resew))
 {
 if ($todayactive)
-	 $todayactive .= ", ";
+     $todayactive .= ", ";
 switch ($arr["class"])
 {
-	 case 7:
-	 $arr["username"] = "<font color=#FF0000>" . class_user($arr['username']) . "</font>";
-	 break;
-	 case 6:
-	 $arr["username"] = "<font color=#00FF00>" . class_user($arr['username']) . "</font>";
-	 break;
-	 case 5:
-	 $arr["username"] = "<font color=#009900>" . class_user($arr['username']) . "</font>";
-	 break;
-	 case 4:
-	 $arr["username"] = "<font color=#0000FF>" . class_user($arr['username']) . "</font>";
-	 break;
-	 case 3:
-	 $arr["username"] = "<font color=#990099>" . class_user($arr['username']) . "</font>";
-	 break;
-	 case 2:
-	 $arr["username"] = "<font color=#FF7519>" . class_user($arr['username']) . "</font>";
-	 break;
-	 case 1:
-	 $arr["username"] = "<font color=#00FFFF>" . class_user($arr['username']) . "</font>";
-	 break;				
-		 }
-	
-	 $donator = $arr["donated"] > 0;
+     case 7:
+     $arr["username"] = "<font color=#FF0000>" . class_user($arr['username']) . "</font>";
+     break;
+     case 6:
+     $arr["username"] = "<font color=#00FF00>" . class_user($arr['username']) . "</font>";
+     break;
+     case 5:
+     $arr["username"] = "<font color=#009900>" . class_user($arr['username']) . "</font>";
+     break;
+     case 4:
+     $arr["username"] = "<font color=#0000FF>" . class_user($arr['username']) . "</font>";
+     break;
+     case 3:
+     $arr["username"] = "<font color=#990099>" . class_user($arr['username']) . "</font>";
+     break;
+     case 2:
+     $arr["username"] = "<font color=#FF7519>" . class_user($arr['username']) . "</font>";
+     break;
+     case 1:
+     $arr["username"] = "<font color=#00FFFF>" . class_user($arr['username']) . "</font>";
+     break;                
+         }
+    
+     $donator = $arr["donated"] > 0;
 if ($CURUSER) {
-	 $todayactive .= "<b><a href=../user/?id=" . $arr["id"] . ">" . class_user($arr['username']) . "</b></a></a>";
+     $todayactive .= "<b><a href=../user/?id=" . $arr["id"] . ">" . class_user($arr['username']) . "</b></a></a>";
 } else {
-	 $todayactive .= "<b><a href=../user/?id=" . $arr["id"] . ">" . class_user($arr['username']) . "</b></a></a>";
+     $todayactive .= "<b><a href=../user/?id=" . $arr["id"] . ">" . class_user($arr['username']) . "</b></a></a>";
 }
 if ($donator) {
-	 $todayactive .= "<img src=\"images/star.gif\" title=\"You have contributed to the success of the site!\">";
+     $todayactive .= "<img src=\"images/star.gif\" title=\"You have contributed to the success of the site!\">";
 }
 $warned = $arr["warned"] == "yes";
 if ($warned) {
-	 $todayactive .= "<img src=\"images/warn.gif\" title=\"You had a warning from staff!!\">";
+     $todayactive .= "<img src=\"images/warn.gif\" title=\"You had a warning from staff!!\">";
 }
 $usersactivetoday++;
-		 }
+         }
 
 echo "<div align='left'>" . $todayactive . "</div>";
 echo "<br />";
 end_frame();
 }
 if ($site_config['DISCLAIMERON']){
-	begin_frame(T_("DISCLAIMER"));
-	echo T_("DISCLAIMERTXT");
-	end_frame();
+    begin_frame(T_("DISCLAIMER"));
+    echo T_("DISCLAIMERTXT");
+    end_frame();
 }
 ?>
   <!-- START FOOTER CODE -->
         <?php
         //
         // *************************************************************************************************************************************
-        //			PLEASE DO NOT REMOVE THE POWERED BY LINE, SHOW SOME SUPPORT! WE WILL NOT SUPPORT ANYONE WHO HAS THIS LINE EDITED OR REMOVED!
+        //            PLEASE DO NOT REMOVE THE POWERED BY LINE, SHOW SOME SUPPORT! WE WILL NOT SUPPORT ANYONE WHO HAS THIS LINE EDITED OR REMOVED!
         // *************************************************************************************************************************************
         print ("<center>Powered by <a href=\"http://www.torrenttrader.org\" target=\"_blank\">TorrentTrader v".$site_config["ttversion"]."</a> - ");
         $totaltime = array_sum(explode(" ", microtime())) - $GLOBALS['tstart'];
@@ -229,7 +229,7 @@ if ($site_config['DISCLAIMERON']){
         print (" - Theme By: <a href=\"http://nikkbu.info\" target=\"_blank\">Nikkbu</a> & <a href=\"https://www.facebook.com/l3oncod3r\" target=\"_blank\">leoncoder</a></center>");
         //
         // *************************************************************************************************************************************
-        //			PLEASE DO NOT REMOVE THE POWERED BY LINE, SHOW SOME SUPPORT! WE WILL NOT SUPPORT ANYONE WHO HAS THIS LINE EDITED OR REMOVED!
+        //            PLEASE DO NOT REMOVE THE POWERED BY LINE, SHOW SOME SUPPORT! WE WILL NOT SUPPORT ANYONE WHO HAS THIS LINE EDITED OR REMOVED!
         // *************************************************************************************************************************************
         //
         ?>
@@ -238,4 +238,4 @@ if ($site_config['DISCLAIMERON']){
 
 </body>
 </html>
-<?php ob_end_flush(); ?>
+<?php ob_end_flush(); ?> 

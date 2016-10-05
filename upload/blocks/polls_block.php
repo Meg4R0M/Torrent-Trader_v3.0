@@ -13,20 +13,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $CURUSER && $_POST["act"] == "takepo
 	$choice = $_POST["choice"];
 	if ($choice != "" && $choice < 256 && $choice == floor($choice)){
 		$res = SQL_Query_exec("SELECT * FROM polls ORDER BY added DESC LIMIT 1");
-		$arr = mysql_fetch_assoc($res) or show_error_msg(T_("ERROR"), "No Poll", 1);
+		$arr = mysqli_fetch_assoc($res) or show_error_msg(T_("ERROR"), "No Poll", 1);
 
 		$pollid = $arr["id"];
 		$userid = $CURUSER["id"];
 
 		$res = SQL_Query_exec("SELECT * FROM pollanswers WHERE pollid=$pollid && userid=$userid");
-		$arr = mysql_fetch_assoc($res);
+		$arr = mysqli_fetch_assoc($res);
 
 		if ($arr){
 			show_error_msg(T_("ERROR"), "You have already voted!", 0);
 		}else{
 
 			SQL_Query_exec("INSERT INTO pollanswers VALUES(0, $pollid, $userid, $choice)");
-			if (mysql_affected_rows() != 1)
+			if (mysqli_affected_rows() != 1)
 					show_error_msg(T_("ERROR"), "An error occured. Your vote has not been counted.", 0);
 		}
 	}else{
@@ -38,8 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $CURUSER && $_POST["act"] == "takepo
 if ($CURUSER){
 	$res = SQL_Query_exec("SELECT * FROM polls ORDER BY added DESC LIMIT 1");
 
-	if($pollok=(mysql_num_rows($res))) {
-		$arr = mysql_fetch_assoc($res);
+	if($pollok=(mysqli_num_rows($res))) {
+		$arr = mysqli_fetch_assoc($res);
 		$pollid = $arr["id"];
 		$userid = $CURUSER["id"];
 		$question = $arr["question"];
@@ -51,7 +51,7 @@ if ($CURUSER){
 
 		// Check if user has already voted
   		$res = SQL_Query_exec("SELECT * FROM pollanswers WHERE pollid=$pollid AND userid=$userid");
-  		$arr2 = mysql_fetch_assoc($res);
+  		$arr2 = mysqli_fetch_assoc($res);
 	}
 
 	//Display Current Poll
@@ -69,13 +69,13 @@ if ($CURUSER){
 			// we reserve 255 for blank vote.
     		$res = SQL_Query_exec("SELECT selection FROM pollanswers WHERE pollid=$pollid AND selection < 20");
 
-    		$tvotes = mysql_num_rows($res);
+    		$tvotes = mysqli_num_rows($res);
 
     		$vs = array(); // array of
     		$os = array();
 
     		// Count votes
-    		while ($arr2 = mysql_fetch_row($res))
+    		while ($arr2 = mysqli_fetch_row($res))
       		$vs[$arr2[0]] += 1;
 
     		reset($o);
