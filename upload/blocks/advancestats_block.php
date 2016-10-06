@@ -1,4 +1,4 @@
-<?php
+ <?php
 $date_time = get_date_time(gmtime()-(3600*24)); // the 24hrs is the hours you want listed
 $registered = number_format(get_row_count("users"));
 $ncomments = number_format(get_row_count("comments"));
@@ -14,47 +14,47 @@ $members = number_format(get_row_count("users", "WHERE UNIX_TIMESTAMP('" . get_d
 $totalonline = $members + $guests;
 
 $result = SQL_Query_exec("SELECT SUM(downloaded) AS totaldl FROM users"); 
-while ($row = mysql_fetch_array ($result)) { 
-	$totaldownloaded = $row["totaldl"]; 
+while ($row = mysqli_fetch_array($result)) { 
+    $totaldownloaded = $row["totaldl"]; 
 } 
 
 $result = SQL_Query_exec("SELECT SUM(uploaded) AS totalul FROM users"); 
-while ($row = mysql_fetch_array ($result)) { 
-	$totaluploaded      = $row["totalul"]; 
+while ($row = mysqli_fetch_array($result)) { 
+    $totaluploaded      = $row["totalul"]; 
 }
 $localpeers = $leechers+$seeders;
 if($CURUSER["edit_users"]=="yes") {
 begin_block(T_("STATS"));
 
-    echo "<div align='left'>";
+echo "<p id='websiteStatsList' class=''>";
 echo "<b>".T_("TORRENTS")."</b>";
-echo "<br /><small>".T_("TRACKING").":<b> $ntor ".P_("TORRENT", $ntor)."</b></small>";
-echo "<br /><small>".T_("NEW_TODAY").":<b> " . $todaytor . "</b></small>";
-echo "<br /><small>".T_("SEEDERS").":<b> " . number_format($seeders) . "</b></small>";
-echo "<br /><small>".T_("LEECHERS").":<b> " . number_format($leechers) . "</b></small>";
-echo "<br /><small>".T_("PEERS").":<b> " . number_format($localpeers) . "</b></small>";
-echo "<br /><small>".T_("DOWNLOADED").":<b> " . mksize($totaldownloaded) . "</b></small>";
-echo "<br /><small>".T_("UPLOADED").":<b> " . mksize($totaluploaded) . "</b></small>";
+echo "<br />".T_("TRACKING").":<b> $ntor ".P_("TORRENT", $ntor)."</b>";
+echo "<br />".T_("NEW_TODAY").":<b> " . $todaytor . "</b>";
+echo "<br />".T_("SEEDERS").":<b> " . number_format($seeders) . "</b>";
+echo "<br />".T_("LEECHERS").":<b> " . number_format($leechers) . "</b>";
+echo "<br />".T_("PEERS").":<b> " . number_format($localpeers) . "</b>";
+echo "<br />".T_("DOWNLOADED").":<b> " . mksize($totaldownloaded) . "</b>";
+echo "<br />".T_("UPLOADED").":<b> " . mksize($totaluploaded) . "</b>";
 echo "<br /><br /><b>".T_("MEMBERS")."</b>";
-echo "<br /><small>".T_("WE_HAVE").":<b> $registered ".P_("MEMBER", $registered)."</b></small>";
-echo "<br /><small>".T_("NEW_TODAY").":<b> " . $regtoday . "</b></small>";
-echo "<br /><small>".T_("VISITORS_TODAY").": <b>" . $totaltoday . "</b></small>";
+echo "<br />".T_("WE_HAVE").":<b> $registered ".P_("MEMBER", $registered)."</b>";
+echo "<br />".T_("NEW_TODAY").":<b> " . $regtoday . "</b>";
+echo "<br />".T_("VISITORS_TODAY").": <b>" . $totaltoday . "</b>";
 echo "<br /><br /><b>".T_("ONLINE")."</b>";
-echo "<br /><small>".T_("TOTAL_ONLINE").":<b> " . $totalonline . "</b></small>";
-echo "<br /><small>".T_("MEMBERS").":<b> " . $members . "</b></small>";
-echo "<br /><small>".T_("GUESTS_ONLINE").":<b> " . $guests . "</b></small>";
-echo "<br /><small>".T_("COMMENTS_POSTED").":<b> " . $ncomments . "</b></small>";
-echo "<br /><small>".T_("MESSAGES_SENT").":<b> " . $nmessages . "</b></small>";
-echo "<br /><br /></div>";
+echo "<br />".T_("TOTAL_ONLINE").":<b> " . $totalonline . "</b>";
+echo "<br />".T_("MEMBERS").":<b> " . $members . "</b>";
+echo "<br />".T_("GUESTS_ONLINE").":<b> " . $guests . "</b>";
+echo "<br />".T_("COMMENTS_POSTED").":<b> " . $ncomments . "</b>";
+echo "<br />".T_("MESSAGES_SENT").":<b> " . $nmessages . "</b>";
+echo "<br /><br /></p>";
 end_block();
 }
 if($CURUSER["edit_users"]=="no") {
 begin_block(T_("STATS"));
-    echo "<div align='left'>";
+    echo "<p id='websiteStatsList' class=''>";
 echo "<b>".T_("TORRENTS")."</b>";
-echo "<br /><small>".T_("TRACKING").":<b> $ntor ".P_("TORRENT", $ntor)."</b></small>";
-echo "<br /><small>".T_("NEW_TODAY").":<b> " . $todaytor . "</b></small>";
-echo "<br /><br /></div>";
+echo "<br />".T_("TRACKING").":<b> $ntor ".P_("TORRENT", $ntor)."</b>";
+echo "<br />".T_("NEW_TODAY").":<b> " . $todaytor . "</b>";
+echo "<br /><br /></p>";
 end_block();
 }
-?>
+?> 

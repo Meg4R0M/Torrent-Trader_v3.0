@@ -2,34 +2,41 @@
 //BEGIN FRAME
 function begin_frame($caption = "-", $align = "justify"){
     global $THEME, $site_config;
-    print("<div class='myFrame'>
-  <div class='myF-caption'>$caption</div>
-  <div class='wrapper'>
-    <div class='myF-content'>");
+    print("<div class='widget'>
+	<h4>
+		<div class='floatright'>
+			
+		</div>
+		<img src='/themes/default/forums/mix/bullet_toggle_minus.png' alt='' title='' rel='recentTorrents' id='toggle' class='middle pointer' /> $caption
+	</h4>
+	<div id='$caption' class=''>");
+    
 }
-
 
 //END FRAME
 function end_frame() {
     global $THEME, $site_config;
-    print("</div>
-  </div>
+    print("<div class='clear'></div>
+	</div>
 </div>");
 }
 
 //BEGIN BLOCK
 function begin_block($caption = "-", $align = "justify"){
     global $THEME, $site_config;
-    print("<div class='myBlock'>
-  <div class='myB-caption'>$caption</div>
-  <div class='myB-content'>");
+    print("<div class='widget'>
+	<h4>
+		<span class='floatright'>
+			<img src='/themes/default/buttons/refresh.png' alt='Refresh' title='Refresh' rel='refresh$caption' class='clickable middle' />
+		</span>
+		<img src='/themes/default/forums/mix/bullet_toggle_minus.png' alt='' title='' rel='$caption.List' id='toggle' class='middle pointer' /> $caption
+	</h4>");
 }
 
 //END BLOCK
 function end_block(){
     global $THEME, $site_config;
-    print("</div>
-</div");
+    print("</div>");
 }
 
 function begin_table(){

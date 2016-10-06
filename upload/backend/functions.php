@@ -245,14 +245,14 @@ function stdfoot() {
 function leftblocks() {
     global $site_config, $CURUSER, $THEME, $LANGUAGE, $TTCache, $blockfilename;  //Define globals
 
-    if (($blocks=$TTCache->get("blocks_left", 900)) === false) {
+    //if (($blocks=$TTCache->get("blocks_left", 900)) === false) {
         $res = SQL_Query_exec("SELECT * FROM blocks WHERE position='left' AND enabled=1 ORDER BY sort");
         $blocks = array();
         while ($result = mysqli_fetch_assoc($res)) {
                 $blocks[] = $result["name"];
         }
-        $TTCache->Set("blocks_left", $blocks, 900);
-    }
+        //$TTCache->Set("blocks_left", $blocks, 900);
+    //}
 
     foreach ($blocks as $blockfilename){
         include("blocks/".$blockfilename."_block.php");
@@ -262,14 +262,14 @@ function leftblocks() {
 function rightblocks() {
     global $site_config, $CURUSER, $THEME, $LANGUAGE, $TTCache, $blockfilename;  //Define globals
 
-    if (($blocks=$TTv3Cache->get("blocks_right", 900)) === false) {
+    //if (($blocks=$TTv3Cache->get("blocks_right", 900)) === false) {
         $res = SQL_Query_exec("SELECT * FROM blocks WHERE position='right' AND enabled=1 ORDER BY sort");
         $blocks = array();
         while ($result = mysqli_fetch_assoc($res)) {
                 $blocks[] = $result["name"];
         }
-        $TTCache->Set("blocks_right", $blocks, 900);
-    }
+        //$TTCache->Set("blocks_right", $blocks, 900);
+    //}
 
     foreach ($blocks as $blockfilename){
         include("blocks/".$blockfilename."_block.php");
@@ -279,14 +279,14 @@ function rightblocks() {
 function middleblocks() {
     global $site_config, $CURUSER, $THEME, $LANGUAGE, $TTv3Cache;  //Define globals
     
-    if (($blocks=$TTCache->get("blocks_middle", 900)) === false) {
+    //if (($blocks=$TTCache->get("blocks_middle", 900)) === false) {
         $res = SQL_Query_exec("SELECT * FROM blocks WHERE position='middle' AND enabled=1 ORDER BY sort");
         $blocks = array();
         while ($result = mysqli_fetch_assoc($res)) {
                 $blocks[] = $result["name"];
         }
-        $TTCache->Set("blocks_middle", $blocks, 900);
-    }
+        //$TTCache->Set("blocks_middle", $blocks, 900);
+    //}
 
     foreach ($blocks as $blockfilename){
         include("blocks/".$blockfilename."_block.php");

@@ -7,7 +7,7 @@ if (!$site_config["MEMBERSONLY"] || $CURUSER) {
 	$external = 1;
 
 	$expires = 600; // Cache time in seconds
-	if (($rows = $TTCache->Get("seedwanted_block", $expires)) === false) {
+	//if (($rows = $TTCache->Get("seedwanted_block", $expires)) === false) {
 		$res = SQL_Query_exec("SELECT id, name, seeders, leechers FROM torrents WHERE seeders = 0 AND leechers > 0 AND banned = 'no' AND $external ORDER BY leechers DESC LIMIT 5");
 		$rows = array();
 
@@ -15,8 +15,8 @@ if (!$site_config["MEMBERSONLY"] || $CURUSER) {
 			$rows[] = $row;
 		}
 
-		$TTCache->Set("seedwanted_block", $rows, $expires);
-	}
+		//$TTCache->Set("seedwanted_block", $rows, $expires);
+	//}
 
 
 	if (!$rows) {
