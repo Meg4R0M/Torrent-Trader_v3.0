@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $CURUSER && $_POST["act"] == "takepo
 		}else{
 
 			SQL_Query_exec("INSERT INTO pollanswers VALUES(0, $pollid, $userid, $choice)");
-			if (mysqli_affected_rows() != 1)
+			if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) != 1)
 					show_error_msg(T_("ERROR"), "An error occured. Your vote has not been counted.", 0);
 		}
 	}else{
@@ -101,7 +101,7 @@ if ($CURUSER){
         			$c = "";
       			else
         			$c = " class='poll-alt'";
-      			print("<tr><td width='1%'$c>" . format_comment($a[1]) . "&nbsp;&nbsp;</td><td width='99%'$c><img src='".$site_config["SITEURL"]."/images/poll/bar_left.gif' alt='' /><img src='".$site_config["SITEURL"]."/images/poll/bar.gif' height='9' width='" . ($p / 2) . "' alt='' /><img src='".$site_config["SITEURL"]."/images/poll/bar_right.gif' alt='' />$p%</td></tr>\n");
+      			print("<tr><td width='1%'$c>" . format_comment($a[1]) . "&nbsp;&nbsp;</td><td width='99%'$c><img src='/images/poll/bar_left.gif' alt='' /><img src='/images/poll/bar.gif' height='9' width='" . ($p / 2) . "' alt='' /><img src='/images/poll/bar_right.gif' alt='' />$p%</td></tr>\n");
       			++$i;
     		}
 
