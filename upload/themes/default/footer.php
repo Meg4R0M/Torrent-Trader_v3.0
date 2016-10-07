@@ -3,11 +3,6 @@
 									middleblocks();
 								} //MIDDLENAV ON/OFF END
 
-								if ($site_config['DISCLAIMERON']){
-									begin_frame(T_("DISCLAIMER"));
-									echo T_("DISCLAIMERTXT");
-									end_frame();
-								}
 							echo '</div>
 						</div>
 						<div id="sidebar">';

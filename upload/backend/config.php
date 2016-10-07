@@ -66,7 +66,9 @@ $site_config['WELCOMEPMON'] = true;	    	# Auto PM New members
 $site_config['WELCOMEPMMSG'] = 'Thank you for registering at our tracker! Please remember to keep your ratio at 1.00 or greater :)';
 
 $site_config['SITENOTICEON'] = true;
-$site_config['SITENOTICE'] = 'Welcome To TorrentTrader v3.0<br /><br />This is currently in development still, please report any bugs to torrenttrader.org<br /><br />';
+$site_config['SITENOTICE'] = '<b>Welcome to TTv3!</b><br />
+		TTv3 | The most powerful CMS software. Fast. Secure. Social. Build your own website today.<br /><br />
+		Please take a look around, and feel free to <a href="/account-signup.php"><b>sign up</b></a> and join our community.';
 
 $site_config['UPLOADRULES'] = 'You should also include a .nfo file wherever possible<br />Try to make sure your torrents are well-seeded for at least 24 hours<br />Do not re-release material that is still active';
 

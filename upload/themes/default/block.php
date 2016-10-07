@@ -2,14 +2,15 @@
 //BEGIN FRAME
 function begin_frame($caption = "-", $align = "justify"){
     global $THEME, $site_config;
+	$togglediv = str_replace(" ", "", $caption);
     print("<div class='widget'>
 	<h4>
 		<div class='floatright'>
 			
 		</div>
-		<img src='/themes/default/forums/mix/bullet_toggle_minus.png' alt='' title='' rel='recentTorrents' id='toggle' class='middle pointer' /> $caption
+		<img src='/themes/default/forums/mix/bullet_toggle_minus.png' alt='' title='' rel='$togglediv' id='toggle' class='middle pointer' /> $caption
 	</h4>
-	<div id='$caption' class=''>");
+	<div id='$togglediv' class=''>");
     
 }
 

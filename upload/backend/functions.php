@@ -299,9 +299,8 @@ function show_error_msg($title, $message, $wrapper = "1") {
         ob_clean();
         stdhead($title);
     }
-    begin_frame("<font class='error'>". htmlspecialchars($title) ."</font>");
-    print("<center><b>" . $message . "</b></center>\n");
-    end_frame();
+	
+    echo '<p class="error">'.$message.'</p>';
 
     if ($wrapper){
         stdfoot();
