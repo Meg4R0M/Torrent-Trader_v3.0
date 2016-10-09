@@ -25,19 +25,23 @@ function end_frame() {
 //BEGIN BLOCK
 function begin_block($caption = "-", $align = "justify"){
     global $THEME, $site_config;
+	$togglediv = str_replace(" ", "", $caption);
     print("<div class='widget'>
 	<h4>
 		<span class='floatright'>
-			<img src='/themes/default/buttons/refresh.png' alt='Refresh' title='Refresh' rel='refresh$caption' class='clickable middle' />
+			<img src='/themes/default/buttons/refresh.png' alt='Refresh' title='Refresh' rel='refresh$togglediv' class='clickable middle' />
 		</span>
-		<img src='/themes/default/forums/mix/bullet_toggle_minus.png' alt='' title='' rel='$caption.List' id='toggle' class='middle pointer' /> $caption
-	</h4>");
+		<img src='/themes/default/forums/mix/bullet_toggle_minus.png' alt='' title='' rel='$togglediv' id='toggle' class='middle pointer' /> $caption
+	</h4>
+	<div id='$togglediv' class=''>");
 }
 
 //END BLOCK
 function end_block(){
     global $THEME, $site_config;
-    print("</div>");
+    print("</div>
+	<div class='clear'></div>
+</div>");
 }
 
 function begin_table(){

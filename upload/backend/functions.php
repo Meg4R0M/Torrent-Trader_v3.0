@@ -75,7 +75,7 @@ function dbconn($autoclean = false) {
 
     $lng_a = mysqli_fetch_assoc(SQL_Query_exec("select uri from languages where id='" .  ( $CURUSER ? $CURUSER['language'] : $site_config['default_language'] )  . "'"));
     $LANGUAGE = $lng_a["uri"];
-    
+	
     require_once("languages/$LANGUAGE");
 
     if ($autoclean)
@@ -137,7 +137,23 @@ function validip($ip) {
 }
 
 function getip() {
-    return $_SERVER["REMOTE_ADDR"];
+      $ipaddress = '';
+      if (getenv('HTTP_CLIENT_IP'))
+          $ipaddress = getenv('HTTP_CLIENT_IP');
+      else if(getenv('HTTP_X_FORWARDED_FOR'))
+          $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+      else if(getenv('HTTP_X_FORWARDED'))
+          $ipaddress = getenv('HTTP_X_FORWARDED');
+      else if(getenv('HTTP_FORWARDED_FOR'))
+          $ipaddress = getenv('HTTP_FORWARDED_FOR');
+      else if(getenv('HTTP_FORWARDED'))
+          $ipaddress = getenv('HTTP_FORWARDED');
+      else if(getenv('REMOTE_ADDR'))
+          $ipaddress = getenv('REMOTE_ADDR');
+      else
+          $ipaddress = 'UNKNOWN';
+
+      return $ipaddress;
 }
 
 function userlogin() {

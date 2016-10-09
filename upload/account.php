@@ -19,7 +19,6 @@ function navmenu(){
             <div class="profile-promotion-wrap">
 <?php print("<a href='../account/'class=\"profile-signup-btn  a_signup-profile\"><b>Profile</b></a>");?>
 		<?php print("<a href='../account/?action=edit_settings&amp;do=edit'class=\"profile-signup-btn  a_signup-profile\"><b>Settings</b></a>");?>
-		<?php print("<a href='../account/?action=changepw'class=\"profile-signup-btn  a_signup-profile\"><b>Change Password</b></a>");?>
 		<?php print("<a href='../account/?action=mytorrents'class=\"profile-signup-btn  a_signup-profile\"><b>My Uploads</b></a>");?>
 		
 
@@ -52,8 +51,6 @@ if (!$action){
         <div class="profile-stats">
             <ul>
             	<li><span><font><font><?php echo T_("JOINED"); ?></font></font></span><font><font><?php echo utc_to_tz($CURUSER["added"]); ?></font></font></a></li>
-                <li><span><font><font><?php echo T_("AGE"); ?></font></font></span><font><font><?php echo $CURUSER["age"]; ?></font></font></a></li>
-                <li><span><font><font><?php echo T_("GENDER"); ?></font></font></span><font><font><?php echo T_($CURUSER["gender"]); ?><br /></font></font></a></li>
                 
             </ul>
             <div class="clear"></div>
@@ -70,7 +67,6 @@ if (!$action){
         <div class="profile-stats">
             <ul>
             	<li><span><font><font><?php echo T_("JOINED"); ?></font></font></span><font><font><?php echo utc_to_tz($CURUSER["added"]); ?></font></font></a></li>
-                <li><span><font><font><?php echo T_("AGE"); ?></font></font></span><font><font><?php echo $CURUSER["age"]; ?></font></font></a></li>
                 <li><span><font><font><?php echo T_("PASSKEY"); ?></font></font></span><font><font><?php echo $CURUSER["passkey"]; ?><br /></font></font></a></li>
                 
             </ul>
@@ -177,129 +173,7 @@ if ($action=="edit_settings"){
 	<form enctype="multipart/form-data" method="post" action="../account/">
 	<input type="hidden" name="action" value="edit_settings" />
 	<input type="hidden" name="do" value="save_settings" />
-	<table class="f-border" cellspacing="0" cellpadding="5" width="100%" align="center">
-	<?php
-
-	$ss_r = SQL_Query_exec("SELECT * from stylesheets");
-	$ss_sa = array();
-	while ($ss_a = mysqli_fetch_assoc($ss_r))
-	{
-	  $ss_id = $ss_a["id"];
-	  $ss_name = $ss_a["name"];
-	  $ss_sa[$ss_name] = $ss_id;
-	}
-	ksort($ss_sa);
-	reset($ss_sa);
-	while (list($ss_name, $ss_id) = each($ss_sa))
-	{
-	  if ($ss_id == $CURUSER["stylesheet"]) $ss = " selected='selected'"; else $ss = "";
-	  $stylesheets .= "<option value='$ss_id'$ss>$ss_name</option>\n";
-	}
-
-	$countries = "<option value='0'>----</option>\n";
-	$ct_r = SQL_Query_exec("SELECT id,name from countries ORDER BY name");
-	while ($ct_a = mysqli_fetch_assoc($ct_r))
-	  $countries .= "<option value='$ct_a[id]'" . ($CURUSER["country"] == $ct_a['id'] ? " selected='selected'" : "") . ">$ct_a[name]</option>\n";
-
-$moods = "<option value='0'>--- ".T_("MOOD_SELECT")." ----</option>";
-$ms_r = SQL_Query_exec("SELECT id,name from moods ORDER BY name");
-while ($ms_a = mysqli_fetch_assoc($ms_r))
-$moods .= "<option value='$ms_a[id]'>$ms_a[name]</option>";
-
-	$teams = "<option value='0'>--- ".T_("NONE_SELECTED")." ----</option>\n";
-	$sashok = SQL_Query_exec("SELECT id,name FROM teams ORDER BY name");
-	while ($sasha = mysqli_fetch_assoc($sashok))
-		$teams .= "<option value='$sasha[id]'" . ($CURUSER["team"] == $sasha['id'] ? " selected='selected'" : "") . ">$sasha[name]</option>\n"; 
-
-
-	$acceptpms = $CURUSER["acceptpms"] == "yes";
-	print ("<tr><td align='right' class='alt2'><b>" . T_("ACCEPT_PMS") . ":</b> </td><td class='alt2'><input type='radio' name='acceptpms'" . ($acceptpms ? " checked='checked'" : "") .
-	  " value='yes' /><b>".T_("FROM_ALL")."</b> <input type='radio' name='acceptpms'" .
-	  ($acceptpms ? "" : " checked='checked'") . " value='no' /><b>" . T_("FROM_STAFF_ONLY") . "</b><br /><i>".T_("ACCEPTPM_WHICH_USERS")."</i></td></tr>");
-
-	$gender = "<option value='Male'" . ($CURUSER["gender"] == "Male" ? " selected='selected'" : "") . ">" . T_("MALE") . "</option>\n"
-		 ."<option value='Female'" . ($CURUSER["gender"] == "Female" ? " selected='selected'" : "") . ">" . T_("FEMALE") . "</option>\n";
-
-	// START CAT LIST SQL
-	$r = SQL_Query_exec("SELECT id,name,parent_cat FROM categories ORDER BY parent_cat ASC, sort_index ASC");
-	if (mysqli_num_rows($r) > 0)
-	{
-		$categories .= "<table><tr>\n";
-		$i = 0;
-		while ($a = mysqli_fetch_assoc($r))
-		{
-		  $categories .=  ($i && $i % 2 == 0) ? "</tr><tr>" : "";
-		  $categories .= "<td class='bottom' style='padding-right: 5px'><input name='cat$a[id]' type=\"checkbox\" " . (strpos($CURUSER['notifs'], "[cat$a[id]]") !== false ? " checked='checked'" : "") . " value='yes' />&nbsp;" .htmlspecialchars($a["parent_cat"]).": " . htmlspecialchars($a["name"]) . "</td>\n";
-		  ++$i;
-		}
-		$categories .= "</tr></table>\n";
-	}
-
-	// END CAT LIST SQL
-	function priv($name, $descr) {
-		global $CURUSER;
-		if ($CURUSER["privacy"] == $name)
-			return "<input type=\"radio\" name=\"privacy\" value=\"$name\" checked=\"checked\" /> $descr";
-		return "<input type=\"radio\" name=\"privacy\" value=\"$name\" /> $descr";
-	}
-
-	print("<tr><td align='right' class='alt3'><b>" . T_("ACCOUNT_PRIVACY_LVL") . ":</b> </td><td align='left' class='alt3'>". priv("normal", "<b>" . T_("NORMAL") . "</b>") . " " . priv("low", "<b>" . T_("LOW") . "</b>") . " " . priv("strong", "<b>" . T_("STRONG") . "</b>") . "<br /><i>".T_("ACCOUNT_PRIVACY_LVL_MSG")."</i></td></tr>");
-	print("<div class='profile-stats'>
-            <ul>
-            	<li><span><font><font>Themes</font></font></span><font><font><select name='stylesheet'>\n$stylesheets\n</select></font></font></a></li>
-                <li><span><font><font>Preferred Client</font></font></span><font><font><input type='text' size='20' maxlength='20' name='client' value=\"" . htmlspecialchars($CURUSER["client"]) . "\" /></font></font></a></li>
-                <li><span><font><font>Age</font></font></span><font><font><input type='text' size='3' maxlength='2' name='age' value=\"" . htmlspecialchars($CURUSER["age"]) . "\" /></font></font></a></li>
-                
-            </ul>
-            <div class='clear'></div>
-        </div>");
-        print("<div class='profile-stats'>
-            <ul>
-            	<li><span><font><font>Gender</font></font></span><font><font><select size='1' name='gender'>\n$gender\n</select></font></font></a></li>
-                <li><span><font><font>Country</font></font></span><font><font><select name='country'>\n$countries\n</select></font></font></a></li>
-                <li><span><font><font>Team</font></font></span><font><font><select name='teams'>\n$teams\n</select></font></font></a></li>
-                
-            </ul>
-            <div class='clear'></div>
-        </div>");
-print("<div class='profile-stats'>
-            <ul>
-            	<li><span><font><font>Avatar url</font></font></span><font><font><input type='text' name='avatar' size='50' value=\"" . htmlspecialchars($CURUSER["avatar"]) .
-	  "\" /></font></font></a></li>
-                <li><span><font><font>FaceMood</font></font></span><font><font><select name='mood'>\n$moods\n</select></font></font></a></li>
-                <li><span><font><font>Custom Title</font></font></span><font><font><input type='text' name='title' size='50' value=\"" . strip_tags($CURUSER["title"]) .
-	  "\" /></font></font></a></li>
-                
-            </ul>
-            <div class='clear'></div>
-        </div>");
-
-	print("<tr><td align='right' class='alt3' valign='top'><b>" . T_("SIGNATURE") . ":</b> </td><td align='left' class='alt3'><textarea name='signature' cols='50' rows='10'>" . htmlspecialchars($CURUSER["signature"]) .
-	  "</textarea><br />\n <i>".sprintf(T_("MAX_CHARS"), 150).", " . T_("HTML_NOT_ALLOWED") . "</i></td></tr>");
-
-	print("<tr><td align='right' class='alt2'><b>".T_("RESET_PASSKEY").":</b> </td><td align='left' class='alt2'><input type='checkbox' name='resetpasskey' value='1' />&nbsp;<i>".T_("RESET_PASSKEY_MSG").".</i></td></tr>");
-
-    if ($site_config["SHOUTBOX"])
-        print("<tr><td align='right' class='table_col3'><b>".T_("HIDE_SHOUT").":</b></td><td align='left' class='table_col3'><input type='checkbox' name='hideshoutbox' value='yes' ".($CURUSER['hideshoutbox'] == 'yes' ? 'checked="checked"' : '')." />&nbsp;<i>".T_("HIDE_SHOUT_TEXT")."</i></td></tr> ");
-	
-    print("<tr><td align='right' class='alt2'><b>" . T_("EMAIL") . ":</b> </td><td align='left' class='alt2'><input type=\"text\" name=\"email\" size=\"50\" value=\"" . htmlspecialchars($CURUSER["email"]) .
-	  "\" /><br />\n<i>".T_("REPLY_TO_CONFIRM_EMAIL")."</i><br /></td></tr>");
-
-	ksort($tzs);
-	reset($tzs);
-	while (list($key, $val) = each($tzs)) {
-	if ($CURUSER["tzoffset"] == $key)
-		$tz .= "<option value=\"$key\" selected='selected'>$val[0]</option>\n";
-	else
-		$tz .= "<option value=\"$key\">$val[0]</option>\n";
-	}
-
-	print("<tr><td align='right' class='alt3'><b>".T_("TIMEZONE").":</b> </td><td align='left' class='alt3'><select name='tzoffset'>$tz</select></td></tr>");
-
-	?>
-	<p class="profile-bio"><input type="reset" value="Revert" class='btn btn-large btn-danger'/>
-        <input type="submit" value="Submit" class='btn btn-large btn-success'/></p>
-	</table></form>
+</form>
 
 	<?php
 	end_frame();
@@ -484,29 +358,6 @@ if ($action=="changepw"){
 		stdfoot();
 		die();
 	}//do
-
-	begin_frame(T_("CHANGE_YOUR_PASS"));
-	navmenu();
-	?>
-    <div class="profile-stats">
-            <ul>
-            	<li><span><font><font>New Password</font></font></span><font><font><input type="password" name="chpassword" size="50" /></font></font></a></li>
-                <li><span><font><font>Repeat Password</font></font></span><font><font><input type="password" name="passagain" size="50" /></font></font></a></li>
-                <li><span><font><font>Password Change</font></font></span><font><font>Maybe logged</font></font></a></li>
-                
-            </ul>
-            <div class="clear"></div>
-        </div>
-<p class="profile-bio"><input type="reset" value="Revert" class='btn btn-large btn-danger'/>
-        <input type="submit" value="Submit" class='btn btn-large btn-success'/></p>       
-	<form method="post" action="../account/?action=changepw">
-	<input type="hidden" name="do" value="newpassword" />
-   
-    </div>
-	</form>
-    
-	<?php
-	end_frame();
 }
 
 stdfoot();

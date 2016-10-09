@@ -101,48 +101,98 @@ if ($count) {
 }
 
 stdhead(T_("BROWSE_TORRENTS"));
+
+begin_frame("Torrent Categories");
+
+	$catsquery = SQL_Query_exec("SELECT distinct parent_cat FROM categories ORDER BY parent_cat");
+	while($catsrow = mysqli_fetch_assoc($catsquery)){
+		echo '<div class="torrentCategory">
+			<div class="torrentCategoryImage"><img src="/images/categories/'.$catsrow["image"].'" /></div>
+			<div class="categories">
+				<div class="torrentCategoryTitle">
+					<a href="../browse/?cat='.$catrow["id"].'">'.htmlspecialchars($catsrow[parent_cat]).'</a>
+				</div>
+				<div class="torrentSubcategories">';
+					$parentcat = $catsrow['parent_cat'];
+					$cats = SQL_Query_exec("SELECT * FROM categories WHERE parent_cat=".sqlesc($parentcat)." ORDER BY name");
+					$countcats = mysqli_num_rows($cats);
+					$countcats = $countcats - 1;
+					$i = 0;
+					while ($cat = mysqli_fetch_assoc($cats)) {
+						echo '<a href="../browse/?cat='.$cat["id"].'">'.htmlspecialchars($cat["name"]).'</a>';
+						if ($i < $countcats){
+							echo ', ';
+							$i++;
+						}
+					}
+				echo '</div>
+			</div>
+			<div class="clear">
+		</div></div>';
+	}
+
+end_frame();
+
+?><div class="torrent-box" id="search_torrent">
+
+	<form method="post" action="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=10" name="form_search_torrent" id="form_search_torrent">
+		
+		<input type="text" name="keywords" id="keywords" class="s" accesskey="s" value="" placeholder="enter a search word" /> 
+		
+		<select name="search_type" id="cat_content_tiny">
+			<option value="name">in Torrents name</option>
+			<option value="description">in Torrents description</option>
+			<option value="both">in Torrents name & description</option>
+			<option value="uploader">by Uploader</option>
+		</select>
+		
+		<input type="submit" value="Search" class="submit" /> 
+		<input type="button" value="Categories" class="submit" id="torrents_select_category" />
+		<input type="button" value="Tags" class="submit" rel="tags" />
+
+		<div id="torrent_categories" class="hidden"><div class="text"></div></div>
+	</form>
+
+	<div id="Alfabe">
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=A"><div class="alfabe">A</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=B"><div class="alfabe">B</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=C"><div class="alfabe">C</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=D"><div class="alfabe">D</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=E"><div class="alfabe">E</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=F"><div class="alfabe">F</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=G"><div class="alfabe">G</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=H"><div class="alfabe">H</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=I"><div class="alfabe">I</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=J"><div class="alfabe">J</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=K"><div class="alfabe">K</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=L"><div class="alfabe">L</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=M"><div class="alfabe">M</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=N"><div class="alfabe">N</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=O"><div class="alfabe">O</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=P"><div class="alfabe">P</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=Q"><div class="alfabe">Q</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=R"><div class="alfabe">R</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=S"><div class="alfabe">S</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=T"><div class="alfabe">T</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=U"><div class="alfabe">U</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=V"><div class="alfabe">V</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=W"><div class="alfabe">W</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=X"><div class="alfabe">X</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=Y"><div class="alfabe">Y</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=Z"><div class="alfabe">Z</div></a>
+			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=0-9"><div class="alfabe">0-9</div></a></div>
+
+</div><?php
+
 begin_frame(T_("BROWSE_TORRENTS"));
 
-// get all parent cats
-echo "<center><b>".T_("CATEGORIES").":</b> ";
-$catsquery = SQL_Query_exec("SELECT distinct parent_cat FROM categories ORDER BY parent_cat");
-echo " - <a href='../browse/'>".T_("SHOW_ALL")."</a>";
-while($catsrow = mysqli_fetch_assoc($catsquery)){
-        echo " - <a href='../browse/?parent_cat=".urlencode($catsrow['parent_cat'])."'>$catsrow[parent_cat]</a>";
-}
-
 ?>
-<br /><br />
+<br />
 <form method="get" action="../browse/">
-<table align="center">
-<tr align='right'>
 <?php
-$i = 0;
-$cats = SQL_Query_exec("SELECT * FROM categories ORDER BY parent_cat, name");
-while ($cat = mysqli_fetch_assoc($cats)) {
-    $catsperrow = 5;
-    print(($i && $i % $catsperrow == 0) ? "</tr><tr align='right'>" : "");
-    print("<td style=\"padding-bottom: 2px;padding-left: 2px\"><a href='../browse/?cat={$cat["id"]}'>".htmlspecialchars($cat["parent_cat"])." - " . htmlspecialchars($cat["name"]) . "</a> <input name='c{$cat["id"]}' type=\"checkbox\" " . (in_array($cat["id"], $wherecatina) || $_GET["cat"] == $cat["id"] ? "checked='checked' " : "") . "value='1' /></td>\n");
-    $i++;
-}
-echo "</tr><tr align='center'><td colspan='$catsperrow' align='center'><input type='submit' value='".T_("GO")."' /></td></tr>";
-echo "</table></form>";
-
-//if we are browsing, display all subcats that are in same cat
-if ($parent_cat){
-    $thisurl .= "parent_cat=".urlencode($parent_cat)."&amp;";
-    echo "<br /><br /><b>".T_("YOU_ARE_IN").":</b> <a href='../browse/?parent_cat=".urlencode($parent_cat)."'>".htmlspecialchars($parent_cat)."</a><br /><b>".T_("SUB_CATS").":</b> ";
-    $subcatsquery = SQL_Query_exec("SELECT id, name, parent_cat FROM categories WHERE parent_cat=".sqlesc($parent_cat)." ORDER BY name");
-    while($subcatsrow = mysqli_fetch_assoc($subcatsquery)){
-        $name = $subcatsrow['name'];
-        echo " - <a href='../browse/?cat=$subcatsrow[id]'>$name</a>";
-    }
-}
 
 if (is_valid_id($_GET["page"]))
     $thisurl .= "page=$_GET[page]&amp;";
-
-echo "</center><br /><br />";//some spacing
 
 // New code (TorrentialStorm)
     echo "<div align='right'><form id='sort' action=''>".T_("SORT_BY").": <select name='sort' onchange='window.location=\"{$thisurl}sort=\"+this.options[this.selectedIndex].value+\"&amp;order=\"+document.forms[\"sort\"].order.options[document.forms[\"sort\"].order.selectedIndex].value'>";
@@ -166,14 +216,8 @@ if ($count) {
     torrenttable($res);
     print($pagerbottom);
 }else {
-    
-     print("<div class='f-border'>");
-     print("<div class='f-cat' width='100%'>".T_("NOTHING_FOUND")."</div>");
-     print("<div>");
-     print T_("NO_UPLOADS");
-     print("</div>");
-     print("</div>");
-    
+	end_frame();
+    show_error_msg(T_("ERROR"), T_("NO_UPLOADS"), 1);  
 }
 
 if ($CURUSER)

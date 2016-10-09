@@ -1,154 +1,56 @@
- /**
- * @package TorrentTrader
- * @version v2.08
- * @author  Lee Howarth
- */
- 
- function httpObject()
- {
-     var httpObject;
-     
-     if ( typeof XMLHttpRequest != 'undefined' )
-     {
-          httpObject = new XMLHttpRequest();
-     }
-     else
-     {
-          httpObject = new ActiveXObject( 'MSXML2.XMLHTTP.3.0' );
-     }
-     
-     return httpObject;
- }
- 
- function getMessages()
- {
-     var httpObject = this.httpObject();               
-              
-     httpObject.open( 'GET', '/shout.php?action=select', true );
-     
-     httpObject.onreadystatechange = function()
-     {
-         if ( ( httpObject.status == 200 ) && ( httpObject.readyState == 4 ) )
-         {           
-              document.getElementById( 'shouts' ).innerHTML = httpObject.responseText;
-                                                                                                                            
-              document.getElementById( 'shout' ).focus();
-              
-              return;
-         }
-     }
-       
-     httpObject.setRequestHeader( 'TT', 1 );
 
-     httpObject.send();
- }
- 
- function getHistory()
- {
-     var httpObject = this.httpObject();               
-              
-     httpObject.open( 'GET', '/shout.php?action=history', true );
-     
-     httpObject.onreadystatechange = function()
-     {
-         if ( ( httpObject.status == 200 ) && ( httpObject.readyState == 4 ) )
-         {           
-              document.getElementById( 'shoutHistory' ).innerHTML = '<a href="javascript:void(0);" onclick="closeHistory();">[Close History]</a>' + httpObject.responseText;
- 
-              return;
-         }
-     }
-       
-     httpObject.setRequestHeader( 'TT', 1 );
-
-     httpObject.send();
- }
- 
- function sendMessage()
- {
-     var shout = document.getElementById( 'shout' ).value;
-     
-     var httpObject = this.httpObject();
-     
-     if ( shout.length == 0 )
-     {
-          alert( 'Please enter a message.' );
-          
-          return false;
-     }
-     
-     if ( shout.length > 255 )
-     {
-          alert( 'Your shout cannot be longer than 255 characters.' );
-          
-          return false;
-     }
-     
-     httpObject.open( 'POST', '/shout.php?action=update', true );
-     
-     httpObject.onreadystatechange = function()
-     {
-         if ( ( httpObject.status == 200 ) && ( httpObject.readyState == 4 ) )
-         {           
-              document.getElementById( 'shout' ).value = '';
-              
-              return;
-         }
-     }
-     
-     httpObject.setRequestHeader( 'TT', 1 );
-       
-     httpObject.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
-       
-     httpObject.send( 'shout=' + encodeURIComponent( shout ) );
- }
- 
- function deleteMessage( sid )
- {
-     var response = confirm( 'Delete this message?' );
-     
-     var httpObject = this.httpObject();
-     
-     if ( response == true )
-     {
-          httpObject.open( 'GET', '/shout.php?action=delete&sid=' + sid, true );
-          
-          httpObject.setRequestHeader( 'TT', 1 );
-       
-          httpObject.send();
-     }
-     
-     return false;
- }
- 
- function openHistory()
- {
-     document.getElementById( 'shoutHistory' ).style.display = 'block';
-     document.getElementById( 'shoutFade' ).style.display = 'block';
-     
-     this.getHistory();                    
- }
- 
- function closeHistory()
- {
-     document.getElementById( 'shoutHistory' ).style.display = 'none';
-     document.getElementById( 'shoutFade' ).style.display = 'none';
- }
- 
- function refresh()
- {
-     var shoutForm = document.getElementById( 'shoutForm' );
- 
-     shoutForm.innerHTML = '<form name="shoutbox" method="post" action="" onsubmit="sendMessage(); return false;">' +
-                            '<input type="text" name="shout" id="shout" style="width: 92%;" />&nbsp;&nbsp;' +
-                            '<input type="submit" value="SEND" class="btn btn-danger" />' +
-                           '</form>' +
-                           '<a href="" onclick="PopMoreTags(); return false;">[Tags]</a> ' +
-                           '<a href="javascript:PopMoreSmiles(' + "'" + 'shoutbox' + "'" + ', ' + "'" + 'shout' + "'" + ');">[Smiles]</a> ' +
-                           '<a href="" onclick="openHistory(); return false;">[History]</a>';
-     
-     setInterval( 'getMessages()', 500 );
-  }
-  function ShowSmilies() {
-  var SmiliesWindow = window.open("<?php echo $site_config['SITEURL']?>/mysmilies.php", "Smilies","width=300,height=600,resizable=yes,scrollbars=yes,toolbar=no,location=no,directories=no,status=no");
-}
+var shoutboxEditorLoaded=false,loadNewShouts=false,idleTime=0,idleInterval=false;$(window).load(function()
+{if(typeof refreshINseconds!='undefined'&&typeof maxLoadLimit!='undefined')
+{autoGetNewShouts();hoverRows();setIdleInterval();}});function autoGetNewShouts()
+{loadNewShouts=setInterval(getNewShouts,refreshINseconds*1000);};function disableAutoGetNewShouts()
+{loadNewShouts=window.clearInterval(loadNewShouts);};function getNewShouts()
+{if(TSUESettings['isAjaxRunning'])
+{return false;}
+disableAutoGetNewShouts();shoutboxUpdating();$.ajax
+({url:TSUESettings['website_url']+'/ajax/shoutbox.php',data:'action=getNewShouts&lastSID='+lastSID+'&securitytoken='+TSUESettings['stKey'],dataType:'json',success:function(serverResponse)
+{disableShoutboxUpdating();autoGetNewShouts();if(serverResponse)
+{if(serverResponse['lastSID'])
+{lastSID=serverResponse['lastSID'];if(serverResponse['ShoutBOXRows'])
+{$(serverResponse['ShoutBOXRows']).prependTo('ul[class="shoutbox"]');$('#shout_'+lastSID).hide().fadeIn('slow');hoverRows();}}}}});return false;};function forceUpdate()
+{disableAutoGetNewShouts();TSUESettings['isAjaxRunning']=false;getNewShouts();};function setIdleInterval()
+{idleInterval=self.setInterval(timerIncrement,1000);};function timerIncrement()
+{idleTime+=1;if(idleTime>maxLoadLimit)
+{disableIdleInterval();disableShoutboxUpdating();disableAutoGetNewShouts();$('<div class="information" id="memberInactive">'+TSUEPhrases['shoutbox_inacitivityWarning']+'</div>').insertBefore('#shoutbox_list');}};function disableIdleInterval()
+{idleTime=0;idleInterval=window.clearInterval(idleInterval);};function shoutboxUpdating()
+{$('#shoutboxUpdating').show();TSUESettings['showLoaderWhileAjax']=false,TSUESettings['disableButtonsWhileAjax']=false,TSUESettings['closeOverlayWhileAjax']=false;};function disableShoutboxUpdating()
+{$('#shoutboxUpdating').hide();TSUESettings['showLoaderWhileAjax']=true,TSUESettings['disableButtonsWhileAjax']=true,TSUESettings['closeOverlayWhileAjax']=true;};function hoverRows()
+{$('ul[class="shoutbox"] li').hover(function()
+{$(this).addClass('box-hover');$('.sButtons',this).show();},function()
+{$(this).removeClass('box-hover');$('.sButtons',this).hide();});};$(document).on('click','#imback',function(e)
+{e.preventDefault();$('#memberInactive').remove();forceUpdate();setIdleInterval();return false;});$('#postShout').submit(function(e)
+{e.preventDefault();idleTime=0;var smessage=$.TSUE.removeSpaces(tinyMCE.activeEditor.getContent());if(smessage=='')
+{$.TSUE.alert(TSUEPhrases['message_required_fields_error']);return false;}
+tinyMCE.activeEditor.setContent('');shoutboxUpdating();buildQuery='action=postShout&smessage='+$.TSUE.urlEncode(smessage)+'&securitytoken='+TSUESettings['stKey'];$.ajax
+({url:TSUESettings['website_url']+'/ajax/shoutbox.php',data:buildQuery,success:function(serverResponse)
+{if($.TSUE.findresponsecode(serverResponse))
+{$.TSUE.dialog(serverResponse)}
+disableShoutboxUpdating();forceUpdate();}});return false;});$(document).on('click','#edit_shout',function(e)
+{e.preventDefault();idleTime=0;var $sid=$(this).attr('rel');shoutboxUpdating();buildQuery='action=getShout&sid='+$sid+'&securitytoken='+TSUESettings['stKey'];$.ajax
+({url:TSUESettings['website_url']+'/ajax/shoutbox.php',data:buildQuery,success:function(serverResponse)
+{$.TSUE.dialog(serverResponse);disableShoutboxUpdating();if(!$.TSUE.findresponsecode(serverResponse))
+{$('#cancel_editor_message_'+$sid).click(function(e)
+{e.preventDefault();$.TSUE.closedialog();return false;});$('#save_editor_message_'+$sid).click(function(e)
+{e.preventDefault();var smessage=$.TSUE.removeSpaces(tinyMCE.activeEditor.getContent());buildQuery='action=saveShout&sid='+$sid+'&smessage='+$.TSUE.urlEncode(smessage)+'&securitytoken='+TSUESettings['stKey'];$.ajax
+({url:TSUESettings['website_url']+'/ajax/shoutbox.php',data:buildQuery,success:function(serverResponse)
+{if($.TSUE.findresponsecode(serverResponse))
+{$.TSUE.alert($.TSUE.htmlspecialchars(serverResponse));}
+else
+{$('#shout_'+$sid+' #smessage').fadeOut('slow',function()
+{var $updateShout=$(this);$updateShout.html(serverResponse).fadeIn('slow');});$.TSUE.alert(TSUEPhrases['message_saved']);$.TSUE.closedialog();}}});return false;});}}});return false;});$(document).on('click','#delete_shout',function(e)
+{e.preventDefault();idleTime=0;var $this=$(this),$sid=$this.attr('rel');$.TSUE.confirmAction(TSUEPhrases['confirm_delete_message'],function(yes)
+{if(yes)
+{shoutboxUpdating();buildQuery='action=deleteShout&sid='+$sid+'&securitytoken='+TSUESettings['stKey'];$.ajax
+({url:TSUESettings['website_url']+'/ajax/shoutbox.php',data:buildQuery,success:function(serverResponse)
+{disableShoutboxUpdating();if(serverResponse)
+{$('<div id="sServerResponse">'+$.TSUE.clearresponse(serverResponse)+'</div>').insertBefore('#postShout');$.TSUE.autoRemoveBodyDIV('#sServerResponse');}
+else
+{$('#shout_'+$sid).fadeOut('slow',function(){$(this).remove()});}}});}});});$(document).on('click','#tinymceShoutbox',function(e)
+{idleTime=0;if(!shoutboxEditorLoaded)
+{shoutboxEditorLoaded=$(this);shoutboxEditorLoaded.val('');tinyMCE.execCommand('mceAddControl',false,'tinymceShoutbox');tinymce.execCommand('mceFocus',false,'tinymceShoutbox');$('.shoutboxButtons').fadeIn('slow');tinyMCE.activeEditor.setContent('');}});$(document).on('change','select[name="shoutboxCID"]',function(e)
+{var $cid=parseInt($(this).val());if($cid)
+{disableIdleInterval();disableShoutboxUpdating();disableAutoGetNewShouts();$('ul[class="shoutbox"]').empty();lastSID=0;$.TSUE.setCookie('shoutboxChannelID',$cid);forceUpdate();setIdleInterval();}});

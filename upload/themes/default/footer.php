@@ -92,7 +92,7 @@ var TSUESettings =
 	memberDST: 0,
 	stKey: "0-1475755390-fa47ce9292f5ba0019c504f1cc77748cbc51b6e5",
 	website_title: "Templateshares Ultimate Edition | TSUE",
-	website_url: "http://templateshares-ue.net/tsue",
+	website_url: "localhost",
 	theme_dir: "http://templateshares-ue.net/tsue/styles/default/",
 	website_active: "1",
 	website_resize_images_max_width: "665",
@@ -111,11 +111,31 @@ var TSUESettings =
 	isMobile: 0
 };
 		//]]>
-		</script>
+		</script><?php
+if (strpos($_SERVER['REQUEST_URI'], '?') !== false){
+	$scripturl =  substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
+}else{
+	$scripturl = $_SERVER['REQUEST_URI'];
+}
+		?><script type="text/javascript" src="../../js/jquery.js"></script>
+		<script type="text/javascript" src="../../js/tt.js"></script><?php
+if ($scripturl == "/index.php"){
+		?><script type="text/javascript" src="../../js/login.js"></script>
+		<script type="text/javascript" src="../../js/signup.js"></script>
+		<script type="text/javascript" src="../../js/forgot_password.js"></script>
+		<script type="text/javascript" src="../../js/passwordstrength.js"></script>
+		<script type="text/javascript" src="../../js/donate.js"></script>
+		<script type="text/javascript" src="../../js/shoutbox.js"></script>
+		<script type="text/javascript" src="../../js/news.js"></script>
+		<script type="text/javascript" src="../../js/poll.js"></script>
+		<script type="text/javascript" src="../../js/scrollable.js"></script><?php
+}elseif ($scripturl == "/membercp.php"){
+		?><script type="text/javascript" src="../../js/passwordstrength.js"></script>
+		<script type="text/javascript" src="../../js/membercp.js"></script>
+		<script type="text/javascript" src="../../js/messages.js"></script><?php
+}
 
-		<script type="text/javascript" src="http://templateshares-ue.net/tsue/js.php?lv=2.3&s=jquery,tsue,login,signup,forgot_password,passwordstrength,donate,shoutbox,news,poll,scrollable"></script>
-
-		<script type="text/javascript" src="http://templateshares-ue.net/tsue/js/tiny_mce/tiny_mce_gzip.js?lv=2.3"></script>
+		?><script type="text/javascript" src="http://templateshares-ue.net/tsue/js/tiny_mce/tiny_mce_gzip.js?lv=2.3"></script>
 		<script type="text/javascript">tinyMCE_GZ.init({plugins : '-inlinepopups,-smilies,-quote,-tsuecode,-autoresize,-autolink',themes:'tsue',languages:'',disk_cache:true,debug:false});</script>
 		<script type="text/javascript">
 		//<![CDATA[

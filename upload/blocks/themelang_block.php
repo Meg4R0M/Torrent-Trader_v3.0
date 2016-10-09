@@ -19,23 +19,6 @@ if ($CURUSER){
         $stylesheets .= "<option value='$ss_id'$ss>$ss_name</option>\n";
     }
 
-    $lang_r = SQL_Query_exec("SELECT * from languages");
-    $lang_sa = array();
-
-    while ($lang_a = mysqli_fetch_assoc($lang_r)){
-        $lang_id = $lang_a["id"];
-        $lang_name = $lang_a["name"];
-        $lang_sa[$lang_name] = $lang_id;
-    }
-
-    ksort($lang_sa);
-    reset($lang_sa);
-
-    while (list($lang_name, $lang_id) = each($lang_sa)){
-        if ($lang_id == $CURUSER["language"]) $lang = " selected='selected'"; else $lang = "";
-        $languages .= "<option value='$lang_id'$lang>$lang_name</option>\n";
-    }
-
 ?>
  
  <form method="post" action="take-theme.php">
@@ -43,10 +26,6 @@ if ($CURUSER){
   <tr>
 <td align="center" valign="middle"><b><?php echo T_("THEME"); ?></b>
 <select name="stylesheet"><?php echo $stylesheets; ?></select></td>
-  </tr>
-  <tr>
-<td align="center" valign="middle"><b><?php echo T_("LANGUAGE"); ?></b>
-<select name="language"><?php echo $languages; ?></select></td>
   </tr>
   <tr>
 <td align="center" valign="middle"><input type="submit" value="<?php echo T_("APPLY"); ?>" /></td>

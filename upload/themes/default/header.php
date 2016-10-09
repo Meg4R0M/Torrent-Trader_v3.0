@@ -184,25 +184,25 @@
 								echo "";
 							}else{
 								?><li class="">
-									<a href="/account.php" class="link drop">Member CP</a>
+									<a href="/membercp.php" class="link drop">Member CP</a>
 									<div class="dropdown_column">
-										<div class="column"><?php
-											echo '<a href="/account-details.php?id='.$CURUSER[id].'">Personal Details</a>';
-											?><a href="/account.php?action=edit_settings&do=edit">Contact Details</a>
-											<a href="/account.php?action=edit_settings&do=edit">Preferences</a>
-											<a href="/account.php?action=edit_settings&do=edit">Privacy</a>
-											<a href="/account.php?action=changepw">Password</a>
-											<a href="/account.php?action=edit_settings&do=edit">Signature</a>
-											<a href="/account.php?action=edit_settings&do=edit">Avatar</a>
-											<a href="/invite.php">Invite Friends</a>
-											<a href="#">Upgrade Account</a>
-											<a href="#">People You Follow</a>
-											<a href="#">Image Gallery</a>
-											<a href="#">Performance</a>
-											<a href="#">Subscribed Threads</a>
-											<a href="#">Open Port Check Tool</a>
-											<a href="#">Recent Alerts</a>
-											<a href="/mailbox.php">Messages</a>
+										<div class="column">
+											<a href="/membercp.php">Personal Details</a>
+											<a href="/membercp.php?action=contact_details">Contact Details</a>
+											<a href="/membercp.php?action=preferences">Preferences</a>
+											<a href="/membercp.php?action=privacy">Privacy</a>
+											<a href="/membercp.php?action=password">Password</a>
+											<a href="/membercp.php?action=signature">Signature</a>
+											<a href="/membercp.php?action=avatar">Avatar</a>
+											<a href="/membercp.php?action=invite">Invite Friends</a>
+											<a href="/membercp.php?action=upgrade">Upgrade Account</a>
+											<a href="/membercp.php?action=following">People You Follow</a>
+											<a href="/membercp.php?action=gallery">Image Gallery</a>
+											<a href="/membercp.php?action=performance">Performance</a>
+											<a href="/membercp.php?action=subscribed_threads">Subscribed Threads</a>
+											<a href="/membercp.php?action=open_port_check_tool">Open Port Check Tool</a>
+											<a href="/membercp.php?action=alerts">Recent Alerts</a>
+											<a href="/membercp.php?action=messages">Messages</a>
 										</div>
 									</div>
 								</li>
@@ -263,24 +263,24 @@
 							if (!$CURUSER){
 								echo "";
 							}else{
-								?><li><a href="/account.php">Member CP</a>
-									<ul><?php
-										echo '<li><a href="/account-details.php?id='.$CURUSER[id].'">Personal Details</a></li>';
-										?><li><a href="/account.php?action=edit_settings&do=edit">Contact Details</a></li>
-										<li><a href="/account.php?action=edit_settings&do=edit">Preferences</a></li>
-										<li><a href="/account.php?action=edit_settings&do=edit">Privacy</a></li>
-										<li><a href="/account.php?action=changepw">Password</a></li>
-										<li><a href="/account.php?action=edit_settings&do=edit">Signature</a></li>
-										<li><a href="/account.php?action=edit_settings&do=edit">Avatar</a></li>
-										<li><a href="/invite.php">Invite Friends</a></li>
-										<li><a href="#">Upgrade Account</a></li>
-										<li><a href="#">People You Follow</a></li>
-										<li><a href="#">Image Gallery</a></li>
-										<li><a href="#">Performance</a></li>
-										<li><a href="#">Subscribed Threads</a></li>
-										<li><a href="#">Open Port Check Tool</a></li>
-										<li><a href="#">Recent Alerts</a></li>
-										<li><a href="/mailbox.php">Messages</a></li>
+								?><li><a href="/membercp.php">Member CP</a>
+									<ul>
+										<li><a href="/membercp.php">Personal Details</a></li>
+										<li><a href="/membercp.php?action=contact_details">Contact Details</a></li>
+										<li><a href="/membercp.php?action=preferences">Preferences</a></li>
+										<li><a href="/membercp.php?action=privacy">Privacy</a></li>
+										<li><a href="/membercp.php?action=password">Password</a></li>
+										<li><a href="/membercp.php?action=signature">Signature</a></li>
+										<li><a href="/membercp.php?action=avatar">Avatar</a></li>
+										<li><a href="/membercp.php?action=invite">Invite Friends</a></li>
+										<li><a href="/membercp.php?action=upgrade">Upgrade Account</a></li>
+										<li><a href="/membercp.php?action=following">People You Follow</a></li>
+										<li><a href="/membercp.php?action=gallery">Image Gallery</a></li>
+										<li><a href="/membercp.php?action=performance">Performance</a></li>
+										<li><a href="/membercp.php?action=subscribed_threads">Subscribed Threads</a></li>
+										<li><a href="/membercp.php?action=open_port_check_tool">Open Port Check Tool</a></li>
+										<li><a href="/membercp.php?action=alerts">Recent Alerts</a></li>
+										<li><a href="/membercp.php?action=messages">Messages</a></li>
 									</ul>
 								</li>
 								<li><a href="#">Market</a></li>
