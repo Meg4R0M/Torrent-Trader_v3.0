@@ -781,7 +781,7 @@ if ($action=="categories" && $do=="edit"){
 
     } else {
         begin_frame(T_("CP_CATEGORY_EDIT"));
-        print("<form method='post' action='?action=categories&amp;do=edit&amp;id=$id&amp;save=1'>\n");
+        print("<form method='post' action='admincp.php?action=categories&amp;do=edit&amp;id=$id&amp;save=1'>\n");
         print("<center><table border='0' cellspacing='0' cellpadding='5'>\n");
         print("<tr><td align='left'><b>Parent Category: </b><input type='text' name='parent_cat' value=\"".$arr['parent_cat']."\" /> All Subcats with EXACTLY the same parent cat are grouped</td></tr>\n");
         print("<tr><td align='left'><b>Sub Category: </b><input type='text' name='name' value=\"".$arr['name']."\" /></td></tr>\n");

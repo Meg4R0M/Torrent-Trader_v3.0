@@ -1,12 +1,10 @@
  <?php
 //
-//  TorrentTrader v2.x
-//      $LastChangedDate: 2012-01-07 14:57:37 +0000 (Sat, 07 Jan 2012) $
-//      $LastChangedBy: dj-howarth1 $
+//  TorrentTrader v3.x
+//      $LastChangedDate: 2016-10-11 11:18:37 +0000 (Tue, 11 Oct 2016) $
+//      $LastChangedBy: Meg4R0M $
 //
-//      http://www.torrenttrader.org
-//
-//
+
 require_once("backend/functions.php");
 dbconn();
 
@@ -106,18 +104,21 @@ begin_frame("Torrent Categories");
 
 	$catsquery = SQL_Query_exec("SELECT distinct parent_cat FROM categories ORDER BY parent_cat");
 	while($catsrow = mysqli_fetch_assoc($catsquery)){
+		$parentcat = $catsrow['parent_cat'];
+		$imgcats = SQL_Query_exec("SELECT image FROM categories WHERE parent_cat=".sqlesc($parentcat)." ORDER BY name");
+		$imgcat = mysqli_fetch_assoc($imgcats);
 		echo '<div class="torrentCategory">
-			<div class="torrentCategoryImage"><img src="/images/categories/'.$catsrow["image"].'" /></div>
+			<div class="torrentCategoryImage"><img src="/images/categories/'.$imgcat["image"].'" /></div>
 			<div class="categories">
 				<div class="torrentCategoryTitle">
 					<a href="../browse/?cat='.$catrow["id"].'">'.htmlspecialchars($catsrow[parent_cat]).'</a>
 				</div>
 				<div class="torrentSubcategories">';
-					$parentcat = $catsrow['parent_cat'];
 					$cats = SQL_Query_exec("SELECT * FROM categories WHERE parent_cat=".sqlesc($parentcat)." ORDER BY name");
 					$countcats = mysqli_num_rows($cats);
 					$countcats = $countcats - 1;
 					$i = 0;
+					// Changer pour une boucle For et utiliser next() pour l'ajout de virgule
 					while ($cat = mysqli_fetch_assoc($cats)) {
 						echo '<a href="../browse/?cat='.$cat["id"].'">'.htmlspecialchars($cat["name"]).'</a>';
 						if ($i < $countcats){
@@ -151,38 +152,15 @@ end_frame();
 		<input type="button" value="Tags" class="submit" rel="tags" />
 
 		<div id="torrent_categories" class="hidden"><div class="text"></div></div>
-	</form>
+	</form><?php
 
-	<div id="Alfabe">
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=A"><div class="alfabe">A</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=B"><div class="alfabe">B</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=C"><div class="alfabe">C</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=D"><div class="alfabe">D</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=E"><div class="alfabe">E</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=F"><div class="alfabe">F</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=G"><div class="alfabe">G</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=H"><div class="alfabe">H</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=I"><div class="alfabe">I</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=J"><div class="alfabe">J</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=K"><div class="alfabe">K</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=L"><div class="alfabe">L</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=M"><div class="alfabe">M</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=N"><div class="alfabe">N</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=O"><div class="alfabe">O</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=P"><div class="alfabe">P</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=Q"><div class="alfabe">Q</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=R"><div class="alfabe">R</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=S"><div class="alfabe">S</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=T"><div class="alfabe">T</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=U"><div class="alfabe">U</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=V"><div class="alfabe">V</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=W"><div class="alfabe">W</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=X"><div class="alfabe">X</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=Y"><div class="alfabe">Y</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=Z"><div class="alfabe">Z</div></a>
-			<a href="http://templateshares-ue.net/tsue/?p=torrents&amp;pid=32&amp;a=0-9"><div class="alfabe">0-9</div></a></div>
-
-</div><?php
+	echo '<div id="Alfabe">';
+		foreach(range('A','Z') as $i) {
+			echo '<a href="./torrents.php?lettre='.$i.'"><div class="alfabe">'.$i.'</div></a>';
+		}
+		echo '<a href="./torrents.php?lettre=0-9"><div class="alfabe">0-9</div></a>
+	</div>
+</div>';
 
 begin_frame(T_("BROWSE_TORRENTS"));
 
@@ -194,30 +172,11 @@ begin_frame(T_("BROWSE_TORRENTS"));
 if (is_valid_id($_GET["page"]))
     $thisurl .= "page=$_GET[page]&amp;";
 
-// New code (TorrentialStorm)
-    echo "<div align='right'><form id='sort' action=''>".T_("SORT_BY").": <select name='sort' onchange='window.location=\"{$thisurl}sort=\"+this.options[this.selectedIndex].value+\"&amp;order=\"+document.forms[\"sort\"].order.options[document.forms[\"sort\"].order.selectedIndex].value'>";
-    echo "<option value='id'" . ($_GET["sort"] == "id" ? " selected='selected'" : "") . ">".T_("ADDED")."</option>";
-    echo "<option value='name'" . ($_GET["sort"] == "name" ? " selected='selected'" : "") . ">".T_("NAME")."</option>";
-    echo "<option value='comments'" . ($_GET["sort"] == "comments" ? " selected='selected'" : "") . ">".T_("COMMENTS")."</option>";
-    echo "<option value='size'" . ($_GET["sort"] == "size" ? " selected='selected'" : "") . ">".T_("SIZE")."</option>";
-    echo "<option value='times_completed'" . ($_GET["sort"] == "times_completed" ? " selected='selected'" : "") . ">".T_("COMPLETED")."</option>";
-    echo "<option value='seeders'" . ($_GET["sort"] == "seeders" ? " selected='selected'" : "") . ">".T_("SEEDERS")."</option>";
-    echo "<option value='leechers'" . ($_GET["sort"] == "leechers" ? " selected='selected'" : "") . ">".T_("LEECHERS")."</option>";
-    echo "</select>&nbsp;";
-    echo "<select name='order' onchange='window.location=\"{$thisurl}order=\"+this.options[this.selectedIndex].value+\"&amp;sort=\"+document.forms[\"sort\"].sort.options[document.forms[\"sort\"].sort.selectedIndex].value'>";
-    echo "<option selected='selected' value='asc'" . ($_GET["order"] == "asc" ? " selected='selected'" : "") . ">".T_("ASCEND")."</option>";
-    echo "<option value='desc'" . ($_GET["order"] == "desc" ? " selected='selected'" : "") . ">".T_("DESCEND")."</option>";
-    echo "</select>";
-    echo "</form></div>";
-
-// End
-
 if ($count) {
     torrenttable($res);
     print($pagerbottom);
 }else {
-	end_frame();
-    show_error_msg(T_("ERROR"), T_("NO_UPLOADS"), 1);  
+    echo T_("ERROR").', '.T_("NO_UPLOADS");  
 }
 
 if ($CURUSER)

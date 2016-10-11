@@ -81,6 +81,7 @@ echo '<div class="widget" id="advertisements">
 			<div class="adsContent">We\'re constantly updating TTv3 to improve features and performance.<br /></div>
 		</div>
 	</div>
+	<br />
 </div>';
 ?><script type="text/javascript">
 	var totalAds = 9, rotate, currentAd = 1, nextAd = 2;
@@ -280,12 +281,7 @@ if ($site_config["MEMBERSONLY"] && !$CURUSER) {
 	if (mysqli_num_rows($res)) {
 		torrenttable($res);
 	}else {
-		print("<div class='f-border'>");
-		print("<div class='f-cat' width='100%'>".T_("NOTHING_FOUND")."</div>");
-		print("<div>");
-		print T_("NO_UPLOADS");
-		print("</div>");
-		print("</div>");
+		show_error_msg(T_("ERROR"), T_("NO_UPLOADS"), 0);
 	}
 	if ($CURUSER)
 		SQL_Query_exec("UPDATE users SET last_browse=".gmtime()." WHERE id=$CURUSER[id]");
