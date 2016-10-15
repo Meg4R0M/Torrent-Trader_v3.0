@@ -243,11 +243,13 @@ function stdhead($title = "") {
     if (!$CURUSER)
         guestadd();
 
-    if ($title == "")
+    if ($title == ""){
         $title = $site_config['SITENAME'];
-    else
+        $page = "Home";
+    }else{
         $title = $site_config['SITENAME']. " : ". htmlspecialchars($title);
-
+        $page = htmlspecialchars($title);
+    }
     require_once("themes/" . $THEME . "/block.php");
     require_once("themes/" . $THEME . "/header.php");
 }

@@ -1,4 +1,10 @@
 <?php
+//
+//  TorrentTrader v3.0
+//      $LastChangedDate: 2016-10-14 22:19:50 +0000 (Fri, 14 Oct 2016) $
+//      $LastChangedBy: Meg4R0M $
+//
+
 if ($_SERVER['REQUEST_URI'] == "/index.php"){
 	$date_time = get_date_time(gmtime()-(3600*24)); // the 24hrs is the hours you want listed
 	$registered = number_format(get_row_count("users"));
@@ -32,47 +38,53 @@ if ($_SERVER['REQUEST_URI'] == "/index.php"){
 		}
 		$localpeers = $leechers+$seeders;
 
-		begin_block(T_("STATS"));
-		echo "<div id='websiteStatsList' style='margin:10px;'>";
-			echo '<b>---'.T_("TORRENTS").'---</b>
-			<p class="small">
-				<b>'.T_("TRACKING").':</b> '.$ntor.' '.P_("TORRENT", $ntor).'<br />
-				<b>'.T_("NEW_TODAY").':</b> '.$todaytor.'<br />
-				<b>Unseeded Torrents:</b> '.$inactiventor.'<br />
-				<b>'.T_("SEEDERS").':</b> '.number_format($seeders).'<br />
-				<b>'.T_("LEECHERS").':</b> '.number_format($leechers).'<br />
-				<b>'.T_("PEERS").':</b> '.number_format($localpeers).'<br />
-				<b>'.T_("DOWNLOADED").':</b> '.mksize($totaldownloaded).'<br />
-				<b>'.T_("UPLOADED").':</b> '.mksize($totaluploaded).'
-			</p>
-			<b>---'.T_("MEMBERS").'---</b>
-			<p class="small">
-				<b>'.T_("WE_HAVE").':</b> '.$registered.' '.P_("MEMBER", $registered).'<br />
-				<b>'.T_("NEW_TODAY").':</b> '.$regtoday.'<br />
-				<b>'.T_("VISITORS_TODAY").':</b> '.$totaltoday.'<br />
-				<b>Welcome:</b> '.$latestuser.'
-			</p>
-			<b>---Misc---</b>
-			<p class="small">
-				<b>'.T_("COMMENTS_POSTED").':</b> '.$ncomments.'<br />
-				<b>'.T_("MESSAGES_SENT").':</b> '.$nmessages.'
-			</p>
-		</div>';
-		end_block();
+		echo '<div class="widget">
+            <h4>
+                <span class="floatright">
+                    <img src="/themes/default/buttons/refresh.png" alt="Refresh" title="Refresh" rel="refreshWebsiteStats" class="clickable middle" />
+                </span>
+                <img src="/themes/default/forums/mix/bullet_toggle_minus.png" alt="" title="" rel="websiteStatsList" id="toggle" class="middle pointer" /> Website Statistics
+            </h4>
+            <p id="websiteStatsList" class="">
+                <b>---'.T_("TORRENTS").'---</b><br />
+				'.T_("TRACKING").': '.$ntor.' '.P_("TORRENT", $ntor).'<br />
+				'.T_("NEW_TODAY").': '.$todaytor.'<br />
+				Unseeded Torrents: '.$inactiventor.'<br />
+				'.T_("SEEDERS").': '.number_format($seeders).'<br />
+				'.T_("LEECHERS").': '.number_format($leechers).'<br />
+				'.T_("PEERS").': '.number_format($localpeers).'<br />
+				'.T_("DOWNLOADED").': '.mksize($totaldownloaded).'<br />
+				'.T_("UPLOADED").': '.mksize($totaluploaded).'<br />
+                <b>---'.T_("MEMBERS").'---</b><br />
+				'.T_("WE_HAVE").': '.$registered.' '.P_("MEMBER", $registered).'<br />
+				'.T_("NEW_TODAY").': '.$regtoday.'<br />
+				'.T_("VISITORS_TODAY").': '.$totaltoday.'<br />
+				Welcome: '.$latestuser.'<br />
+                <b>---Misc---</b><br />
+				'.T_("COMMENTS_POSTED").': '.$ncomments.'<br />
+				'.T_("MESSAGES_SENT").': '.$nmessages.'
+            </p>
+        </div>';
 	}else{
-		begin_block(T_("STATS"));
-		echo '<div id="websiteStatsList" style="margin:10px;">
-			<b>'.T_("WE_HAVE").':</b> '.$registered.'<br />
-			<b>'.T_("TRACKING").':</b> '.$ntor.'<br />
-			<b>'.T_("SEEDERS").':</b> '.$seeders.'<br />
-			<b>'.T_("LEECHERS").':</b> '.$leechers.'<br />
-			<b>Unseeded Torrents:</b> '.$inactiventor.'<br />';
-			//Total Threads: 1,040<br />
-			//Total Replies: 3,744<br />
-			echo '<b>'.T_("NEW_TODAY").':</b> '.$regtoday.'';
-			echo "<b>Welcome:</b> $latestuser";
-		echo '</div>';
-		end_block();
+		echo '<div class="widget">
+            <h4>
+                <span class="floatright">
+                    <img src="/themes/default/buttons/refresh.png" alt="Refresh" title="Refresh" rel="refreshWebsiteStats" class="clickable middle" />
+                </span>
+                <img src="/themes/default/forums/mix/bullet_toggle_minus.png" alt="" title="" rel="websiteStatsList" id="toggle" class="middle pointer" /> Website Statistics
+            </h4>
+            <p id="websiteStatsList" class="">
+                '.T_("WE_HAVE").': '.$registered.'<br />
+                '.T_("TRACKING").': '.$ntor.'<br />
+                '.T_("SEEDERS").': '.$seeders.'<br />
+                '.T_("LEECHERS").': '.$leechers.'<br />
+                Unseeded Torrents: '.$inactiventor.'<br />';
+                //Total Threads: 1,040<br />
+                //Total Replies: 3,744<br />
+                echo T_("NEW_TODAY").': '.$regtoday.'<br />
+                Welcome: '.$latestuser.'
+            </p>
+        </div>';
 	}
 }
 ?> 
