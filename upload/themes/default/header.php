@@ -3,7 +3,7 @@
 	<head>
 		<!--<noscript><meta http-equiv="refresh" content="0; URL=<?php echo $site_config['SITEURL']; ?>" /></noscript>-->
 		<base href="<?php echo $site_config['SITEURL']; ?>" />
-		<title><?php echo $title; ?></title>
+		<title>TorrentTrader v3 | TTv3</title>
 		<meta charset="<?php echo $site_config["CHARSET"]; ?>" />
 		<meta name="generator" content="tt3 <?php echo $site_config['ttversion']; ?>" />
 		<meta name="description" content="TTv3 | The most powerful CMS software. Fast. Secure. Social. Build your own website today." />
@@ -343,27 +343,16 @@
 
 					<!-- start #breadcrumb -->
 					<div class="rcrumbs" id="breadcrumbs">
-						<ul><?php
-                            if ($page == "forums")
-                                echo '<li><a href="/index.php">Home</a><span class="divider">></span></li><li><a href="/forums.php">Forums</a></li>';
-                            else
-                                echo '<li><a href="/index.php">'.$page.'</a></li>';
-						?></ul>
+						<ul>
+							<li><a href="/index.php">Home</a></li>
+						</ul>
 					</div>
 					<!-- end #breadcrumb -->
 
 					<!-- start #inner -->
 					<div id="inner">
-						<div id="container"><?php
-                            if (strpos($_SERVER['REQUEST_URI'], '?') !== false){
-                                $scripturl =  substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
-                            }else{
-                                $scripturl = $_SERVER['REQUEST_URI'];
-                            }
-                            
-                            if ($scripturl != "/forums.php"){
-                                echo '<div id="content" class="marginRightClass">';
-                            }else{
-                                echo '<div id="content" class="">';
-                            }
+						<div id="container">
+							<div id="content" class="marginRightClass">
+    <?php
+   //print (T_("<font color='white'>Howdy!</font>")."&nbsp;&nbsp;".class_user($CURUSER[username])."");
     ?>

@@ -13,13 +13,13 @@ $site_config = array();
 $site_config['ttversion'] = '3.0.0 BETA';										# DONT CHANGE THIS!
 
 // Main Site Settings
-$site_config['SITENAME'] = 'TorrentTrader v3.0 Beta';							# Site Name
+$site_config['SITENAME'] = 'TorrentTrader3';									# Site Name
 $site_config['SITEEMAIL'] = 'change@yoursite.com';								# Emails will be sent from this address
-$site_config['SITEURL'] = 'http://your.site/';									# Main Site URL
+$site_config['SITEURL'] = 'http://localhost';											# Main Site URL
 $site_config['default_language'] = "1";											# DEFAULT LANGUAGE ID
 $site_config['default_theme'] = "1";											# DEFAULT THEME ID
 $site_config['CHARSET'] = "utf-8";												# Site Charset
-$site_config['announce_list'] = "http://your.site/announce/"; 					# Seperate via comma
+$site_config['announce_list'] = "http://yoursite.com/announce/"; 				# Seperate via comma
 $site_config['MEMBERSONLY'] = true;												# MAKE MEMBERS SIGNUP
 $site_config['MEMBERSONLY_WAIT'] = true;										# Enable wait times for bad ratio
 $site_config['ALLOWEXTERNAL'] = true;											# Enable Uploading of external tracked torrents
