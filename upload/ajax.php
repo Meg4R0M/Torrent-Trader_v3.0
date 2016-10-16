@@ -220,35 +220,87 @@ if ($action == "refreshMemberStats"){
 		}
 	}
 }elseif ($action == "member_info"){
-    $userinfoid = $_POST["memberid"];
+    $userinfoid = (int)$_POST["memberid"];
+    if (!is_valid_id($userinfoid))
+        show_error_msg(T_("NO_SHOW_DETAILS"), "Bad ID.",1);
+    
     $userinfo = "SELECT * FROM users WHERE id=$userinfoid";
-	$resultui = SQL_Query_exec($userinfo);
-	$detailsui = mysqli_fetch_array($resultui);
+	$resultui = @SQL_Query_exec($userinfo);
+	$detailsui = mysqli_fetch_array($resultui) or  show_error_msg(T_("NO_SHOW_DETAILS"), T_("NO_USER_WITH_ID")." $userinfoid.",1);
+    
+    // CHECK SOME RIGHTS
+    if ($CURUSER["view_users"] == "no" && $CURUSER["id"] != $userinfoid)
+        show_error_msg(T_("ERROR"), T_("NO_USER_VIEW"), 1); 
+      
+    if (($detailsui["enabled"] == "no" || ($detailsui["status"] == "pending")) && $CURUSER["edit_users"] == "no") 
+        show_error_msg(T_("ERROR"), T_("NO_ACCESS_ACCOUNT_DISABLED"), 1); 
+    //===| Start Blocked Users 
+    $blocked = SQL_Query_exec("SELECT id FROM blocked WHERE userid=$detailsui[id] AND blockid=$CURUSER[id]"); 
+    $show = mysqli_num_rows($blocked); 
+    if ($show != 0 && $CURUSER["control_panel"] != "yes") 
+        show_error_msg("Error", "<div style='margin-top:10px; margin-bottom:10px' align='center'><font size=2 color=#FF2000><b>You are blocked by this member and you can not view their profile!</b></font></div>", 1); 
+    //===| End Blocked Users
+    
+    //$country
+    $res = SQL_Query_exec("SELECT name, flagpic FROM countries WHERE id=$detailsui[country] LIMIT 1"); 
+    if (mysqli_num_rows($res) == 1){ 
+        $arr = mysqli_fetch_assoc($res); 
+        $country = "$arr[name]";
+        $countrypic = "$arr[flagpic]";
+    }
+
+    if (!$country){
+        $country = "Unknown";
+        $countrypic = "nc.gif";
+    }
+    
+    $avatar = htmlspecialchars($detailsui["avatar"]);
+    if (!$avatar)
+        $avatar = "/images/default_avatar.png";
+
+    //$moods 
+    $res = SQL_Query_exec("SELECT name, moodspic FROM moods WHERE id=$detailsui[moods] LIMIT 1") or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false))); 
+    $row = mysqli_fetch_assoc($res);
+    $moods = ( $row ) ? "<img src='/images/moods/$row[moodspic]' alt='$row[moodspic]' title='$row[moodspic]' />" : 'Unknown';
+    
+    $userdownloaded = mksize($detailsui["downloaded"]);
+    $useruploaded = mksize($detailsui["uploaded"]);
+    //$ratio 
+    if ($detailsui["downloaded"] > 0) { 
+        $ratio = $detailsui["uploaded"] / $detailsui["downloaded"]; 
+    }else{ 
+        $ratio = "---"; 
+    }
+
+    $privacylevel = T_($detailsui["privacy"]);
+    $usergender = $detailsui["gender"];
+    
     echo '<div id="showMemberCard" style="z-index: 9999; top: 48px; left: 545.5px; position: fixed; display: block;">
         <a class="close" original-title=""></a>
         <div class="showMemberCardDetails">
-            <div class="showMemberCardAvatar"><img src="http://templateshares-ue.net/tsue/data/avatars/l/1.png?1476562365" alt="" title=""></div>
+            <div class="showMemberCardAvatar"><img src="'.$avatar.'" alt="" title=""></div>
             <div class="showMemberCardMemberInfo">
                 <div class="showMemberCardIcons">
                     <span class="showMemberCardStaffLinks" original-title=""> </span>
                 </div>
-                <p class="showMemberCardCountryFlag"><img src="http://templateshares-ue.net/tsue/data/countryFlags/jp.png" alt="jp" class="" id="" rel="resized_by_tsue" original-title="jp"></p>
-                <p><a href="/account-details.php?id=1" original-title=""><span class="membernameAdmin" original-title="">'.$detailsui["username"].'</span></a>, '.$detailsui["age"].' years old, Male</p>
-                <p class="showMemberCardGroupname"><span class="membernameAdmin" original-title="">Administrator</span></p>
+                <p class="showMemberCardCountryFlag"><img src="/images/countryFlags/'.$countrypic.'" alt="'.$country.'" class="" id="" rel="resized_by_tsue" original-title="'.$country.'"></p>
+                <p><a href="/account-details.php?id='.$userinfoid.'" original-title=""><span class="membernameAdmin" original-title="">'.$detailsui["username"].'</span></a>, '.$detailsui["age"].' years old, '.$usergender.'</p>
+                <p class="showMemberCardGroupname"><span class="membernameAdmin" original-title="">'.get_user_class_name($detailsui["class"]).'</span></p>
+                <p>'.$moods.'</p>
                 <p><b>Member Since:</b> '.$detailsui["added"].'</p>
                 <p><b>Last Activity:</b> '.$detailsui["last_access"].'</p>
                 <p></p>
                 <p>
-				    Uploaded: <span class="showMemberCardTextHighlight" original-title="">'.mksize($detailsui["uploaded"]).'</span> | 
-				    Downloaded: <span class="showMemberCardTextHighlight" original-title="">'.mksize($detailsui["downloaded"]).'</span> |  
-				    Ratio: <span class="showMemberCardTextHighlight" original-title=""><span class="ratioGood" original-title="">1.16</span></span> | 
+				    Uploaded: <span class="showMemberCardTextHighlight" original-title="">'.$useruploaded.'</span> | 
+				    Downloaded: <span class="showMemberCardTextHighlight" original-title="">'.$userdownloaded.'</span> |  
+				    Ratio: <span class="showMemberCardTextHighlight" original-title=""><span class="ratioGood" original-title="">'.$ratio.'</span></span> | 
 				    Buffer <span class="showMemberCardTextHighlight" original-title="">1.09 MB</span> | 
 				    Points <span class="showMemberCardTextHighlight" original-title="">6.530</span>
                 </p>
                 <div class="showMemberCardLinks">
 				    <a href="/account-details.php?id='.$detailsui["id"].'" original-title="">'.$detailsui["username"].'\'s Profile</a>
-				    <span class="clickable small" id="messages_new_message" receiver_membername="xam" original-title="">Send Message</span>
-				    <span class="clickable small" id="follow_member" memberid="1" inoverlay="yes" original-title="">Follow</span>
+				    <span class="clickable small" id="messages_new_message" receiver_membername="'.$detailsui["username"].'" original-title="">Send Message</span>
+				    <span class="clickable small" id="follow_member" memberid="'.$userinfoid.'" inoverlay="yes" original-title="">Follow</span>
                 </div>
             </div>
         </div>

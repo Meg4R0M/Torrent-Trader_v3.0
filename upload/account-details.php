@@ -1,7 +1,7 @@
 <?php 
 // 
 //  TorrentTrader v3.x 
-//      $LastChangedDate: 2016-10-05 20:44:24 +0100 (Wed, 05 Oct 2016) $ 
+//      $LastChangedDate: 2016-10-16 20:34:24 +0100 (Sun, 16 Oct 2016) $ 
 //      $LastChangedBy: Meg4R0M $ 
 // 
 
@@ -44,11 +44,12 @@ if (mysqli_num_rows($res) == 1){
 
 if (!$country) $country = "<b>Unknown</b>"; 
 //$moods 
-$res = SQL_Query_exec("SELECT name, moodspic FROM moods WHERE id=$user[moods] LIMIT 1") or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false))); 
-if (mysqli_num_rows($res) == 1){ 
-$arr = mysqli_fetch_assoc($res); 
-$moods = ""; 
-} 
+$res = SQL_Query_exec("SELECT name, moodspic FROM moods WHERE id=$CURUSER[moods]");
+$row = mysqli_fetch_assoc($res);
+$moods = ( $row ) ? "<img src='../images/moods/$row[moodspic]' alt='$row[name]' title='$row[name]' />" : 'Unknown';
+
+$userdownloaded = mksize($user["downloaded"]);
+$useruploaded = mksize($user["uploaded"]);
 //$ratio 
 if ($user["downloaded"] > 0) { 
     $ratio = $user["uploaded"] / $user["downloaded"]; 
@@ -84,22 +85,47 @@ function peerstable($res){
 
 
 //Layout 
-stdhead(sprintf(T_("USER_DETAILS_FOR"), $user["username"])); 
+stdhead(sprintf(T_("USER_DETAILS_FOR"), $user["username"]));
 
-begin_frame(sprintf(T_("USER_DETAILS_FOR"), $user["username"])); 
+echo '<div id="memberCard">';
 
 if ($user["privacy"] != "strong" || ($CURUSER["control_panel"] == "yes") || ($CURUSER["id"] == $user["id"])) { 
-    ?> 
-    <section class="profile-intro" style="background-image: url('/clean.jpg')"> 
 
+	echo '<div class="memberCardAvatar">
+		<img src="/images/countryFlags/noFlag.png" alt="" title="" class="countryFlag" />
+		<img src="'.$avatar.'" alt="" title="" class="clickable avatar" id="member_info" memberid="'.$user["id"].'" /><br />
+        '.$moods.'
+	</div>
 
+	<div class="memberCardDetails">
+		<a href="/account-details.php?id='.$user["id"].'"><span style="color: #6d6c6c; font-weight: bold;">'.$user["username"].'</span></a>, '.$user["age"].' years old<br />
+		<span style="color: #6d6c6c; font-weight: bold;">'.get_user_class_name($user["class"]).'</span><br />
+		<b>Member Since:</b> '.$user["added"].'<br />
+		<b>Last Activity:</b> '.$user["last_access"].'<br />
+        <b>Location:</b> '.htmlspecialchars($user["page"]).'<br />
+		
 
-        <div class="profile-promotion"> 
-            <div class="profile-promotion-wrap"> 
-            <a href="/report.php?user=<?php echo $user["id"]?>" class="profile-signup-btn  a_signup-profile">Report</a> 
-                       <?php 
-If ($CURUSER["id"] != $user["id"]) 
-{ 
+		<div id="memberinfoUpDownStats">
+			    
+			<img src="/themes/default/status/upload.png" alt="Uploaded" title="Uploaded" class="middle" /> '.$useruploaded.' 
+			<img src="/themes/default/status/download.png" alt="Downloaded" title="Downloaded" class="middle" /> '.$userdownloaded.'
+			<img src="/themes/default/status/ratio.png" alt="Ratio" title="Ratio" class="middle" /> <span class="ratioNull">'.$ratio.'</span> 
+			<img src="/themes/default/status/buffer.png" alt="Buffer" title="Buffer" class="middle" /> 1 GB 
+            '.T_("TORRENTS_POSTED").': '.number_format($numtorrents).'
+		</div>
+
+		<div>
+			<span class="clickable small">
+				<a href="/account-details.php?id='.$user["id"].'">'.$user["username"].'\'s Profile</a>
+			</span>
+			<span class="clickable small" id="messages_new_message" receiver_membername="'.$user["username"].'">Send Message</span>
+			<span class="clickable small" id="follow_member" memberid="'.$user["id"].'" inOverlay="no">	Follow</span>
+            <span class="clickable small"><a href="/report.php?user='.$user["id"].' class="profile-signup-btn  a_signup-profile">Report</a></span>
+		</div>
+		
+	</div>';
+
+if ($CURUSER["id"] != $user["id"]){ 
     $r = SQL_Query_exec("SELECT id FROM friends WHERE userid=$CURUSER[id] AND friendid=$id"); 
     $friend = mysqli_num_rows($r); 
     $r = SQL_Query_exec("SELECT id FROM blocked WHERE userid=$CURUSER[id] AND blockid=$id"); 
@@ -109,55 +135,65 @@ If ($CURUSER["id"] != $user["id"])
         print("<a href='/friends.php?action=delete&type=friend&targetid=$id' class=\"profile-signup-btn  a_signup-profile\"><font><font>Unfriend</font></font></a>"); 
     elseif($block) 
         print("<a href=/friends.php?action=delete&type=block&targetid=$id class=\"profile-signup-btn  a_signup-profile\"><font><font>Unblocked</font></font></a>"); 
-    else 
-    { 
+    else { 
         print("<a href=/friends.php?action=add&type=friend&targetid=$id class=\"profile-signup-btn  a_signup-profile\"><font><font>+Friend</font></font></a>"); 
         print("<a href=/friends.php?action=add&type=block&targetid=$id class=\"profile-signup-btn  a_signup-profile\"><font><font>Block</font></font></a>"); 
     } 
 } 
-?> 
-                <p><span><font><font>Manage:</font></font></span><a href="../message/?compose&amp;id=<?php echo $user["id"]?>" class="profile-signup-btn  a_signup-profile"><font><font><?php echo T_("PM"); ?></font></font></a></p> 
 
-                <div class="clear"></div> 
-            </div> 
-        </div> 
-
-
-    <div class="profile-intro-wrap"> 
-        <div class="profile-img"> 
-                        <img class="size230" src="<?php echo $avatar; ?>" alt="" title="<?php echo $user["username"]; ?>"> 
-                        <?php echo $moods?> 
-        </div> 
-        <div class="profile-info"> 
-            <h2><font><font>Username: <?php echo htmlspecialchars($user["username"])?></font></font></h2> 
-            <h2><font><font>Class: <?php echo get_user_class_name($user["class"])?></font></font></h2> 
-            <p><br /></p> 
-
-                    </div> 
-        <div class="clear"></div> 
-
-                    <p class="profile-bio"><font><font><?php echo T_("UPLOADED"); ?>: <?php echo mksize($user["uploaded"]); ?> | <?php echo T_("DOWNLOADED"); ?>: <?php echo mksize($user["downloaded"]); ?> | <?php echo T_("TORRENTS_POSTED"); ?>: <?php echo number_format($numtorrents); ?></font></font></p>             
-         
-
-        <div class="profile-stats"> 
-            <ul> 
-                <li><span><font><font><?php echo T_("JOINED"); ?></font></font></span><font><font><?php echo htmlspecialchars(utc_to_tz($user["added"]))?></font></font></a></li> 
-                <li><span><font><font><?php echo T_("LAST_VISIT"); ?></font></font></span><font><font><?php echo htmlspecialchars(utc_to_tz($user["last_access"]))?></font></font></a></li> 
-                <li><span><font><font>Location</font></font></span><font><font><?php echo htmlspecialchars($user["page"]);?><br /></font></font></a></li> 
-            </ul> 
-            <div class="clear"></div> 
-        </div> 
-            </div> 
-        </section> 
-     
-    <?php 
+    
 }else{ 
     echo sprintf(T_("REPORT_MEMBER_MSG"), $user["id"]); 
 } 
 
-end_frame(); 
+	echo '<div class="clear"></div>
+</div>
+<ul class="tabs">
+	<li><a href="#profile_posts">Profile Posts</a></li>
+	<li class="recent_activity"><a href="#recent_activity">Recent Activity</a></li>
+	<li class="following"><a href="#following">Following</a></li>
+	<li class="followers"><a href="#followers">Followers</a></li>
+</ul>';
 
+// COMMENTS
+   $subres = SQL_Query_exec("SELECT COUNT(*) FROM comments WHERE userprofile = $id"); 
+   $subrow = mysqli_fetch_array($subres); 
+   $commcount = $subrow[0]; 
+    
+   if ($commcount) { 
+     list($pagertop, $pagerbottom, $limit) = pager(10, $commcount, "../user/?id=$user[id]&amp;"); 
+     $commquery = "SELECT comments.id, text, user, comments.added, avatar, signature, username, title, class, uploaded, downloaded, privacy, donated FROM comments LEFT JOIN users ON comments.user = users.id WHERE userprofile = $id ORDER BY comments.id $limit"; 
+     $commres = SQL_Query_exec($commquery); 
+   }else{ 
+     unset($commres); 
+   } 
+   require_once("backend/bbcode.php");
+
+    echo '<div class="tabItems">';
+        if ($commcount) { 
+            print($pagertop); 
+            commenttable($commres, 'userprofile'); 
+            print($pagerbottom); 
+        }else{
+            echo '<div class="comment-box" id="no_comments">There are no comments yet.</div>';
+        }
+        if ($CURUSER) {
+            echo '<form method="post" id="comments_post_form">
+                <input type="hidden" name="content_type" id="content_type" value="profile_comments" />
+                <input type="hidden" name="content_id" id="content_id" value="'.$user["id"].'" />
+                <textarea name="message" id="postAComment">'.T_("ADDCOMMENT").'</textarea>
+                <div class="postACommentButtons">
+                    <input type="submit" value="Save" class="submit" /> 
+                    <input type="button" value="Preview" class="submit" id="tinymce_button_preview" /> 
+                    <input type="reset" value="Clear" class="submit" />
+                </div>
+            </form>';
+        }
+    echo '</div>';
 ?> 
+<div class="tabItems" id="recent_activity" rel="1205"></div>
+<div class="tabItems" id="following" rel="1205"></div>
+<div class="tabItems" id="followers" rel="1205"></div>
 
 
 <div class="profile-promotion"> 
@@ -196,30 +232,6 @@ if ($_GET["takecomment"] == 'yes'){
 }      
  echo "<div class='hiddenframe' id='MyWall'>";   
 begin_frame(T_("COMMENTS")); 
-   //echo "<p align=center><a class=index href=../torrents-comment.php?id=$id>" .T_("ADDCOMMENT"). "</a></p>\n"; 
-
-   $subres = SQL_Query_exec("SELECT COUNT(*) FROM comments WHERE userprofile = $id"); 
-   $subrow = mysqli_fetch_array($subres); 
-   $commcount = $subrow[0]; 
-    
-   if ($commcount) { 
-     list($pagertop, $pagerbottom, $limit) = pager(10, $commcount, "../user/?id=$user[id]&amp;"); 
-     $commquery = "SELECT comments.id, text, user, comments.added, avatar, signature, username, title, class, uploaded, downloaded, privacy, donated FROM comments LEFT JOIN users ON comments.user = users.id WHERE userprofile = $id ORDER BY comments.id $limit"; 
-     $commres = SQL_Query_exec($commquery); 
-   }else{ 
-     unset($commres); 
-   } 
-
-   if ($commcount) { 
-     print($pagertop); 
-     commenttable($commres, 'userprofile'); 
-     print($pagerbottom); 
-   }else { 
-     print("<br /><b>" .T_("NOCOMMENTS"). "</b><br />\n"); 
-   } 
-
-   require_once("backend/bbcode.php"); 
-
    if ($CURUSER) { 
      echo "<center>"; 
      echo "<form name=\"comment\" method=\"post\" action=\"../user/?id=$user[id]&amp;takecomment=yes\">"; 

