@@ -1,0 +1,7 @@
+.donations{
+    text-align:center;
+    padding:10px;
+}
+.donations .chart{
+    border-bottom:1px solid rgb(213, 227, 239);
+}

@@ -4,8 +4,13 @@
 //      $LastChangedDate: 2016-10-15 11:28:50 +0000 (Sat, 15 Oct 2016) $
 //      $LastChangedBy: Meg4R0M $
 //
+if (strpos($_SERVER['REQUEST_URI'], '?') !== false){
+    $scripturl =  substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
+}else{
+    $scripturl = $_SERVER['REQUEST_URI'];
+}
 
-if ($_SERVER['REQUEST_URI'] == "/index.php"){
+if ($scripturl == "/index.php" || $scripturl == "/account-details.php"){
     echo '<div class="widget">
         <h4>
             <span class="floatright">

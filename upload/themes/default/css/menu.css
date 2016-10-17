@@ -1,0 +1,169 @@
+#menu{
+    list-style:none;
+    width:100%;
+    margin:0;
+    padding:0;
+    height:42px;
+    background:url('/themes/default/theme_images/nav.wrap.png');
+}
+.fixedMenu{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:42px;
+    background:url('/themes/default/theme_images/nav.wrap.png');
+    z-index:2147483646;
+}
+#menu li{
+    float:left;
+    display:block;
+    position:relative;
+    padding:4px 10px 4px 10px;
+    margin-top:7px;
+    border:none;
+}
+#menu li:hover, #header li:hover{
+    border:1px solid #777777;
+    padding:4px 9px 4px 9px;
+    background:#F4F4F4;
+    background:-moz-linear-gradient(top, #F4F4F4, #EEEEEE);
+    background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#EEEEEE));
+    -moz-border-radius:5px 5px 0px 0px;
+    -webkit-border-radius:5px 5px 0px 0px;
+    border-radius:5px 5px 0px 0px;
+}
+#menu li.nodrop:hover{
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    padding:4px 9px 4px 9px;
+}
+#menu li a.link{
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:14px;
+    color:#EEEEEE;
+    display:block;
+    outline:0;
+    text-decoration:none;
+}
+#menu li:hover a.link{
+    color:#161616;
+}
+#menu li .drop{
+    padding-right:21px;
+    background:url("/themes/default/menu/drop.png") no-repeat right 8px;
+}
+#menu li:hover .drop{
+    background:url("/themes/default/menu/drop.png") no-repeat right 7px;
+}
+.dropdown_column{
+    margin:4px auto;
+    float:left;
+    position:absolute;
+    left:-999em;
+    text-align:left;
+    padding:10px 5px 10px 5px;
+    min-width:200px;
+    max-width:650px;
+    background:#F4F4F4;
+    background:-moz-linear-gradient(top, #EEEEEE, #BBBBBB);
+    background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEEEEE), to(#BBBBBB));
+    -moz-border-radius:0px 5px 5px 5px;
+    -webkit-border-radius:0px 5px 5px 5px;
+    border-radius:0px 5px 5px 5px;
+    -webkit-box-shadow:0 8px 6px -6px black;
+    -moz-box-shadow:0 8px 6px -6px black;
+    box-shadow:0 8px 6px -6px black;
+}
+#menu li:hover .dropdown_column, #header li:hover .dropdown_column{
+    left:-1px;
+    top:auto;
+    z-index:5000;
+}
+#menu .column a, #header .column a{
+    display:block;
+    line-height:1.6;
+    padding:5px;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:12px;
+    color:#161616;
+    outline:0;
+    text-decoration:none;
+}
+#menu .column a:hover, #header .column a:hover{
+    background:#3a3c3d;
+    color:#fff;
+}
+#menu .menu_right, #header .menu_right{
+    float:right;
+}
+#menu .menu_right img.image{
+    margin-left:3px;
+}
+#menu li .align_right, #header li .align_right{
+    -moz-border-radius:5px 0px 5px 5px;
+    -webkit-border-radius:5px 0px 5px 5px;
+    border-radius:5px 0px 5px 5px;
+}
+#menu li:hover .align_right, #header li:hover .align_right{
+    left:auto;
+    right:-1px;
+    top:auto;
+}
+.atext{
+    display:block;
+    max-height:600px;
+    max-width:600px;
+    width:auto;
+    overflow:auto;
+    margin:0 0 0 5px;
+    padding-right:5px;
+}
+.atext .information, .atext .error{
+    min-width:250px;
+}
+.atext .comment-box{
+    width:550px;
+}
+.alertBalloon{
+    position:absolute;
+    top:-17px;
+    right:9px;
+    z-index:1;
+    width:10px;
+    height:18px;
+    padding:3px;
+    text-align:center;
+    vertical-align:top;
+    background:#e03030;
+    color:#fff;
+    text-shadow:none;
+    font-size:9px;
+    font-weight:bold;
+    white-space:nowrap;
+    word-wrap:normal;
+    border-radius:2px;
+    -webkit-border-radius:2px;
+    -moz-border-radius:2px;
+    -khtml-border-radius:2px;
+    box-shadow:2px 2px 5px rgba(0,0,0, 0.25);
+    -webkit-box-shadow:2px 2px 5px rgba(0,0,0, 0.25);
+    -moz-box-shadow:2px 2px 5px rgba(0,0,0, 0.25);
+    -khtml-box-shadow:2px 2px 5px rgba(0,0,0, 0.25);
+}
+.alertBalloon .arrow{
+    border:3px solid transparent;
+    border-top-color:#e03030;
+    border-bottom:none;
+    position:absolute;
+    bottom:-3px;
+    right:4px;
+    line-height:0;
+    width:0;
+    height:0;
+    text-shadow:none;
+}
+.admincp_link{
+    display:block;
+}

@@ -129,10 +129,11 @@ if ($scripturl == "/index.php"){
 		<script type="text/javascript" src="../../js/news.js"></script>
 		<script type="text/javascript" src="../../js/poll.js"></script>
 		<script type="text/javascript" src="../../js/scrollable.js"></script><?php
-}elseif ($scripturl == "/membercp.php"){
+}elseif ($scripturl == "/membercp.php" || $scripturl == "/account-details.php"){
 		?><script type="text/javascript" src="../../js/passwordstrength.js"></script>
 		<script type="text/javascript" src="../../js/membercp.js"></script>
-        <script type="text/javascript" src="http://templateshares-ue.net/tsue/js.php?lv=2.3&s=comments,profile"></script>
+        <script type="text/javascript" src="../../js/comments.js"></script>
+        <script type="text/javascript" src="../../js/profile.js"></script>
 		<script type="text/javascript" src="../../js/messages.js"></script><?php
 }
 

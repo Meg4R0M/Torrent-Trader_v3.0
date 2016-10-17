@@ -1,0 +1,129 @@
+#showMemberCard{
+    display:none;
+    z-index:1000;
+    width:812px;
+    height:243px;
+    position:relative;
+    background:transparent url('/themes/default/overlay/member_card.png') no-repeat;
+    padding:0;
+    margin:0;
+}
+#showMemberCard .close{
+    position:absolute;
+    right:18px;
+    top:0px;
+    cursor:pointer;
+    width:24px;
+    height:24px;
+    background:url('/themes/default/overlay/close.png');
+}
+.showMemberCardDetails{
+    position:relative;
+    margin:15px 30px;
+    padding:10px;
+    border:0;
+}
+.showMemberCardLimitedDetails{
+    position:relative;
+    margin:15px 30px;
+    padding:10px;
+    border:0;
+    color:red;
+}
+.showMemberCardLimitedDetails span{}
+.showMemberCardAvatar{
+    width:192px;
+    height:192px;
+    overflow:hidden;
+    float:left;
+    margin-right:8px;
+}
+.showMemberCardAvatar img{
+    border:0;
+    min-width:192px;
+}
+.showMemberCardMemberInfo{
+    color:#ccc !important;
+    font-size:12px !important;
+    float:left;
+    line-height:1.6;
+    height:192px;
+    width:530px;
+    position:relative;
+}
+.showMemberCardMemberInfo a{
+    color:#fff !important;
+}
+.showMemberCardMemberInfo a:hover{
+    color:#eee !important;
+}
+.showMemberCardMemberInfo p{
+    padding:0;
+    margin:0;
+}
+.showMemberCardIcons{
+    width:100%;
+    position:absolute;
+    left:0;
+    bottom:0;
+}
+.showMemberCardIcons img{
+    vertical-align:top !important;
+    border:0;
+    width:24px;
+    height:24px;
+}
+.showMemberCardStaffLinks, .showMemberCardLimitedViewSendMsg{
+    float:right;
+    cursor:pointer;
+}
+.showMemberCardStaffLinks dl.dropdown{
+    margin:0 !important;
+}
+.showMemberCardStaffLinks .dropdown dd ul, .showMemberCardStaffLinks .dropdown dd ul li{
+    background:#333333 !important;
+}
+.showMemberCardStaffLinks .dropdown dd ul{
+    border:#333333 !important;
+}
+.showMemberCardCountryFlag{
+    float:right;
+}
+.showMemberCardCountryFlag img{
+    width:24px;
+    height:24px;
+}
+.showMemberCardGroupname{
+    font-style:italic;
+}
+.showMemberCardTextHighlight{
+    color:#fff !important;
+    font-weight:bold;
+}
+.showMemberCardTextHighlightLimitedView{
+    text-align:center;
+    color:red !important;
+    font-weight:bold;
+}
+.showMemberCardLinks{
+    margin:10px 0;
+    padding:5px 0;
+    border:1px dotted #ddd;
+    border-left:0;
+    border-right:0;
+    text-align:center;
+    font-weight:bold;
+}
+.showMemberCardLinks span{
+    color:#fff !important;
+    cursor:pointer;
+    margin-left:10px;
+}
+.showMemberCardLinks span:hover{
+    text-decoration:underline;
+    color:#eee !important;
+}
+.showMemberCardLinks a{
+    color:#fff !important;
+    cursor:pointer;
+}

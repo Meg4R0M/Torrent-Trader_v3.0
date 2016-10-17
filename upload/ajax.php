@@ -275,35 +275,56 @@ if ($action == "refreshMemberStats"){
     $privacylevel = T_($detailsui["privacy"]);
     $usergender = $detailsui["gender"];
     
-    echo '<div id="showMemberCard" style="z-index: 9999; top: 48px; left: 545.5px; position: fixed; display: block;">
-        <a class="close" original-title=""></a>
-        <div class="showMemberCardDetails">
-            <div class="showMemberCardAvatar"><img src="'.$avatar.'" alt="" title=""></div>
-            <div class="showMemberCardMemberInfo">
-                <div class="showMemberCardIcons">
-                    <span class="showMemberCardStaffLinks" original-title=""> </span>
-                </div>
-                <p class="showMemberCardCountryFlag"><img src="/images/countryFlags/'.$countrypic.'" alt="'.$country.'" class="" id="" rel="resized_by_tsue" original-title="'.$country.'"></p>
-                <p><a href="/account-details.php?id='.$userinfoid.'" original-title=""><span class="membernameAdmin" original-title="">'.$detailsui["username"].'</span></a>, '.$detailsui["age"].' years old, '.$usergender.'</p>
-                <p class="showMemberCardGroupname"><span class="membernameAdmin" original-title="">'.get_user_class_name($detailsui["class"]).'</span></p>
-                <p>'.$moods.'</p>
-                <p><b>Member Since:</b> '.$detailsui["added"].'</p>
-                <p><b>Last Activity:</b> '.$detailsui["last_access"].'</p>
-                <p></p>
-                <p>
-				    Uploaded: <span class="showMemberCardTextHighlight" original-title="">'.$useruploaded.'</span> | 
-				    Downloaded: <span class="showMemberCardTextHighlight" original-title="">'.$userdownloaded.'</span> |  
-				    Ratio: <span class="showMemberCardTextHighlight" original-title=""><span class="ratioGood" original-title="">'.$ratio.'</span></span> | 
-				    Buffer <span class="showMemberCardTextHighlight" original-title="">1.09 MB</span> | 
-				    Points <span class="showMemberCardTextHighlight" original-title="">6.530</span>
-                </p>
-                <div class="showMemberCardLinks">
-				    <a href="/account-details.php?id='.$detailsui["id"].'" original-title="">'.$detailsui["username"].'\'s Profile</a>
-				    <span class="clickable small" id="messages_new_message" receiver_membername="'.$detailsui["username"].'" original-title="">Send Message</span>
-				    <span class="clickable small" id="follow_member" memberid="'.$userinfoid.'" inoverlay="yes" original-title="">Follow</span>
+    if ($user["privacy"] != "strong" || ($CURUSER["control_panel"] == "yes") || ($CURUSER["id"] == $user["id"])) {
+        echo '<div id="showMemberCard" style="z-index: 9999; top: 48px; left: 545.5px; position: fixed; display: block;">
+            <a class="close" original-title=""></a>
+            <div class="showMemberCardDetails">
+                <div class="showMemberCardAvatar"><img src="'.$avatar.'" alt="" title=""></div>
+                <div class="showMemberCardMemberInfo">
+                    <div class="showMemberCardIcons">
+                        <span class="showMemberCardStaffLinks" original-title=""> </span>
+                    </div>
+                    <p class="showMemberCardCountryFlag"><img src="/images/countryFlags/'.$countrypic.'" alt="'.$country.'" class="" id="" rel="resized_by_tsue" original-title="'.$country.'"></p>
+                    <p><a href="/account-details.php?id='.$userinfoid.'" original-title=""><span class="membernameAdmin" original-title="">'.$detailsui["username"].'</span></a>, '.$detailsui["age"].' years old, '.$usergender.'</p>
+                    <p class="showMemberCardGroupname"><span class="membernameAdmin" original-title="">'.get_user_class_name($detailsui["class"]).'</span></p>
+                    <p>'.$moods.'</p>
+                    <p><b>Member Since:</b> '.$detailsui["added"].'</p>
+                    <p><b>Last Activity:</b> '.$detailsui["last_access"].'</p>
+                    <p></p>
+                    <p>
+				        Uploaded: <span class="showMemberCardTextHighlight" original-title="">'.$useruploaded.'</span> | 
+				        Downloaded: <span class="showMemberCardTextHighlight" original-title="">'.$userdownloaded.'</span> |  
+				        Ratio: <span class="showMemberCardTextHighlight" original-title=""><span class="ratioGood" original-title="">'.$ratio.'</span></span> | 
+				        Buffer <span class="showMemberCardTextHighlight" original-title="">1.09 MB</span> | 
+				        Points <span class="showMemberCardTextHighlight" original-title="">6.530</span>
+                    </p>
+                    <div class="showMemberCardLinks">
+				        <a href="/account-details.php?id='.$detailsui["id"].'" original-title="">'.$detailsui["username"].'\'s Profile</a>
+				        <span class="clickable small" id="messages_new_message" receiver_membername="'.$detailsui["username"].'" original-title="">Send Message</span>
+				        <span class="clickable small" id="follow_member" memberid="'.$userinfoid.'" inoverlay="yes" original-title="">Follow</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>';
+        </div>';
+    }else{
+        echo '<div id="showMemberCard" style="z-index: 9999; top: 48px; left: 545.5px; position: fixed; display: block;">
+            <a class="close" original-title=""></a>
+            <div class="showMemberCardDetails">
+                <div class="showMemberCardAvatar"><img src="'.$avatar.'" alt="" title=""></div>
+                <div class="showMemberCardMemberInfo">
+                    <div class="showMemberCardIcons">
+                        <span class="showMemberCardStaffLinks" original-title=""> </span>
+                    </div>
+                    <p class="showMemberCardCountryFlag"><img src="/images/countryFlags/'.$countrypic.'" alt="'.$country.'" class="" id="" rel="resized_by_tsue" original-title="'.$country.'"></p>
+                    <p><span style="color: #6d6c6c; font-weight: bold;" original-title="">'.$detailsui["username"].'</span></p>
+                    <p class="showMemberCardGroupname"><span style="color: #6d6c6c; font-weight: bold;" original-title="">'.get_user_class_name($detailsui["class"]).'</span></p>
+                    <div class="error">This member limits who may view their profile.</div>
+                    <div class="showMemberCardLinks">
+                        <span class="clickable small" id="messages_new_message" receiver_membername="'.$detailsui["username"].'" original-title="">Send Message</span>
+                    </div>
+                </div>
+            </div>
+        </div>';
+    }
 }
 ?>

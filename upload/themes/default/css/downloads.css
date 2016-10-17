@@ -1,0 +1,33 @@
+.mostPopular li{
+    list-style-type:none;
+}
+.mostPopular li .index{
+    color:red;
+    font-weight:bold;
+    width:25px;
+}
+.mostPopular li .count{
+    color:red;
+    font-weight:bold;
+}
+.tabItems img{
+    max-width:100%;
+    border:0;
+    max-height:100%;
+}
+#showFile{
+    border:1px solid #ddd;
+    padding:5px 5px 0 10px;
+    margin:5px 0;
+}
+#showFile .previewImage{
+    float:right;
+    width:65px;
+    margin-left:2px;
+}
+#showFile .previewImage img{
+    width:60px;
+    height:60px;
+    border:0;
+}
+#showFile .fileDetails{}

@@ -13,7 +13,33 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<!-- CSS -->
 		<!-- Theme css -->
-		<link rel="stylesheet" href="http://templateshares-ue.net/tsue/style.php?lv=2.3&l=style,fancybox,jqueryTools,forums,fileuploader,tinymce_ui,thread_prefixes,comments,downloads,image_gallery,extra,menu,ajax,shoutbox,staffDropDownMenu,upcomingReleases,staffOnlineNow,subtitles,oneStepUpload,mixed,topDonors,fls,memberCard,plugin_torrent_categories,members,donations,responsive" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/style.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/jqueryTools.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/forums.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/fileuploader.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/tinymce_ui.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/thread_prefixes.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/comments.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/downloads.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/image_gallery.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/extra.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/menu.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/ajax.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/shoutbox.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/staffDropDownMenu.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/upcomingReleases.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/staffOnlineNow.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/subtitles.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/oneStepUpload.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/mixed.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/topDonors.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/fls.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/memberCard.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/plugin_torrent_categories.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/members.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/donations.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/themes/default/css/responsive.css" type="text/css" media="screen" />
+		
 		<link rel="Shortcut Icon" href="http://templateshares-ue.net/tsue/favicon.ico?lv=2.3" type="image/x-icon" />
 		<!-- JS -->
 		<script type="text/javascript" src="/backend/java_klappe.js"></script>
