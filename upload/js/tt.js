@@ -19,7 +19,7 @@ $('.torrent-box,.comment-box').hover(function(){$(this).addClass('box-hover');},
 return $defaultOptions;},loadCaptcha:function()
 {if($('#recaptcha_widget').length)
 {$.getScript('http'+(document.location.protocol=='https:'?'s':'')+'://www.google.com/recaptcha/api/js/recaptcha_ajax.js',function()
-{window.Recaptcha.create('6LdWBMgSAAAAAFwwI11YPq7c9p9SUpTJBsy9wAhA','recaptcha_widget',{theme:'custom',custom_theme_widget:'recaptcha_widget',callback:function()
+{window.Recaptcha.create('6Lcip9QSAAAAAHfHSHBrcn4ChwoA740AlzPM_7p6','recaptcha_widget',{theme:'custom',custom_theme_widget:'recaptcha_widget',callback:function()
 {$('#recaptcha_loading').fadeOut('slow',function()
 {$('#recaptcha_widget').fadeIn('slow');});}});});}},initAutoDescription:function()
 {var $autoDescription=$('#autoDescription');if($autoDescription.length)

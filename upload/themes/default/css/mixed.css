@@ -1,1 +1,197 @@
-#newAnnouncement{padding:1px;text-align:center; z-index:1000; background:red; font-size:14px; color:#ffffff; width:100%; position:fixed; top:0; left:0; border-bottom:2px solid #ffffff; cursor:pointer; -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)';filter:alpha(opacity=70);-moz-opacity:0.7;-khtml-opacity:0.7;opacity:0.7;}#newStaffMessage{padding:1px; text-align:center; z-index:1000; background:red; font-size:14px; color:#ffffff; width:100%; position:fixed; bottom:0; left:0; border:2px solid #ffffff; cursor:pointer; -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';filter:alpha(opacity=80);-moz-opacity:0.8;-khtml-opacity:0.8;opacity:0.8;}@font-face{font-family:'NFO';font-style:normal;font-weight:normal;src:local('NFO'), local('NFO-Regular'), url(http://templateshares-ue.net/tsue/styles/default/fonts/nfo.eot) format('eot');}#preNFO{padding:12px;font-family:NFO, Terminal, 'Courier New';font-size:11px;line-height:1em;}#RSSLink{width:99% !important;}#keywords{width:200px !important;}#torrent_categories{background:rgba(0, 0, 0, 0.5);padding:5px;margin-top:8px;border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;}#torrent_categories .text{color:#000;background:#fff;overflow:auto;}.torrent_moderation{position:absolute;bottom:0;left:0;width:100%;padding:2px 0;background:#000;color:#fff;text-align:center;font-weight:bold;font-size:11px;-ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)';filter:alpha(opacity=70);-moz-opacity:0.7;-khtml-opacity:0.7;opacity:0.7;}#torrentGenres{position:relative;margin:5px 0;}.genreIcons{float:left;border:1px solid #ddd;background:#fff;position:relative;margin:0 5px 5px 0;width:80px;height:80px;padding:2px;text-align:center;}.genreImage{margin-top:8px;}.screenshotImage{float:left;margin:0 5px 5px 0;}.screenshotImage img{padding:3px;background:#fff;}.autoSuggestTorrentList{position:relative;border:1px solid #ddd;width:600px;padding:5px;background:#fff;margin:5px;}.autoSuggestTorrentPoster{float:left;background:#fff;width:50px;}.autoSuggestTorrentPoster img{width:46px;}.autoSuggestTorrentDetails{float:left;width:547px;}.autoSuggestTorrentFlags{float:right;text-align:center;}#autoSearchTorrentResult{position:absolute;z-index:1000000;min-width:400px;border-top:0 !important;margin-top:10px;}#closeSearcher{position:absolute;right:-10px;top:-10px;cursor:pointer;}.weakTorrents{margin-bottom:5px;padding-bottom:5px;border-top:1px solid #ddd;display:block;}.requestFilledBox{padding:0px 3px;background:green;}.requestPendingBox{padding:0px 3px;background:red;}.pointer{cursor:pointer;}.rColumn{border-bottom:1px solid #ddd;margin-bottom:10px;padding-bottom:10px;}.rImage{width:60px;float:left;}.rImage img{width:60px;border:0;}.rtDetails{font-size:11px;margin-left:65px;}.rtDetails a{font-weight:bold;}.genreIcon{float:left;margin:5px 3px 3px 10px;border:1px solid #ddd;padding:5px;}.genreIcon:hover{border:1px solid #000;}.center{text-align:center;}
+#newAnnouncement{
+    padding:1px;
+    text-align:center;
+    z-index:1000;
+    background:red;
+    font-size:14px;
+    color:#ffffff;
+    width:100%;
+    position:fixed;
+    top:0; left:0;
+    border-bottom:2px solid #ffffff;
+    cursor:pointer;
+    -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)';
+    filter:alpha(opacity=70);
+    -moz-opacity:0.7;
+    -khtml-opacity:0.7;
+    opacity:0.7;
+}
+#newStaffMessage{
+    padding:1px;
+    text-align:center;
+    z-index:1000;
+    background:red;
+    font-size:14px;
+    color:#ffffff;
+    width:100%;
+    position:fixed;
+    bottom:0;
+    left:0;
+    border:2px solid #ffffff;
+    cursor:pointer;
+    -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';
+    filter:alpha(opacity=80);
+    -moz-opacity:0.8;
+    -khtml-opacity:0.8;
+    opacity:0.8;
+}
+@font-face{
+    font-family:'NFO';
+    font-style:normal;
+    font-weight:normal;
+    src:local('NFO'), local('NFO-Regular'), url(/themes/default/fonts/nfo.eot) format('eot');
+}
+#preNFO{
+    padding:12px;
+    font-family:NFO, Terminal, 'Courier New';
+    font-size:11px;
+    line-height:1em;
+}
+#RSSLink{
+    width:99% !important;
+}
+#keywords{
+    width:200px !important;
+}
+#torrent_categories{
+    background:rgba(0, 0, 0, 0.5);
+    padding:5px;
+    margin-top:8px;
+    border-radius:4px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+}
+#torrent_categories .text{
+    color:#000;
+    background:#fff;
+    overflow:auto;
+}
+.torrent_moderation{
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    padding:2px 0;
+    background:#000;
+    color:#fff;
+    text-align:center;
+    font-weight:bold;
+    font-size:11px;
+    -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)';
+    filter:alpha(opacity=70);
+    -moz-opacity:0.7;
+    -khtml-opacity:0.7;
+    opacity:0.7;
+}
+#torrentGenres{
+    position:relative;
+    margin:5px 0;
+}
+.genreIcons{
+    float:left;
+    border:1px solid #ddd;
+    background:#fff;
+    position:relative;
+    margin:0 5px 5px 0;
+    width:80px;
+    height:80px;
+    padding:2px;
+    text-align:center;
+}
+.genreImage{
+    margin-top:8px;
+}
+.screenshotImage{
+    float:left;
+    margin:0 5px 5px 0;
+}
+.screenshotImage img{
+    padding:3px;
+    background:#fff;
+}
+.autoSuggestTorrentList{
+    position:relative;
+    border:1px solid #ddd;
+    width:600px;
+    padding:5px;
+    background:#fff;
+    margin:5px;
+}
+.autoSuggestTorrentPoster{
+    float:left;
+    background:#fff;
+    width:50px;
+}
+.autoSuggestTorrentPoster img{
+    width:46px;
+}
+.autoSuggestTorrentDetails{
+    float:left;
+    width:547px;
+}
+.autoSuggestTorrentFlags{
+    float:right;
+    text-align:center;
+}
+#autoSearchTorrentResult{
+    position:absolute;
+    z-index:1000000;
+    min-width:400px;
+    border-top:0 !important;
+    margin-top:10px;
+}
+#closeSearcher{
+    position:absolute;
+    right:-10px;
+    top:-10px;
+    cursor:pointer;
+}
+.weakTorrents{
+    margin-bottom:5px;
+    padding-bottom:5px;
+    border-top:1px solid #ddd;
+    display:block;
+}
+.requestFilledBox{
+    padding:0px 3px;
+    background:green;
+}
+.requestPendingBox{
+    padding:0px 3px;
+    background:red;
+}
+.pointer{
+    cursor:pointer;
+}
+.rColumn{
+    border-bottom:1px solid #ddd;
+    margin-bottom:10px;
+    padding-bottom:10px;
+}
+.rImage{
+    width:60px;
+    float:left;
+}
+.rImage img{
+    width:60px;
+    border:0;
+}
+.rtDetails{
+    font-size:11px;
+    margin-left:65px;
+}
+.rtDetails a{
+    font-weight:bold;
+}
+.genreIcon{
+    float:left;
+    margin:5px 3px 3px 10px;
+    border:1px solid #ddd;
+    padding:5px;
+}
+.genreIcon:hover{
+    border:1px solid #000;
+}
+.center{
+    text-align:center;
+}

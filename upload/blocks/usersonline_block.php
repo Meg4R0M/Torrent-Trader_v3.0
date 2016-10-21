@@ -1,16 +1,17 @@
 <?php
 //
-//  TorrentTrader v3.0
-//      $LastChangedDate: 2016-10-15 11:28:50 +0000 (Sat, 15 Oct 2016) $
+//  TorrentTrader v3.x
+//      $LastChangedDate: 2016-10-21 14:55:35 +0100 (Fri, 21 Oct 2016) $
 //      $LastChangedBy: Meg4R0M $
 //
+
 if (strpos($_SERVER['REQUEST_URI'], '?') !== false){
     $scripturl =  substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
 }else{
     $scripturl = $_SERVER['REQUEST_URI'];
 }
 
-if ($scripturl == "/index.php" || $scripturl == "/account-details.php"){
+if ($scripturl != "/membercp.php" || $scripturl != "/forums.php"){
     echo '<div class="widget">
         <h4>
             <span class="floatright">

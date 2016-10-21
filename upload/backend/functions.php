@@ -326,6 +326,54 @@ function show_error_msg($title, $message, $wrapper = "1") {
     }
 }
 
+function ajax_show_error_msg($title, $message, $wrapper = "1") {
+    if ($wrapper) {
+        ob_start();
+        ob_clean();
+    }
+	
+    echo '<div id="overlay" style="position: fixed; z-index: 10000; top: 30px; left: 605px; display: block;">
+        <div class="overlay_header">
+            <div class="close"></div>
+            '.$title.'
+        </div>
+        <div class="overlay_text">
+            <div class="error" header="'.$title.'">
+                '.$message.'
+            </div>
+        </div>
+        <div class="overlay_footer"></div>
+    </div>';
+
+    if ($wrapper){
+        die();
+    }
+}
+
+function ajax_show_infos_msg($title, $message, $wrapper = "1") {
+    if ($wrapper) {
+        ob_start();
+        ob_clean();
+    }
+
+    echo '<div id="overlay" style="position: fixed; z-index: 10000; top: 30px; left: 605px; display: block;">
+        <div class="overlay_header">
+            <div class="close"></div>
+            '.$title.'
+        </div>
+        <div class="overlay_text">
+            <div class="done" header="'.$title.'">
+                '.$message.'
+            </div>
+        </div>
+        <div class="overlay_footer"></div>
+    </div>';
+
+    if ($wrapper){
+        die();
+    }
+}
+
 function health($leechers, $seeders) {
     if (($leechers == 0 && $seeders == 0) || ($leechers > 0 && $seeders == 0))
         return 0;

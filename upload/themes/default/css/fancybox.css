@@ -54,7 +54,7 @@
     max-height:100%;
 }
 #fancybox-loading, .fancybox-close, .fancybox-prev span, .fancybox-next span{
-    background-image:url('./styles/default/fancybox/fancybox_sprite.png');
+    background-image:url('/themes/default/fancybox/fancybox_sprite.png');
 }
 #fancybox-loading{
     position:fixed;
@@ -70,7 +70,7 @@
 #fancybox-loading div{
     width:44px;
     height:44px;
-    background:url('./styles/default/fancybox/fancybox_loading.gif') center center no-repeat;
+    background:url('/themes/default/fancybox/fancybox_loading.gif') center center no-repeat;
 }
 .fancybox-close{
     position:absolute;
@@ -88,7 +88,7 @@
     height:100%;
     cursor:pointer;
     text-decoration:none;
-    background:transparent url('./styles/default/fancybox/blank.gif');
+    background:transparent url('/themes/default/fancybox/blank.gif');
     -webkit-tap-highlight-color:rgba(0,0,0,0);
     z-index:8040;
 }
@@ -138,7 +138,7 @@
     overflow:hidden;
     display:none;
     z-index:8010;
-    background:url('./styles/default/fancybox/fancybox_overlay.png');
+    background:url('/themes/default/fancybox/fancybox_overlay.png');
 }
 .fancybox-overlay-fixed{
     position:fixed;

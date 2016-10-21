@@ -1,1 +1,69 @@
-#igUploadForm{border:1px solid #ddd;padding:5px;}#igUploadForm div{margin-bottom:5px;padding:2px;border-bottom:1px dotted #ddd;}.igRules{color:red;font-weight:bold;}.igPrivateAlt{font-size:11px;color:#ccc;font-weight:bold;font-style:italic;}#igUploading{display:none;border:1px solid #ddd;padding:5px;}.igImageBox{margin:5px;border:1px solid #ddd;width:121px;height:80px;float:left;overflow:hidden;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}.igBigImageBox{position:relative;margin:0;padding:0;}.igDelete, .ig_report_content{padding:3px 5px;background:#000;color:#fff;font-weight:bold;font-size:11px;cursor:pointer;display:inline;}.igDelete:hover, .ig_report_content:hover{color:yellow;text-decoration:none;}.igImageDetails span{display:block;font-weight:bold;font-size:13px;}.igImageDetails textarea{border:1px solid #ddd;width:99%;height:30px;color:#000;}.igImageDetails label{margin:5px 0;border:1px solid #ddd;padding:5px;}
+#igUploadForm{
+    border:1px solid #ddd;
+    padding:5px;
+}
+#igUploadForm div{
+    margin-bottom:5px;
+    padding:2px;
+    border-bottom:1px dotted #ddd;
+}
+.igRules{
+    color:red;
+    font-weight:bold;
+}
+.igPrivateAlt{
+    font-size:11px;
+    color:#ccc;
+    font-weight:bold;
+    font-style:italic;
+}
+#igUploading{
+    display:none;
+    border:1px solid #ddd;
+    padding:5px;
+}
+.igImageBox{
+    margin:5px;
+    border:1px solid #ddd;
+    width:121px;
+    height:80px;
+    float:left;
+    overflow:hidden;
+    -moz-box-shadow:0 0 5px #888;
+    -webkit-box-shadow:0 0 5px#888;
+    box-shadow:0 0 5px #888;
+}
+.igBigImageBox{
+    position:relative;
+    margin:0;
+    padding:0;
+}
+.igDelete, .ig_report_content{
+    padding:3px 5px;
+    background:#000;
+    color:#fff;
+    font-weight:bold;
+    font-size:11px;
+    cursor:pointer;
+    display:inline;
+}
+.igDelete:hover, .ig_report_content:hover{
+    color:yellow;
+    text-decoration:none;
+}
+.igImageDetails span{
+    display:block;
+    font-weight:bold;
+    font-size:13px;
+}
+.igImageDetails textarea{
+    border:1px solid #ddd;
+    width:99%;
+    height:30px;
+    color:#000;
+}
+.igImageDetails label{
+    margin:5px 0;
+    border:1px solid #ddd;
+    padding:5px;
+}

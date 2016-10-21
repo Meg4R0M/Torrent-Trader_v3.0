@@ -99,7 +99,7 @@ var TSUESettings =
 	website_resize_images_max_height: "665",
 	ajaxHolderID: 'ajaxloader',
 	ajaxLoaderImage: '<img src="http://templateshares-ue.net/tsue/styles/default/ajax/fb_ajax-loader.gif" class="ajaxLoaderImage">',
-	security_enable_captcha: "1",
+	security_enable_captcha: "0",
 
 	shoutbox_enabled: 1,
 	irtm_enabled: 0,
@@ -120,11 +120,12 @@ if (strpos($_SERVER['REQUEST_URI'], '?') !== false){
 		?><script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/tt.js"></script>
     <script type="text/javascript" src="../../js/login.js"></script><?php
-if ($scripturl == "/index.php"){
+if ($scripturl == "/index.php" || $scripturl == "/account-signup.php"){
 		?><script type="text/javascript" src="../../js/signup.js"></script>
 		<script type="text/javascript" src="../../js/forgot_password.js"></script>
-		<script type="text/javascript" src="../../js/passwordstrength.js"></script>
-		<script type="text/javascript" src="../../js/donate.js"></script>
+		<script type="text/javascript" src="../../js/passwordstrength.js"></script><?php
+}elseif ($scripturl == "/index.php"){
+		?><script type="text/javascript" src="../../js/donate.js"></script>
 		<script type="text/javascript" src="../../js/shoutbox.js"></script>
 		<script type="text/javascript" src="../../js/news.js"></script>
 		<script type="text/javascript" src="../../js/poll.js"></script>
@@ -135,6 +136,10 @@ if ($scripturl == "/index.php"){
         <script type="text/javascript" src="../../js/comments.js"></script>
         <script type="text/javascript" src="../../js/profile.js"></script>
 		<script type="text/javascript" src="../../js/messages.js"></script><?php
+}elseif ($scripturl == "/faq.php"){
+	?><script type="text/javascript" src="../../js/faq.js"></script>
+	<script type="text/javascript">function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');}</script>
+	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><?php
 }
 
 		?><script type="text/javascript" src="http://templateshares-ue.net/tsue/js/tiny_mce/tiny_mce_gzip.js?lv=2.3"></script>
