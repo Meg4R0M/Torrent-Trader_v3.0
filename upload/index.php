@@ -135,6 +135,108 @@ if ($site_config['NEWSON'] && $CURUSER['view_news'] == "yes"){
 	end_frame();
 }
 
+if ($site_config['SHOUTBOX'] && !($CURUSER['hideshoutbox'] == 'yes')){
+	echo '<div class="tableHeader">
+		<div class="row">
+			<div class="cell first">
+				<div id="shoutboxUpdating">Updating...</div>Shoutbox 
+			</div>
+		</div>
+	</div>';
+
+	require_once("backend/smilies.php");
+	require_once("shoutfun_new.php");
+
+	function smile() {
+		print "<div align='center'>
+			<table cellpadding='1' cellspacing='1' align='center'>
+				<tr>";
+
+					global $smilies, $count;
+					reset($smilies);
+					while ((list($code, $url) = each($smilies)) && $count<13) {
+						print("\n<td><a href=\"javascript: SmileIT('".str_replace("'","\'",$code)."')\"><img border=\"0\" src=\"images/smilies/$url\" alt=\"$code\" /></a></td>");
+						$count++;
+					}
+					print '<td>&nbsp<button onclick="show_hide(\'sextra\')" class="submit"><i class="fa fa-arrow-down" aria-hidden="true" title="More !"></i></button></td>
+				</tr>
+			</table>
+		</div>';
+	}
+
+	function smileextra() {
+		global $smilies;
+		reset($smilies);
+		print "<div align='center'>
+			<table cellpadding='1' cellspacing='1' align='center'>
+				<tr>";
+		# getting smilies
+		while (list($code, $url) = each($smilies)) {
+			print("\n<td><a href=\"javascript: SmileIT('".str_replace("'","\'",$code)."')\"><img border=\"0\" src=\"images/smilies/$url\" alt=\"$code\" /></a></td>");
+			$count++;
+		}
+		print '</tr>
+			</table>
+		</div>';
+	}
+
+	?>
+	<script src="js/shoutbox.js" language="Javascript" type="text/javascript"></script>
+<div class="widget" ><div id="shoutbox_list">
+		<div class="shoutbox">
+			<table cellpadding="0" cellspacing="0" border="0" class="shoutbox" id="outputList">
+				<div class="loader"></div>
+			</table>
+		</div>
+	</div>
+
+	<div class="shoutboxButtons" id="shoutheader">
+		<form id="chatForm" name="chatForm" onsubmit="return false;" action="">
+			<input type="hidden" name="name" id="name" value="<?php echo $CURUSER["username"] ?>" />
+			<input type="hidden" name="uid" id="uid" value="<?php echo $CURUSER["id"] ?>" />
+			<input type="text" maxlength="800" name="chatbarText" class="s" id="chatbarText" onblur="checkStatus('');" onfocus="checkStatus('active');" />
+			<button onclick="sendComment();" type="submit" id="submit" name="submit" class="submit">SHOUT !</button>
+			<button onclick="PopMoreSmiles('chatForm','chatbarText')" class="submit"><i class="fa fa-smile-o" aria-hidden="true" title="smilies"></i></button>
+			<?php
+
+			if (get_user_class() >= 5) {
+				echo '<button onclick="purge(0)" class="submit"><i class="fa fa-trash" aria-hidden="true" title="Empty Shoutbox"></i></button>';
+			}
+			?>
+			<button onclick="Pophistory()" class="submit"><i class="fa fa-history" aria-hidden="true" title="History"></i></button>
+			<br />
+			<div align=center><?php echo smile();?></div>
+			<div style="display: none;" id="sextra"><?php echo shoutfun('chatForm','chatbarText',$dossier);?></div>
+			<div style="display: none;" id="sextra1"><br /><?php echo smileextra();?></div>
+		</form>
+	</div>
+</div>
+
+	<script language="Javascript">
+		function show_hide(sextra){
+			if(document.getElementById(sextra)){
+				if(document.getElementById(sextra).style.display == 'none'){
+					document.getElementById(sextra).style.display = 'inline';
+				}else{
+					document.getElementById(sextra).style.display = 'none';
+				}
+			}
+		}
+		function show_hide(sextra1){
+			if(document.getElementById(sextra1)){
+				if(document.getElementById(sextra1).style.display == 'none'){
+					document.getElementById(sextra1).style.display = 'inline';
+				}else{
+					document.getElementById(sextra1).style.display = 'none';
+				}
+			}
+		}
+	</script>
+	<?php
+
+}
+//END_AJAX_SHOUTBOX
+
 //Polls
 begin_frame(T_("POLL"));
 if (!function_exists("srt")) {

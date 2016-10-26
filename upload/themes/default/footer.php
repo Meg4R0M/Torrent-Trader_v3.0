@@ -122,8 +122,7 @@ if (strpos($_SERVER['REQUEST_URI'], '?') !== false){
     <script type="text/javascript" src="../../js/login.js"></script><?php
 if ($scripturl == "/index.php" || $scripturl == "/account-signup.php"){
 		?><script type="text/javascript" src="../../js/signup.js"></script>
-		<script type="text/javascript" src="../../js/forgot_password.js"></script>
-		<script type="text/javascript" src="../../js/passwordstrength.js"></script><?php
+		<script type="text/javascript" src="../../js/forgot_password.js"></script><?php
 }elseif ($scripturl == "/index.php"){
 		?><script type="text/javascript" src="../../js/donate.js"></script>
 		<script type="text/javascript" src="../../js/shoutbox.js"></script>
@@ -131,7 +130,7 @@ if ($scripturl == "/index.php" || $scripturl == "/account-signup.php"){
 		<script type="text/javascript" src="../../js/poll.js"></script>
 		<script type="text/javascript" src="../../js/scrollable.js"></script><?php
 }elseif ($scripturl == "/membercp.php" || $scripturl == "/account-details.php"){
-		?><script type="text/javascript" src="../../js/passwordstrength.js"></script>
+		?><script type="text/javascript" src="../../js/signup.js"></script>
 		<script type="text/javascript" src="../../js/membercp.js"></script>
         <script type="text/javascript" src="../../js/comments.js"></script>
         <script type="text/javascript" src="../../js/profile.js"></script>
@@ -142,8 +141,14 @@ if ($scripturl == "/index.php" || $scripturl == "/account-signup.php"){
 	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><?php
 }
 
-		?><script type="text/javascript" src="http://templateshares-ue.net/tsue/js/tiny_mce/tiny_mce_gzip.js?lv=2.3"></script>
+		?><!--<script type="text/javascript" src="../../js/tinymce/tinymce.min.js"></script>
 		<script type="text/javascript">tinyMCE_GZ.init({plugins : '-inlinepopups,-smilies,-quote,-tsuecode,-autoresize,-autolink',themes:'tsue',languages:'',disk_cache:true,debug:false});</script>
+								<script type="text/javascript">
+								tinymce.init({
+								selector: 'textarea',  // change this value according to your HTML
+								plugins : 'bbcode autoresize autolink'
+								});
+								</script>
 		<script type="text/javascript">
 		//<![CDATA[
 			tinyMCE.addI18n('en.tsue',
@@ -179,7 +184,7 @@ if ($scripturl == "/index.php" || $scripturl == "/account-signup.php"){
 
 tinyMCE.init({ mode:'none', theme:'tsue', language:'', plugins:'-inlinepopups,-smilies,-quote,-tsuecode,-autoresize,-autolink' });
 		//]]>
-		</script>
+		</script>-->
 
 	</body>
 </html>

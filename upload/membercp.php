@@ -6,6 +6,7 @@
 //
 
 require_once("backend/functions.php");
+require_once("mailbox-functions.php");
 dbconn();
 loggedinonly();
 
@@ -1089,120 +1090,226 @@ if ($action=="alerts"){
 	show_error_msg(T_("ERROR"), "You have no new alerts.", 1);
 }
 
-if ($action=="messages"){
-?><div class="message" id="show_all_messages">
+if ($action=="messages") {
+    if (isset($_GET["message_id"])) {
+        if (is_valid_id($_GET["message_id"])){
+            $messageid = $_GET["message_id"];
+            $res = SQL_Query_exec("SELECT * FROM messages WHERE id=$messageid");
+            $arr = mysqli_fetch_assoc($res);
+            echo '<div id="messageTools">
+            	<div class="toolsMenu">
+            	    <dl class="dropdown">
+                    	<dt><a href="javascript:void(0);"></a></dt>
+                    	<dd>
+                    		<ul id="ulglobal">
+			                    <li><a href="#" id="pm_markAsUnread" rel="'.$arr["id"].'">Mark as Unread</a></li>
+			        			<li><a href="#" id="pm_DeleteMessage" rel="'.$arr["id"].'">Delete Message</a></li>
+			                    <li><a href="#" id="pm_forwardMessage" rel="'.$arr["id"].'">Forward Message</a></li>
+                    		</ul>
+                    	</dd>
+                    </dl>
+                </div>
+            </div>';
 
-	<span class="floatright">
-		<input type="button" name="messages_delete_messages" value="Delete Selected Messages" id="messages_delete_messages" class="submit" /> 
-		<input type="button" name="messages_select_all" value="Select All" id="messages_select_all" class="submit" /> 
-	</span>
+            if ($arr["sender"] == $CURUSER['id'])
+                $sender = "Yourself";
+            elseif (is_valid_id($arr["sender"])) {
+                $res2 = SQL_Query_exec("SELECT username, class, avatar FROM users WHERE `id` = $arr[sender]");
+                $arr2 = mysqli_fetch_assoc($res2);
+                $sender = ($arr2["username"] ? $arr2["username"] : "[Deleted]");
+                $avatar = htmlspecialchars($arr2["avatar"]);
+                if (!$avatar)
+                    $avatar = "/images/default_avatar.png";
+                if ($sender != "[Deleted]") {
+                    switch ($arr2["class"]) {
+                        case 1:
+                            $color = "#00FFFF";// user
+                            break;
+                        case 2:
+                            $color = "#FF7519";// power user
+                            break;
+                        case 3:
+                            $color = "#990099";// VIP
+                            break;
+                        case 4:
+                            $color = "#0000FF";// uploader
+                            break;
+                        case 5:
+                            $color = "#009900";//moderator
+                            break;
+                        case 6:
+                            $color = "#00FF00";//super moderator
+                            break;
+                        case 7:
+                            $color = "#FF0000";// you and most trusted
+                            break;
+                    }
+                } else {
+                    $color = "#000";
+                }
+            } else {
+                $sender = T_("SYSTEM");
+                $avatar = "/images/default_avatar.png";
+                $color = "#000";
+            }
+
+            echo '<div id="message_id_'.$arr["id"].'">
+                <div class="comments" id="reply_15291">
+                	<div class="cAvatar">';
+                        if ($sender == T_("SYSTEM") || $sender == "[Deleted]") {
+                            echo '<img src="' . $avatar . '" alt="" title="" class="avatar" width="48px" />';
+                        } else {
+                            echo '<img src="' . $avatar . '" alt="" title="" class="clickable avatar" id="member_info" memberid="' . $arr["sender"] . '" width="48px" />';
+                        }
+                    echo '</div>
+	                <div class="commentHolder">
+		                <div class="cMessage" id="cMessage_15291">'.format_comment($arr["msg"]).'</div>
+                        <div class="commentDate">
+			                <div class="cLinks">
+				                &nbsp;&nbsp;&nbsp;<a href="#" id="replyMessage" reply_id="15291" message_id="'.$arr["id"].'">Reply</a>
+                			</div>';
+                            if ($sender == T_("SYSTEM") || $sender == "[Deleted]") {
+                                echo '<span style="color: ' . $color . '; font-weight: bold;">' . $sender . '</span>  '.$arr["added"];
+                            } else {
+                                echo '<span id="member_info" memberid="' . $arr["sender"] . '" class="clickable"><span style="color: ' . $color . '; font-weight: bold;">' . $sender . '</span></span>  '.$arr["added"];
+                            }
+                		echo '</div>
+                		<div class="clear"></div>
+                	</div>
+                	<div class="clear"></div>';
+
+                    echo '<form method="POST" action="mailbox.php">';
+                    require_once("backend/bbcode.php");
+
+                    print textbbcode("compose","msg","$msg");
+                    echo "<table width='600px' border='0' align='center' cellpadding='4' cellspacing='0'>";
+                    $output = "<input type=\"submit\" name=\"send\" value=\"Send\" />&nbsp;<label><input type=\"checkbox\" name=\"save\" checked='checked' />Save Copy In Outbox</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"submit\" name=\"draft\" value=\"Save Draft\" />&nbsp;";
+                    tr2($output);
+            echo "</table>";
+            end_form();
+                echo '</div>
+            </div>
+            <div id="messageData"><input type="hidden" name="last_reply_id" id="last_reply_id" value="15291" /></div>
+            <div id="fetchNewMessages"></div>
+            <div id="messages_post_reply"></div>';
+        }
+        else
+            echo 'WUT ! Invalid iD !...';
+    } else {
+        echo '<div class="message" id="show_all_messages">
+
+    		<span class="floatright">
+	    		<input type="button" name="messages_delete_messages" value="Delete Selected Messages" id="messages_delete_messages" class="submit" /> 
+		    	<input type="button" name="messages_select_all" value="Select All" id="messages_select_all" class="submit" /> 
+		    </span>
 	
-	<input type="button" name="messages_new_message" value="New Message" id="messages_new_message" class="submit" /> 
-	<input type="button" name="messages_view_all" value="See All Messages" id="messages_view_all" class="submit" />
-	
-	<div id="show_member_messages"><div id="show_message_9862" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/styles/default/avatars/avatar_m_s.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="618" />
+		    <input type="button" name="messages_new_message" value="New Message" id="messages_new_message" class="submit" /> 
+		    <input type="button" name="messages_view_all" value="See All Messages" id="messages_view_all" class="submit" />
+		    <div id="show_member_messages">';
 
-	<div class="floatright textAlignCenter">
-		<span id="unread" class="prefixButton red">Unread</span>
-		<label><input type="checkbox" name="deleteMessages[]" value="9862" id="deleteMessages" /></label>
-	</div>
+                $where = "`receiver` = $CURUSER[id] AND `location` IN ('in','both')";
+                $order = order("added,sender,sendto,subject", "added", true);
+                $res = SQL_Query_exec("SELECT COUNT(*) FROM messages WHERE $where");
+                $count = mysqli_result($res, 0);
+                //list($pagertop, $pagerbottom, $limit) = pager2(20, $count);
 
-	<div><span id="member_info" memberid="618" class="clickable"><span style="color: #6d6c6c; font-weight: bold;">Meg4R0M</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=9862">Failed Login Attempt!</a></div>
-	<div class="smalldate">Yesterday at 12:15</div>
-</div><div id="show_message_9861" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/styles/default/avatars/avatar_m_s.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="618" />
+                $res = SQL_Query_exec("SELECT * FROM messages WHERE $where $order");
+                while ($arr = mysqli_fetch_assoc($res)) {
+                    $userid = 0;
+                    $format = '';
+                    $reading = false;
 
-	<div class="floatright textAlignCenter">
-		<span id="unread" class="prefixButton red">Unread</span>
-		<label><input type="checkbox" name="deleteMessages[]" value="9861" id="deleteMessages" /></label>
-	</div>
+                    if ($arr["sender"] == $CURUSER['id'])
+                        $sender = "Yourself";
+                    elseif (is_valid_id($arr["sender"])) {
+                        $res2 = SQL_Query_exec("SELECT username, class, avatar FROM users WHERE `id` = $arr[sender]");
+                        $arr2 = mysqli_fetch_assoc($res2);
+                        $sender = ($arr2["username"] ? $arr2["username"] : "[Deleted]");
+                        $avatar = htmlspecialchars($arr2["avatar"]);
+                        if (!$avatar)
+                            $avatar = "/images/default_avatar.png";
+                        if ($sender != "[Deleted]") {
+                            switch ($arr2["class"]) {
+                                case 1:
+                                    $color = "#00FFFF";// user
+                                    break;
+                                case 2:
+                                    $color = "#FF7519";// power user
+                                    break;
+                                case 3:
+                                    $color = "#990099";// VIP
+                                    break;
+                                case 4:
+                                    $color = "#0000FF";// uploader
+                                    break;
+                                case 5:
+                                    $color = "#009900";//moderator
+                                    break;
+                                case 6:
+                                    $color = "#00FF00";//super moderator
+                                    break;
+                                case 7:
+                                    $color = "#FF0000";// you and most trusted
+                                    break;
+                            }
+                        } else {
+                            $color = "#000";
+                        }
+                    } else {
+                        $sender = T_("SYSTEM");
+                        $avatar = "/images/default_avatar.png";
+                        $color = "#000";
+                    }
 
-	<div><span id="member_info" memberid="618" class="clickable"><span style="color: #6d6c6c; font-weight: bold;">Meg4R0M</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=9861">Failed Login Attempt!</a></div>
-	<div class="smalldate">Thursday at 20:12</div>
-</div><div id="show_message_9860" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/styles/default/avatars/avatar_m_s.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="618" />
+                    if ($arr["receiver"] == $CURUSER['id']) $sentto = "Yourself";
+                    elseif (is_valid_id($arr["receiver"])) {
+                        $res2 = SQL_Query_exec("SELECT username FROM users WHERE `id` = $arr[receiver]");
+                        $arr2 = mysqli_fetch_assoc($res2);
+                        $sentto = "<a href=\"account-details.php?id=$arr[receiver]\">" . ($arr2["username"] ? $arr2["username"] : "[Deleted]") . "</a>";
+                    } else
+                        $sentto = T_("SYSTEM");
 
-	<div class="floatright textAlignCenter">
-		<span id="unread" class="prefixButton red">Unread</span>
-		<label><input type="checkbox" name="deleteMessages[]" value="9860" id="deleteMessages" /></label>
-	</div>
+                    $subject = ($arr['subject'] ? htmlspecialchars($arr['subject']) : "no subject");
 
-	<div><span id="member_info" memberid="618" class="clickable"><span style="color: #6d6c6c; font-weight: bold;">Meg4R0M</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=9860">Failed Login Attempt!</a></div>
-	<div class="smalldate">Thursday at 18:57</div>
-</div><div id="show_message_9467" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/styles/default/avatars/avatar_m_s.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="96" />
+                    if (@$_GET['read'] == $arr['id']) {
+                        $reading = true;
+                        if (isset($_GET['inbox']) && $arr["unread"] == "yes")
+                            SQL_Query_exec("UPDATE messages SET `unread` = 'no' WHERE `id` = $arr[id] AND `receiver` = $CURUSER[id]");
+                    }
+                    if ($arr["unread"] == "yes") {
+                        $format = "font-weight:bold;";
+                        $unread = true;
+                    }
 
-	<div class="floatright textAlignCenter">
-		<span id="unread" class="prefixButton red">Unread</span>
-		<label><input type="checkbox" name="deleteMessages[]" value="9467" id="deleteMessages" /></label>
-	</div>
+                    echo '<div id="show_message_' . $arr["id"] . '" class="comment-box">';
+                        if ($sender == T_("SYSTEM") || $sender == "[Deleted]") {
+                            echo '<img src="' . $avatar . '" alt="" title="" class="avatar" width="48px" />';
+                        } else {
+                            echo '<img src="' . $avatar . '" alt="" title="" class="clickable avatar" id="member_info" memberid="' . $arr["sender"] . '" width="48px" />';
+                        }
 
-	<div><span id="member_info" memberid="96" class="clickable"><span style="color: #6d6c6c; font-weight: bold;">ahmedwahab</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=9467">test</a></div>
-	<div class="smalldate">24-09-2015 06:19</div>
-</div><div id="show_message_9453" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/styles/default/avatars/avatar_m_s.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="618" />
+                        echo '<div class="floatright textAlignCenter">';
+                            if ($arr["unread"] == "yes") {
+                                echo '<span id="unread" class="prefixButton red">Unread</span>';
+                            }
+                            echo '<label><input type="checkbox" name="deleteMessages[]" value="' . $arr["id"] . '" id="deleteMessages" /></label>
+                        </div>
 
-	<div class="floatright textAlignCenter">
-		<span id="unread" class="prefixButton red">Unread</span>
-		<label><input type="checkbox" name="deleteMessages[]" value="9453" id="deleteMessages" /></label>
-	</div>
+                        <div>';
+                            if ($sender == T_("SYSTEM") || $sender == "[Deleted]") {
+                                echo '<span style="color: ' . $color . '; font-weight: bold;">' . $sender . '</span>';
+                            } else {
+                                echo '<span id="member_info" memberid="' . $arr["sender"] . '" class="clickable"><span style="color: ' . $color . '; font-weight: bold;">' . $sender . '</span></span>';
+                            }
+                        echo '</div>
+					    <div><a href="/membercp.php?action=messages&message_id=' . $arr["id"] . '">' . $subject . '</a></div>
+					    <div class="smalldate">' . utc_to_tz($arr["added"]) . '</div>
+			    	</div>';
 
-	<div><span id="member_info" memberid="618" class="clickable"><span style="color: #6d6c6c; font-weight: bold;">Meg4R0M</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=9453">Failed Login Attempt!</a></div>
-	<div class="smalldate">18-09-2015 01:06</div>
-</div><div id="show_message_8004" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/styles/default/avatars/avatar_m_s.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="618" />
-
-	<div class="floatright textAlignCenter">
-		<span id="unread" class="prefixButton red">Unread</span>
-		<label><input type="checkbox" name="deleteMessages[]" value="8004" id="deleteMessages" /></label>
-	</div>
-
-	<div><span id="member_info" memberid="618" class="clickable"><span style="color: #6d6c6c; font-weight: bold;">Meg4R0M</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=8004">Failed Login Attempt!</a></div>
-	<div class="smalldate">11-12-2013 21:12</div>
-</div><div id="show_message_8003" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/styles/default/avatars/avatar_m_s.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="618" />
-
-	<div class="floatright textAlignCenter">
-		<span id="unread" class="prefixButton red">Unread</span>
-		<label><input type="checkbox" name="deleteMessages[]" value="8003" id="deleteMessages" /></label>
-	</div>
-
-	<div><span id="member_info" memberid="618" class="clickable"><span style="color: #6d6c6c; font-weight: bold;">Meg4R0M</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=8003">Failed Login Attempt!</a></div>
-	<div class="smalldate">11-12-2013 21:12</div>
-</div><div id="show_message_6840" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/styles/default/avatars/avatar_m_s.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="618" />
-
-	<div class="floatright textAlignCenter">
-		<span id="unread" class="prefixButton red">Unread</span>
-		<label><input type="checkbox" name="deleteMessages[]" value="6840" id="deleteMessages" /></label>
-	</div>
-
-	<div><span id="member_info" memberid="618" class="clickable"><span style="color: #6d6c6c; font-weight: bold;">Meg4R0M</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=6840">Failed Login Attempt!</a></div>
-	<div class="smalldate">23-04-2013 21:36</div>
-</div><div id="show_message_4826" class="comment-box">
-	<img src="http://templateshares-ue.net/tsue/data/avatars/s/1.png?1476005802" alt="" title="" class="clickable avatar" id="member_info" memberid="1" />
-
-	<div class="floatright textAlignCenter">
-		
-		<label><input type="checkbox" name="deleteMessages[]" value="4826" id="deleteMessages" /></label>
-	</div>
-
-	<div><span id="member_info" memberid="1" class="clickable"><span class="membernameAdmin">xam</span></span></div>
-	<div><a href="http://templateshares-ue.net/tsue/?p=messages&amp;pid=20&amp;message_id=4826">Welcome to Templateshares Ultimate Edition</a></div>
-	<div class="smalldate">22-08-2012 00:13</div>
-</div></div>
-
-</div>
-<?php
+                }
+            echo '</div>
+	    </div>';
+    }
 }
 
 stdfoot();

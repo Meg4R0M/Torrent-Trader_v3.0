@@ -16,7 +16,7 @@ if ( $site_config['SHOUTBOX'] && ! ( $CURUSER['hideshoutbox'] == 'yes' ) ){
 		echo "<font size='2'><center><b><font color=#FF0000>Your shoutbox rights have been takin away. If you fill like it was an error then please PM staff</font> <br><br></b></center><br />";
 		end_frame();
 	}else{
-		?><script src="/js/shoutbox.js"></script>
+		?><script src="/js/shoutbox2.js"></script>
 		<!-- Shout Container -->
 		<div id="shouts">
 			<img src="/images/ajax-loader.gif" alt="Loading..." title="Loading..." />

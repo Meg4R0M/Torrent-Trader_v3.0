@@ -1,167 +1,158 @@
 <?php
-//
-//  TorrentTrader v3.x
-//      $LastChangedDate: 2016-10-05 15:42:26 +0100 (Wed, 5 Oct 2016) $
-//      $LastChangedBy: Meg4R0M $
-//
 
 require_once("backend/functions.php");
+
 dbconn();
 
-if ($site_config['SHOUTBOX']){
+global $CURUSER;
 
-	//DELETE MESSAGES
-	if (isset($_GET['del'])){
-		if (is_numeric($_GET['del'])){
-			$query = "SELECT * FROM shoutbox WHERE msgid=".$_GET['del'] ;
-			$result = SQL_Query_exec($query);
-		}else{
-			echo "invalid msg id STOP TRYING TO INJECT SQL";
-			exit;
-		}
-		$row = mysqli_fetch_row($result);
-		if ($row && ($CURUSER["edit_users"]=="yes" || $CURUSER['username'] == $row[1])) {
-			$query = "DELETE FROM shoutbox WHERE msgid=".$_GET['del'] ;
-			write_log("<b><font color='orange'>Shout Deleted: </font> Deleted by   ".$CURUSER['username']."</b>");
-			SQL_Query_exec($query);    
-		}
-	}
+# if no id of the last known message id is set to 0
+if (!$lastID) { $lastID = 0; }
 
-	//INSERT MESSAGE
-	if (!empty($_POST['message']) && $CURUSER) {    
-		$_POST['message'] = sqlesc($_POST['message']);
-		$query = "SELECT COUNT(*) FROM shoutbox WHERE message=".$_POST['message']." AND user='".$CURUSER['username']."' AND UNIX_TIMESTAMP('".get_date_time()."')-UNIX_TIMESTAMP(date) < 30";
-		$result = SQL_Query_exec($query);
-		$row = mysqli_fetch_row($result);
-		if ($row[0] == '0') {
-			$query = "INSERT INTO shoutbox (msgid, user, message, date, userid) VALUES (NULL, '".$CURUSER['username']."', ".$_POST['message'].", '".get_date_time()."', '".$CURUSER['id']."')";
-			SQL_Query_exec($query);
-		}
-	}
+# call to retrieve all messages with an id greater than $lastID
+getData($lastID);
 
-	//GET CURRENT USERS THEME AND LANGUAGE
-	if ($CURUSER){
-		$ss_a = @mysqli_fetch_assoc(@SQL_Query_exec("select uri from stylesheets where id=" . $CURUSER["stylesheet"]));
-		if ($ss_a)
-			$THEME = $ss_a["uri"];
-	}else{//not logged in so get default theme/language
-		$ss_a = mysqli_fetch_assoc(SQL_Query_exec("select uri from stylesheets where id='" . $site_config['default_theme'] . "'"));
-		if ($ss_a)
-			$THEME = $ss_a["uri"];
-	}
+# function that do retrieve all messages with an id greater than $lastID
+function getData($lastID) {
+    global $CURUSER;
+    if ($CURUSER){
+        //check for new pm's
+        $res = SQL_Query_exec("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"] . " and unread='yes' AND location IN ('in','both')") or print(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+        $arr = mysqli_fetch_row($res);
+        $unreadmail = $arr[0];
+        if ($unreadmail)
+            print("<font color=#FF0000 ><B><center>Vous avez reçu [<a href=mailbox.php?inbox class=link2 target=_blank><font color=#FF0000> $unreadmail </a>]  nouveaux messages ! Consultez les</center></b></a></font>&nbsp;&nbsp;");
+    }
 
-	if(!isset($_GET['history'])){ 
-		?><html>
-		<head>
-		<title><?php echo $site_config['SITENAME'] . T_("SHOUTBOX"); ?></title><?php
-		/* If you do change the refresh interval, you should also change index.php printf(T_("SHOUTBOX_REFRESH"), 5) the 5 is in minutes */ ?>
-		<meta http-equiv="refresh" content="300" />
-		<link rel="stylesheet" type="text/css" href="<?php echo $site_config['SITEURL']?>/themes/<?php echo $THEME; ?>/theme.css" />
-		<script type="text/javascript" src="<?php echo $site_config['SITEURL']; ?>/backend/java_klappe.js"></script>
-		</head>
-		<body class="shoutbox_body"><?php
-		echo '<div class="shoutbox_contain"><table border="0" style="width: 99%; table-layout:fixed">';
-	}else{
-		if ($site_config["MEMBERSONLY"]) {
-			loggedinonly();
-		}
-		stdhead();
-		begin_frame(T_("SHOUTBOX_HISTORY"));
-		echo '<div class="shoutbox_history">';
-		$query = 'SELECT COUNT(*) FROM shoutbox';
-		$result = SQL_Query_exec($query);
-		$row = mysqli_fetch_row($result);
-		echo '<div align="center">Pages: ';
-		$pages = round($row[0] / 100) + 1;
-		$i = 1;
-		while ($pages > 0){
-			echo "<a href='".$site_config['SITEURL']."/shoutbox.php?history=1&amp;page=".$i."'>[".$i."]</a>&nbsp;";
-			$i++;
-			$pages--;
-		}
-		echo '</div><br /><table border="0" style="width: 99%; table-layout:fixed">';
-	}
-	if (isset($_GET['history'])) {
-		if (isset($_GET['page'])) {
-			if($_GET['page'] > '1') {
-				$lowerlimit = $_GET['page'] * 100 - 100;
-				$upperlimit = $_GET['page'] * 100;
-			}else{
-				$lowerlimit = 0;
-				$upperlimit = 100;
-			}
-		}else{
-			$lowerlimit = 0;
-			$upperlimit = 100;
-		}
-		$query = 'SELECT * FROM shoutbox ORDER BY msgid DESC LIMIT '.$lowerlimit.','.$upperlimit;
-	}else{
-		$query = 'SELECT * FROM shoutbox ORDER BY msgid DESC LIMIT 20';
-	}
+    $results = SQL_Query_exec("SELECT c.* FROM shoutbox c left join users u on c.uid=u.id left join groups g on g.group_id=u.class WHERE c.id > $lastID ORDER BY c.id DESC LIMIT 15");
+    //$conn = getDBConnection(); # establishes the connection to the database
 
-	$result = SQL_Query_exec($query);
-	$alt = false;
+    # getting the data array
+    while ($row = mysqli_fetch_array($results)) {
 
-	while ($row = mysqli_fetch_assoc($result)) {
-		if ($alt){    
-			echo '<tr class="shoutbox_noalt">';
-			$alt = false;
-		}else{
-			echo '<tr class="shoutbox_alt">';
-			$alt = true;
-		}
+        # getting the data array
+        $id   = $row[id];
+        $uid  = $row[uid];
+        $time = date(' G:i ', 3600 + utc_to_tz_time($row['date']));
+        //$name = $row[name];
+        $text = $row[text];
 
-		echo '<td style="font-size: 9px; width: 118px;">';
-		echo "<div align='left' style='float: left'>";
-		echo date('jS M, g:ia', utc_to_tz_time($row['date']));
-		echo "</div>";
-		if ( ($CURUSER["edit_users"]=="yes") || ($CURUSER['username'] == $row['user']) ){
-			echo "<div align='right' style='float: right'><a href='".$site_config['SITEURL']."/shoutbox.php?del=".$row['msgid']."' style='font-size: 8px'>[D]</a></div>";
-		}
+        if ( ($CURUSER["edit_users"]=="yes") || ($CURUSER['id'] == $row['uid']) ){
+            $mid=$row['id'];
+            $edit="<button onclick=\"editup($mid,$CURUSER[id])\" style='font-size: 10px' class=\"submit\"><i class=\"fa fa-pencil\" aria-hidden=\"true\" title=\"edit\"></i></button><button onclick=\"delup($mid)\" style='font-size: 10px' class=\"submit\"><i class=\"fa fa-times\" aria-hidden=\"true\" title=\"Sup\"></i></button>";
+        }
+        $UClass=@mysqli_fetch_array(@SQL_Query_exec("SELECT level,  username, gender, avatar,uploaded, downloaded, privacy, country, added, age, class, donated, warned FROM users JOIN groups ON users.class=groups.group_id WHERE users.id=".$row[uid].""));
 
-		echo    '</td><td style="font-size: 12px; padding-left: 5px"><a href="'.$site_config['SITEURL'].'/account-details.php?id='.$row['userid'].'" target="_parent"><b>'.$row['user'].':</b></a>&nbsp;&nbsp;'.nl2br(format_comment($row['message']));
-		echo    '</td></tr>';
-	}
-	?></table>
-	</div>
-	<br /><?php
-	//if the user is logged in, show the shoutbox, if not, dont.
+        $don = $UClass["donated"] > 0 ? "<img src=".$site_config['SITEURL']."/images/users/money.png alt='' width='15' height='15' >" : "";
 
-	if(!isset($_GET['history'])) {
-		if (isset($_COOKIE["pass"])){
-			echo "<form name='shoutboxform' action='shoutbox.php' method='post'>";
-			echo "<center><table width='100%' border='0' cellpadding='1' cellspacing='1'>";
-			echo "<tr class='shoutbox_messageboxback'>";
-			echo "<td width='75%' align='center'>";
-			echo "<input type='text' name='message' class='shoutbox_msgbox' />";
-			echo "</td>";
-			echo "<td>";
-			echo "<input type='submit' name='submit' value='".T_("SHOUT")."' class='shoutbox_shoutbtn' />";
-			echo "</td>";
-			echo "<td>";
-			echo '<a href="javascript:PopMoreSmiles(\'shoutboxform\', \'message\');"><small>'.T_("MORE_SMILIES").'</small></a>';
-			echo ' <small>-</small> <a href="javascript:PopMoreTags();"><small>'.T_("TAGS").'</small></a>';
-			echo "<br />";
-			echo "<a href='shoutbox.php'><small>".T_("REFRESH")."</small></a>";              
-			echo " <small>-</small> <a href='".$site_config['SITEURL']."/shoutbox.php?history=1' target='_blank'><small>".T_("HISTORY")."</small></a>";
-			echo "</td>";
-			echo "</tr>";
-			echo "</table></center>";
-			echo "</form>";
-		}else{
-			echo "<br /><div class='shoutbox_error'>".T_("SHOUTBOX_MUST_LOGIN")."</div>";
-		}
-	}
+        $warn = $UClass["warned"] == "yes" ? "<img src=".$site_config['SITEURL']."/images/users/warn.gif alt=''>" : "";
 
-	if(!isset($_GET['history'])){ 
-		echo "</body></html>";
-	}else{
-		end_frame();
-		stdfoot();
-	}
+        $av=$UClass['avatar'];
+        if(!empty($av)){
+            $av="<img src='".$UClass[avatar]."' alt='my_avatar' width='50 height='50'>";
+        }
+        else{
+            $av="<img src='images/default_avatar.png' alt='my_avatar' width='50' height='50'>";
+        }
 
-}//END IF $SHOUTBOX
-else{
-    echo T_("SHOUTBOX_DISABLED");
+        if (!$UClass[avatar])
+            $avatar = '<img border=0 width=100 src=images/default_avatar.png>';
+        else $avatar = "<img border=0 width=100 src=$UClass[avatar]>";
+
+
+        if ($UClass['added'] == '0000-00-00 00:00:00')
+            $UClass['added'] = '---';
+        $added = date("d-M-Y", utc_to_tz_time($UClass['added']));
+
+        if ($UClass['privacy'] == '')
+            $UClass['privacy'] = '---';
+        $privacylevel = ($UClass["privacy"]);
+
+        if($UClass["downloaded"] != 0){
+            $ratio = number_format($UClass["uploaded"] / $UClass["downloaded"], 2);
+        } else {
+            $ratio = "---";
+        }
+        $ratio = "<font color=white>$ratio</font>";
+        switch($UClass["class"]){
+            case 1:
+                $color = "#00FFFF";// user
+                break;
+            case 2:
+                $color = "#FF7519";// power user
+                break;
+            case 3:
+                $color = "#990099";// VIP
+                break;
+            case 4:
+                $color = "#0000FF";// uploader
+                break;
+            case 5:
+                $color = "#009900";//moderator
+                break;
+            case 6:
+                $color = "#00FF00";//super moderator
+                break;
+            case 7:
+                $color = "#FF0000";// you and most trusted
+                break;
+        }
+        @((mysqli_free_result($UClass) || (is_object($UClass) && (get_class($UClass) == "mysqli_result"))) ? true : false);
+
+
+        $name = "".$row['name']."";
+        $mail = $CURUSER['username'] == $row['name'] ? "" : '<button onclick="window.location.href=\'mailbox.php?compose&id='.$row['uid'].'\'" style=\'font-size: 10px\' target="_parent" class="submit"><i class="fa fa-envelope" aria-hidden="true" title="Envoyer un MP"></i></button>';
+        #putting the chat together.
+        $chatout = "<tr id=\"shout_".$id."\" class=\"rowMemberShout\">
+            <td class=\"sMemberDetails\" style=\"min-width:38px;\">
+                ".$time."
+            </td>
+        	<td class=\"sMemberDetails\" style=\"min-width:90px;\" align=\"right\">
+                <span id=\"member_info\" memberid=\"".$uid."\" class=\"clickable\"><span style=\"color: ".$color.";\">".$name."</span></span>&nbsp;".$warn."&nbsp;
+            </td>
+            <td class=\"sMemberShout\" style=\"width: 95%;\">
+		        <div id=\"sMessageRow\">
+			        <div id=\"smessage\">&nbsp;&nbsp;".format_comment($text)."</div>
+		        </div>
+	        </td>";
+        if ( ($CURUSER["edit_users"]=="yes") || ($CURUSER['id'] == $row['uid']) ) {
+            $chatout .= "<td class=\"sMemberShout\" style=\"min-width:85px; float: right;\">
+                    <div class=\"sButtons\">" . $edit . "$mail&nbsp;</div>
+	            </td>";
+        }
+        $chatout .= "</tr>";
+
+        echo $chatout; # echo as known handles arrays very fast...
+    }
 }
+
+function execcommand_message ($message = '<div style="background: #000000; border: 1px solid #EA5F00; padding-left: 5px; color:orangered;">Votre commande a été exécutée. (Les résultats peuvent apparaître dans le prochain refresh!)</div>', $forcemessage = false){
+    if ((mysqli_affected_rows($GLOBALS["___mysqli_ston"]) OR $forcemessage)){
+        echo $message;
+    }
+}
+
+function execcommand_clean ($Data){
+    $Data = trim ($Data[0][1]);
+    if (empty ($Data)){
+
+        (@SQL_Query_exec ("TRUNCATE ajshoutbox") OR sqlerr (__FILE__, 284));
+        execcommand_message ();
+    }else{
+
+        $query = @SQL_Query_exec ("SELECT id FROM users WHERE username = " . sqlesc ($Data));
+        if (0 < mysqli_num_rows($query)){
+            $Userid = mysqli_result ($query, 0, 'id');
+
+            (@SQL_Query_exec ("delete from ajshoutbox where uid = " . sqlesc ($Userid)) OR sqlerr (__FILE__, 293));
+            execcommand_message ();
+        }
+    }
+
+    return true;
+}
+function execcommand_noclean ($Data){
+    (@SQL_Query_exec ("delete from ajshoutbox WHERE text='/clean'") OR sqlerr (__FILE__, 284));
+}
+
 ?>

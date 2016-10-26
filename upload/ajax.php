@@ -121,16 +121,17 @@ if ($action == "refreshMemberStats"){
 
 	$usersonlinequery = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id, username, class FROM users WHERE privacy !='strong' AND UNIX_TIMESTAMP('" . get_date_time() . "') - UNIX_TIMESTAMP(users.last_access) < 900") or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
 
-	while ($usersonlinerecord = mysqli_fetch_array($usersonlinequery) ) {
-		$usersonlinerecords[] = $usersonlinerecord;
+	$rows = array();
+	while ($row = mysqli_fetch_assoc($usersonlinequery)) {
+		$rows[] = $row;
 	}
 
-    if ($usersonlinerecords == ""){
-		echo "No members OnLine"; 
+	if (!$rows){
+		echo "No members OnLine";
 	}else{
-
-        $countusers = count($usersonlinerecords);
-        foreach ($usersonlinerecords as $user) {
+		$countusers = count($rows);
+		for ($i = 0, $cnt = $countusers, $n = $cnt - 1; $i < $cnt; $i++) {
+			$row = &$rows[$i];
 			switch($user["class"]){
 				case 1:
 					$color = "#00FFFF";// user
@@ -151,17 +152,14 @@ if ($action == "refreshMemberStats"){
 					$color = "#00FF00";//super moderator
 					break;
 				case 7:
-					$color = "#FF0000";// you and most trusted 
+					$color = "#FF0000";// you and most trusted
 					break;
 			}
-			for ($i = 0, $cnt = $countusers, $n = $cnt - 1; $i < $cnt; $i++) { 
-				$row = &$rows[$i];
-				echo '<span id="member_info" memberid="'.$user[id].'" class="clickable"><span style="color: '.$color.'; font-weight: bold;">'.class_user($user["username"]).'</span></span>'.($i < $n ? ", " : "");
-			}
+			echo '<span id="member_info" memberid="'.$row[id].'" class="clickable"><span style="color: '.$color.'; font-weight: bold;">'.class_user($row["username"]).'</span></span>'.($i < $n ? ", " : "");
 		}
-		echo '<br />Online now: '.count($rows).' (Members: '.$members.', Guests: '.$guests.')';
+		echo '<br />Online now: '.$countusers.' (Members: '.$members.', Guests: '.$guests.')';
 	}
-// LAST 24H ONLINE LIST
+	// LAST 24H ONLINE LIST
 }elseif ($action == "refreshlast24OnlineList"){
     $monli2 = "SELECT * FROM mostonline";
 	$result2 = SQL_Query_exec($monli2);
@@ -179,18 +177,21 @@ if ($action == "refreshMemberStats"){
 
 	$usersonlinequery2 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id, username, class FROM users WHERE privacy !='strong' AND UNIX_TIMESTAMP('" . get_date_time() . "') - UNIX_TIMESTAMP(users.last_access) < 84600") or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
 
-	while ($usersonlinerecord2 = mysqli_fetch_array($usersonlinequery2) ) {
-		$usersonlinerecords2[] = $usersonlinerecord2;
+	while ($row = mysqli_fetch_assoc($usersonlinequery2)) {
+		$rows[] = $row;
 	}
-    
-	if ($usersonlinerecords2 == ""){
-		echo "No members OnLine"; 
-	}else{
-        echo 'Total members that have visited today: '.$total24on;
-		echo '<br />(Members: '.$members2.', Guests: '.$guests2.')<br />';
-		$countusers2 = count($usersonlinerecords2);
-		foreach ($usersonlinerecords2 as $user2) {
-			switch($user2["class"]){
+
+	$countusers2 = count(mysqli_fetch_array($usersonlinequery2));
+
+	if (!$rows){
+		echo "No members OnLine";
+	}else {
+		echo 'Total members that have visited today: ' . $total24on;
+		echo '<br />(Members: ' . $members2 . ', Guests: ' . $guests2 . ')<br />';
+
+		for ($i = 0, $cnt = count($rows), $n = $cnt - 1; $i < $cnt; $i++) {
+			$row = &$rows[$i];
+			switch ($row["class"]) {
 				case 1:
 					$color = "#00FFFF";// user
 					break;
@@ -210,13 +211,10 @@ if ($action == "refreshMemberStats"){
 					$color = "#00FF00";//super moderator
 					break;
 				case 7:
-					$color = "#FF0000";// you and most trusted 
+					$color = "#FF0000";// you and most trusted
 					break;
 			}
-			for ($i2 = 0, $cnt2 = $countusers2, $n2 = $cnt2 - 1; $i2 < $cnt2; $i2++) { 
-				$row2 = &$rows2[$i2];
-				echo '<span id="member_info" memberid="'.$user2[id].'" class="clickable"><span style="color: '.$color.'; font-weight: bold;">'.class_user($user2["username"]).'</span></span>'.($i2 < $n2 ? ", " : "");
-			}
+			echo '<span id="member_info" memberid="' . $row["id"] . '" class="clickable"><span style="color: ' . $color . '; font-weight: bold;">' . class_user($row["username"]) . '</span></span>' . ($i < $n ? ", " : "");
 		}
 	}
 }elseif ($action == "member_info"){

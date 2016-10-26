@@ -33,7 +33,6 @@ ul.shoutbox li .sMemberShout img{
     border:0;
 }
 ul.shoutbox li .sButtons{
-    display:none;
     position:absolute;
     right:0;
     top:0;
@@ -49,7 +48,7 @@ ul.shoutbox li .sButtons{
 }
 .shoutboxButtons{
     margin:2px 0 10px 0;
-    display:none;
+    width: 99%;
 }
 #shoutboxUpdating{
     margin:0;
@@ -93,3 +92,21 @@ ul.shoutbox li .sButtons{
     display:inline;
     border:1px solid #ccc;
 }
+#chatbarText{
+    margin-left: 10px;
+    width: 85%;
+}
+table.shoutbox{
+    width: 100%;
+}
+.rowMemberShout{
+    border-bottom: 1px solid black;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+.rowMemberShout:hover{
+    background-color: lightgrey;
+}
+

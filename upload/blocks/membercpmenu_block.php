@@ -25,7 +25,7 @@ if ($scripturl == "/membercp.php"){
 			<li><a href="/membercp.php?action=subscribed_threads"'; if ($pageurl == "/membercp.php?action=subscribed_threads"){echo 'class="active"';} echo '>Subscribed Threads</a></li>
 			<li><a href="/membercp.php?action=open_port_check_tool"'; if ($pageurl == "/membercp.php?action=open_port_check_tool"){echo 'class="active"';} echo '>Open Port Check Tool</a></li>
 			<li><a href="/membercp.php?action=alerts"'; if ($pageurl == "/membercp.php?action=alerts"){echo 'class="active"';} echo '>Recent Alerts</a></li>
-			<li><a href="/membercp.php?action=messages"'; if ($pageurl == "/membercp.php?action=messages"){echo 'class="active"';} echo '>Messages</a></li>
+			<li><a href="/mailbox.php"'; if ($pageurl == "/membercp.php?action=messages"){echo 'class="active"';} echo '>Messages</a></li>
 		</ul>';
 	end_block();
 }

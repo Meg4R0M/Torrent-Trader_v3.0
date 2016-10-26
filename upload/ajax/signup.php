@@ -158,21 +158,33 @@ if ($message == "") {
     }
 
     if ($site_config["CONFIRMEMAIL"]){ //email confirmation is on
-        sendmail($email, "Your $site_config[SITENAME] User Account", $body, "", "-f$site_config[SITEEMAIL]");
+        mail($email, "Your $site_config[SITENAME] User Account", $body, "", "-f$site_config[SITEEMAIL]");
         if (!$site_config["ACONFIRM"]){
+            //send pm to new user
+            if ($site_config["WELCOMEPMON"]){
+                $dt = sqlesc(get_date_time());
+                $msg = sqlesc($site_config["WELCOMEPMMSG"]);
+                SQL_Query_exec("INSERT INTO messages (sender, receiver, added, msg, poster) VALUES(0, $id, $dt, $msg, 0)");
+            }
             ajax_show_infos_msg(T_("A_CONFIRMATION_EMAIL_HAS_BEEN_SENT"), T_("A_CONFIRMATION_EMAIL_HAS_BEEN_SENT"). " (" . htmlspecialchars($email) . "). " .T_("ACCOUNT_CONFIRM_SENT_TO_ADDY_REST"),1);
         }else{
+            //send pm to new user
+            if ($site_config["WELCOMEPMON"]){
+                $dt = sqlesc(get_date_time());
+                $msg = sqlesc($site_config["WELCOMEPMMSG"]);
+                SQL_Query_exec("INSERT INTO messages (sender, receiver, added, msg, poster) VALUES(0, $id, $dt, $msg, 0)");
+            }
             ajax_show_infos_msg(T_("EMAIL_CHANGE_SEND"), T_("EMAIL_CHANGE_SEND"). " (" . htmlspecialchars($email) . "). " .T_("ACCOUNT_CONFIRM_SENT_TO_ADDY_ADMIN"),1);
         }
         
     }else{ //email confirmation is off
+        //send pm to new user
+        if ($site_config["WELCOMEPMON"]){
+            $dt = sqlesc(get_date_time());
+            $msg = sqlesc($site_config["WELCOMEPMMSG"]);
+            SQL_Query_exec("INSERT INTO messages (sender, receiver, added, msg, poster) VALUES(0, $id, $dt, $msg, 0)");
+        }
         ajax_show_infos_msg(T_("PLEASE_NOW_LOGIN"), T_("PLEASE_NOW_LOGIN_REST"),1);
-    }
-    //send pm to new user
-    if ($site_config["WELCOMEPMON"]){
-        $dt = sqlesc(get_date_time());
-        $msg = sqlesc($site_config["WELCOMEPMMSG"]);
-        SQL_Query_exec("INSERT INTO messages (sender, receiver, added, msg, poster) VALUES(0, $id, $dt, $msg, 0)");
     }
 
     die;

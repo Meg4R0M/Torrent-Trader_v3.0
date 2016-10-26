@@ -56,7 +56,7 @@ function dbconn($autoclean = false) {
             ob_start();
     }
 
-    header("Content-Type: text/html;charset=$site_config[CHARSET]");
+    //header("Content-Type: text/html;charset=$site_config[CHARSET]");
 
     function_exists("mysqli_connect") or die("MySQL support not available.");
 
@@ -1587,6 +1587,27 @@ function auto_rank_icon($uploaded, $downloaded, $level)
   return "";
 }
 
+// http://stackoverflow.com/questions/2089590/mysqli-equivalent-of-mysql-result
+// MySQLi RESULT
+function mysqli_result($result,$row,$field=0) {
+    if ($result===false) return false;
+    if ($row>=mysqli_num_rows($result)) return false;
+    if (is_string($field) && !(strpos($field,".")===false)) {
+        $t_field=explode(".",$field);
+        $field=-1;
+        $t_fields=mysqli_fetch_fields($result);
+        for ($id=0;$id<mysqli_num_fields($result);$id++) {
+            if ($t_fields[$id]->table==$t_field[0] && $t_fields[$id]->name==$t_field[1]) {
+                $field=$id;
+                break;
+            }
+        }
+        if ($field==-1) return false;
+    }
+    mysqli_data_seek($result,$row);
+    $line=mysqli_fetch_array($result);
+    return isset($line[$field])?$line[$field]:false;
+}
 
  function __autoload( $f )
  {

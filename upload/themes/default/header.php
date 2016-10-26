@@ -40,7 +40,7 @@
 		<link rel="stylesheet" href="/themes/default/css/donations.css" type="text/css" media="screen" />
 		<link rel="stylesheet" href="/themes/default/css/responsive.css" type="text/css" media="screen" />
 		
-		<link rel="Shortcut Icon" href="http://templateshares-ue.net/tsue/favicon.ico?lv=2.3" type="image/x-icon" />
+		<link rel="Shortcut Icon" href="/themes/default/images/favicon.ico" type="image/x-icon" />
 		<!-- JS -->
 		<script type="text/javascript" src="/backend/java_klappe.js"></script>
 		<!--[if lte IE 6]>
@@ -48,6 +48,7 @@
 		<![endif]-->
 		<script src="http://code.jquery.com/jquery-2.1.0.min.js" type="text/javascript"></script>
 		<script src="/js/jquery.js" type="text/javascript"></script>
+		<script src="https://use.fontawesome.com/6f0303e402.js"></script>
 	</head>
 	<?php
 		$page = $_SERVER['REQUEST_URI'];
@@ -228,7 +229,7 @@
 											<a href="/membercp.php?action=subscribed_threads">Subscribed Threads</a>
 											<a href="/membercp.php?action=open_port_check_tool">Open Port Check Tool</a>
 											<a href="/membercp.php?action=alerts">Recent Alerts</a>
-											<a href="/membercp.php?action=messages">Messages</a>
+											<a href="/mailbox.php">Messages</a>
 										</div>
 									</div>
 								</li>
@@ -306,7 +307,7 @@
 										<li><a href="/membercp.php?action=subscribed_threads">Subscribed Threads</a></li>
 										<li><a href="/membercp.php?action=open_port_check_tool">Open Port Check Tool</a></li>
 										<li><a href="/membercp.php?action=alerts">Recent Alerts</a></li>
-										<li><a href="/membercp.php?action=messages">Messages</a></li>
+										<li><a href="/mailbox.php">Messages</a></li>
 									</ul>
 								</li>
 								<li><a href="#">Market</a></li>

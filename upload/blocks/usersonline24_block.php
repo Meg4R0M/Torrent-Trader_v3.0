@@ -4,8 +4,13 @@
 //      $LastChangedDate: 2016-10-15 12:41:50 +0000 (Sat, 15 Oct 2016) $
 //      $LastChangedBy: Meg4R0M $
 //
+if (strpos($_SERVER['REQUEST_URI'], '?') !== false){
+    $scripturl =  substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
+}else {
+    $scripturl = $_SERVER['REQUEST_URI'];
+}
 
-if ($_SERVER['REQUEST_URI'] == "/index.php"){
+if ($scripturl != "/membercp.php" && $scripturl != "/forums.php"){
 	echo '<div class="widget">
         <h4>
             <span class="floatright">
@@ -29,22 +34,26 @@ if ($_SERVER['REQUEST_URI'] == "/index.php"){
 
 
         $usersonlinequery2 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id, username, class FROM users WHERE privacy !='strong' AND UNIX_TIMESTAMP('" . get_date_time() . "') - UNIX_TIMESTAMP(users.last_access) < 84600") or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+        $rows = array();
+        while ($row = mysqli_fetch_assoc($usersonlinequery2)) {
+            $rows[] = $row;
+        }
 
-        while ($usersonlinerecord2 = mysqli_fetch_array($usersonlinequery2) ) {
-            $usersonlinerecords2[] = $usersonlinerecord2;
-		}
+        $countusers2 = count(mysqli_fetch_array($usersonlinequery2));
+
 
         echo '<div id="last24ActiveMembers" class="">
             <p id="last24onlineMembersList">';
     
-                if ($usersonlinerecords2 == ""){
-                    echo "No members OnLine"; 
+                if (!$rows){
+                    echo "No members OnLine";
                 }else{
                     echo 'Total members that have visited today: '.$total24on;
                     echo '<br />(Members: '.$members2.', Guests: '.$guests2.')<br />';
-                    $countusers2 = count($usersonlinerecords2);
-                    foreach ($usersonlinerecords2 as $user2) {
-                        switch($user2["class"]){
+
+                    for ($i = 0, $cnt = count($rows), $n = $cnt - 1; $i < $cnt; $i++) {
+                        $row = &$rows[$i];
+                        switch($row["class"]){
                             case 1:
                                 $color = "#00FFFF";// user
                                 break;
@@ -67,10 +76,7 @@ if ($_SERVER['REQUEST_URI'] == "/index.php"){
                                 $color = "#FF0000";// you and most trusted 
                                 break;
                         }
-                        for ($i2 = 0, $cnt2 = $countusers2, $n2 = $cnt2 - 1; $i2 < $cnt2; $i2++) { 
-                            $row2 = &$rows2[$i2];
-                            echo '<span id="member_info" memberid="'.$user2[id].'" class="clickable"><span style="color: '.$color.'; font-weight: bold;">'.class_user($user2["username"]).'</span></span>'.($i2 < $n2 ? ", " : "");
-                        }
+                        echo '<span id="member_info" memberid="' . $row["id"] . '" class="clickable"><span style="color: ' . $color . '; font-weight: bold;">' . class_user($row["username"]) . '</span></span>' . ($i < $n ? ", " : "");
                     }
                 }
             echo '</p>
