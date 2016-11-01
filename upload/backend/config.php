@@ -148,13 +148,15 @@ $site_config["passhash_method"] = "sha1"; 			# Hashing method (sha1, md5 or hmac
 $site_config["passhash_algorithm"] = "sha1"; 			# See http://php.net/hash_algos for a list of supported algorithms.
 $site_config["passhash_salt"] = ""; 				# Shouldn't be blank. At least 20 characters of random text.
 
-// Class colors
-$site_config['administrator_color'] = '#FF0000'; 		# Administrator
-$site_config['super_moderator_color'] = '#00FF00'; 		# Super Moderator
-$site_config['moderator_color'] = '#009900'; 			# Moderator
-$site_config['uploader_color'] = '#0000FF'; 			# Uploader
-$site_config['vip_color'] = '#990099'; 				# VIP
-$site_config['power_user_color'] = '#FF7519'; 			# Power User
-$site_config['user_color'] = '#00FFFF'; 			# User
+//AntiBruteforce
+$site_config['atbf_activate'] = true; // true => to activate Anti Bruteforce, => false to disabled it.
+$site_config['atbf_trials'] = '5';//numbers of trials before locking = Note: Trials must be SUPERIOR than 0
+$site_config['atbf_days_lock'] = '1';//Number of days to be locked
+$site_config['atbf_months_lock'] ='2';//Number of months to be locked
+$site_config['atbf_years_lock'] = '1';//Number of years to be locked
+if($site_config['atbf_activate'] == true && $site_config['atbf_trials'] == 0 && $site_config['atbf_months_lock'] == 0 && $site_config['atbf_years_lock'] == 0){
+	echo('ERROR: $site_config[\'atbf_trials\'] as set to 0 ! '); // cHeck to prevent errors
+	exit();
+}
 
 ?>
