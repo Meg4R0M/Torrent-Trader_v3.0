@@ -1,13 +1,12 @@
-Torrent-Trader v3.0.0 Beta 
+Torrent-Trader v3.0.2 Beta 
 =============
 
 ### INSTALL NOTES
 
 > `WARNING UPGRADING FROM V2 ISNT TEST AT THIS TIME IMPORTIMG MEMBERS MIGHT NOT WORK`
 
-### REQUIREMENTS:
-    -RewriteEngine On 
-    -PHP 5.2+
+### REQUIREMENTS: 
+    -PHP 7.0+
     -MYSQL 4+
     -We do not advise that register_globals is enabled
     -We do not advise installation in a windows enviroment, however it will work (you may need to adjust paths)
@@ -48,13 +47,11 @@ $ chmod 600 censor.txt
 
     -- check.php is designed for UNIX systems, if you are using WINDOWS it may not report the paths correctly.
 	
-7) Default Login User: `Admin` password: `password`  change password with in profile area and you can change user name from with in phpmyadmin
-
-8) If check.php still exists, please remove it or rename.
+7) If check.php still exists, please remove it or rename.
 
     -- A warning will display on the site index until its removed
 	
-9) You should properly secure backup-database.php and the backups dir. (htaccess/htpasswd)
+8) You should properly secure backup-database.php and the backups dir. (htaccess/htpasswd)
 
 
 Any problems please visit [My FB](https://www.facebook.com/Toos.DL)
