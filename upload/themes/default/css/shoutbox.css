@@ -1,112 +1,111 @@
-div.shoutbox{
-    max-height:200px;
-    overflow:auto;
-    overflow-y:auto;
-    overflow-x:hidden;
-    background:#F7F7F7;
-    position:relative;
-}
-ul.shoutbox{
-    width:100%;
-    padding:0;
-    margin:0;
-    position:relative;
-    font-size:11px;
-}
-ul.shoutbox li{
-    word-wrap:break-word;
-    vertical-align:top;
-    padding:2px;
-    position:relative;
-}
-ul.shoutbox li .sMemberDetails{}
-ul.shoutbox li .sMemberDetails img{
-    width:16px !important;
-    height:16px !important;
-    vertical-align:middle;
-}
-ul.shoutbox li .sMemberShout{
-    position:relative;
-}
-ul.shoutbox li .sMemberShout img{
-    max-width:60%;
-    border:0;
-}
-ul.shoutbox li .sButtons{
-    position:absolute;
-    right:0;
-    top:0;
-    z-index:1500;
-}
-#tinymceShoutbox{
-    width:99%;
-    height:15px;
-    border:1px solid #ccc;
-    margin-top:5px;
-    color:#ccc;
-    padding:3px;
-}
-.shoutboxButtons{
-    margin:2px 0 10px 0;
-    width: 99%;
-}
-#shoutboxUpdating{
-    margin:0;
-    padding:0;
-    overflow:hidden;
-    display:none;
-    float:right;
-    font-size:10px;
-    font-style:italic;
-}
-#imback{
-    cursor:pointer;
-    text-decoration:underline;
-    font-weight:bold;
-}
-.shoutboxAnnouncementImg{
-    width:41px;
-    height:60px;
-    float:left;
-    margin-right:5px;
-    vertical-align:top;
-    border:0;
-}
-.shoutboxAnnouncementTitle{
-    font-weight:bold;
-}
-.shoutboxAnnouncementDesc{
-    font-size:11px;
-}
-.shoutboxChannels{
-    float:right;
-    font-size:11px;
-}
-.shoutboxChannels select{
-    background:#fff;
-    font-size:10px;
-    width:150px;
-    color:#333;
-    margin:0;
-    padding:2px;
-    display:inline;
-    border:1px solid #ccc;
-}
-#chatbarText{
-    margin-left: 10px;
-    width: 85%;
-}
-table.shoutbox{
-    width: 100%;
-}
-.rowMemberShout{
-    border-bottom: 1px solid black;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-}
-.rowMemberShout:hover{
-    background-color: lightgrey;
-}
-
+div.shoutbox{
+    max-height:200px;
+    overflow:auto;
+    overflow-y:auto;
+    overflow-x:hidden;
+    background:#F7F7F7;
+    position:relative;
+}
+ul.shoutbox{
+    width:100%;
+    padding:0;
+    margin:0;
+    position:relative;
+    font-size:11px;
+}
+ul.shoutbox li{
+    word-wrap:break-word;
+    vertical-align:top;
+    padding:2px;
+    position:relative;
+}
+ul.shoutbox li .sMemberDetails{}
+ul.shoutbox li .sMemberDetails img{
+    width:16px !important;
+    height:16px !important;
+    vertical-align:middle;
+}
+ul.shoutbox li .sMemberShout{
+    position:relative;
+}
+ul.shoutbox li .sMemberShout img{
+    max-width:60%;
+    border:0;
+}
+ul.shoutbox li .sButtons{
+    position:absolute;
+    right:0;
+    top:0;
+    z-index:1500;
+}
+#tinymceShoutbox{
+    width:99%;
+    height:15px;
+    border:1px solid #ccc;
+    margin-top:5px;
+    color:#ccc;
+    padding:3px;
+}
+.shoutboxButtons{
+    margin:2px 0 10px 0;
+    width: 99%;
+}
+#shoutboxUpdating{
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    display:none;
+    float:right;
+    font-size:10px;
+    font-style:italic;
+}
+#imback{
+    cursor:pointer;
+    text-decoration:underline;
+    font-weight:bold;
+}
+.shoutboxAnnouncementImg{
+    width:41px;
+    height:60px;
+    float:left;
+    margin-right:5px;
+    vertical-align:top;
+    border:0;
+}
+.shoutboxAnnouncementTitle{
+    font-weight:bold;
+}
+.shoutboxAnnouncementDesc{
+    font-size:11px;
+}
+.shoutboxChannels{
+    float:right;
+    font-size:11px;
+}
+.shoutboxChannels select{
+    background:#fff;
+    font-size:10px;
+    width:150px;
+    color:#333;
+    margin:0;
+    padding:2px;
+    display:inline;
+    border:1px solid #ccc;
+}
+#chatbarText{
+    margin-left: 10px;
+    width: 85%;
+}
+table.shoutbox{
+    width: 100%;
+}
+.rowMemberShout{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+.rowMemberShout:hover{
+    background-color: lightgrey;
+}
+
