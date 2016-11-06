@@ -20,7 +20,7 @@ if ($site_config["MEMBERSONLY"]){
 $addparam = "";
 $wherea = array();
 $wherea[] = "visible = 'yes'";
-$thisurl = "../browse/?";
+$thisurl = "torrents.php?";
 
 if ($_GET["cat"]) {
     $wherea[] = "category = " . sqlesc($_GET["cat"]);
@@ -79,7 +79,7 @@ if ($_GET["sort"] || $_GET["order"]) {
     $orderby = "ORDER BY $sort";
 
     }else{
-        $orderby = "ORDER BY torrents.id DESC";
+        $orderby = "ORDER BY torrents.sticky ASC, torrents.id DESC";
         $_GET["sort"] = "id";
         $_GET["order"] = "desc";
     }
@@ -92,7 +92,7 @@ $count = $row[0];
 //get sql info
 if ($count) {
     list($pagertop, $pagerbottom, $limit) = pager(20, $count, "../browse/?" . $addparam);
-    $query = "SELECT torrents.id, torrents.anon, torrents.announce, torrents.category, torrents.leechers, torrents.nfo, torrents.seeders, torrents.name, torrents.times_completed, torrents.size, torrents.added, torrents.comments, torrents.numfiles, torrents.filename, torrents.owner, torrents.external, torrents.freeleech, categories.name AS cat_name, categories.parent_cat AS cat_parent, categories.image AS cat_pic, users.username, users.privacy, IF(torrents.numratings < 2, NULL, ROUND(torrents.ratingsum / torrents.numratings, 1)) AS rating FROM torrents LEFT JOIN categories ON category = categories.id LEFT JOIN users ON torrents.owner = users.id $where $orderby $limit";
+    $query = "SELECT torrents.id, torrents.anon, torrents.announce, torrents.category, torrents.sticky, torrents.leechers, torrents.nfo, torrents.seeders, torrents.name, torrents.times_completed, torrents.size, torrents.added, torrents.comments, torrents.numfiles, torrents.filename, torrents.owner, torrents.external, torrents.freeleech, categories.name AS cat_name, categories.parent_cat AS cat_parent, categories.image AS cat_pic, categories.image_sub AS cat_pic_sub, users.username, users.privacy, IF(torrents.numratings < 2, NULL, ROUND(torrents.ratingsum / torrents.numratings, 1)) AS rating FROM torrents LEFT JOIN categories ON category = categories.id LEFT JOIN users ON torrents.owner = users.id $where $orderby $limit";
     $res = SQL_Query_exec($query);
 }else{
     unset($res);

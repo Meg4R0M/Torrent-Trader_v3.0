@@ -62,13 +62,13 @@ if ($action == "recent_activity") {
     echo "<div class='cReply'>";
         if ($user["privacy"] != "strong" || ($CURUSER["control_panel"] == "yes") || ($CURUSER["id"] == $user["id"])) { 
 
-            $res = SQL_Query_exec("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = '$id' AND seeder = 'yes'"); 
-            if (mysqli_num_rows($res) > 0) 
-                $seeding = peerstable($res); 
+            //$res = SQL_Query_exec("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = '$id' AND seeder = 'yes'");
+            //if (mysqli_num_rows($res) > 0)
+            //    $seeding = peerstable($res);
 
-            $res = SQL_Query_exec("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = '$id' AND seeder = 'no'"); 
-            if (mysqli_num_rows($res) > 0) 
-                $leeching = peerstable($res); 
+            //$res = SQL_Query_exec("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = '$id' AND seeder = 'no'");
+            //if (mysqli_num_rows($res) > 0)
+            //    $leeching = peerstable($res);
 
             if ($seeding) 
                 print("<b>" .T_("CURRENTLY_SEEDING"). ":</b><br />$seeding<br /><br />"); 

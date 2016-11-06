@@ -122,7 +122,7 @@ switch(tag)
     </table>
     </th>  </tr>
   <tr class='b-row'>
-    <td class='bb-comment' align='center' valign='top'><textarea name="<?php echo $name; ?>" rows="10" cols="50" style="width: 800px;" /><?php echo $content; ?></textarea></td>
+    <td class='bb-comment' align='center' valign='top'><textarea name="<?php echo $name; ?>" rows="10" cols="50" style="width: 800px;" class="tabletinymce"/><?php echo $content; ?></textarea></td>
     <td class='bb-btn' width='130' align="center" valign='top'>
       <table border="0" cellpadding="3" cellspacing="3" align="center">
       <tr>

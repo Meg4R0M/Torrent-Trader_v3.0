@@ -42,14 +42,15 @@ if ($scripturl != "/membercp.php" && $scripturl != "/forums.php"){
         $countusers2 = count(mysqli_fetch_array($usersonlinequery2));
 
 
-        echo '<div id="last24ActiveMembers" class="">
-            <p id="last24onlineMembersList">';
-    
-                if (!$rows){
-                    echo "No members OnLine";
-                }else{
-                    echo 'Total members that have visited today: '.$total24on;
-                    echo '<br />(Members: '.$members2.', Guests: '.$guests2.')<br />';
+        echo '<div id="last24ActiveMembers" class="">';
+            if (!$rows){
+                echo '<p id="last24onlineMembersList">
+                    No members OnLine
+                </p>';
+            }else{
+                echo '<p id="last24onlineMembersList">
+                    Total members that have visited today: '.$total24on.'
+                    <br />(Members: '.$members2.', Guests: '.$guests2.')<br />';
 
                     for ($i = 0, $cnt = count($rows), $n = $cnt - 1; $i < $cnt; $i++) {
                         $row = &$rows[$i];
@@ -78,9 +79,9 @@ if ($scripturl != "/membercp.php" && $scripturl != "/forums.php"){
                         }
                         echo '<span id="member_info" memberid="' . $row["id"] . '" class="clickable"><span style="color: ' . $color . '; font-weight: bold;">' . class_user($row["username"]) . '</span></span>' . ($i < $n ? ", " : "");
                     }
-                }
-            echo '</p>
-            <p>
+                echo '</p>';
+            }
+            echo '<p>
                 <span style="padding: 0 7px; border: 1px solid #000; margin: 1px; background:  #FF0000" title="Administrators">&nbsp;</span>
                 <span style="padding: 0 7px; border: 1px solid #000; margin: 1px; background:  #00FF00" title="Super Moderators">&nbsp;</span> 
                 <span style="padding: 0 7px; border: 1px solid #000; margin: 1px; background:  #009900" title="Moderators">&nbsp;</span> 

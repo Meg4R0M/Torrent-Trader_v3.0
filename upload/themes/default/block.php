@@ -5,9 +5,6 @@ function begin_frame($caption = "-", $align = "justify"){
 	$togglediv = str_replace(" ", "", $caption);
     print("<div class='widget'>
 	<h4>
-		<div class='floatright'>
-			
-		</div>
 		<img src='/themes/default/forums/mix/bullet_toggle_minus.png' alt='' title='' rel='$togglediv' id='toggle' class='middle pointer' /> $caption
 	</h4>
 	<div id='$togglediv' class=''>");

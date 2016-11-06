@@ -51,7 +51,9 @@ if (!$action){
         <div class="profile-stats">
             <ul>
             	<li><span><font><font><?php echo T_("JOINED"); ?></font></font></span><font><font><?php echo utc_to_tz($CURUSER["added"]); ?></font></font></a></li>
-                
+                <?php if ($CURUSER["edit_users"]=="yes" && $CURUSER["class"] > $user["class"]) { ?>
+  <div style="margin-bottom:3px"><a href="snatched.php?uid=<?php echo $CURUSER["id"]?>"><?php echo "<input type='submit' value='".T_("SNATCHLIST")."'>"; ?></a></div>
+<?php } ?>
             </ul>
             <div class="clear"></div>
         </div>
@@ -125,7 +127,7 @@ $offset = ($page * $perpage) - $perpage;
 $where = "WHERE torrents.owner = " . $CURUSER["id"] ."";
 $orderby = "ORDER BY added DESC";
 
-$query = SQL_Query_exec("SELECT torrents.id, torrents.category, torrents.name, torrents.added, torrents.hits, torrents.banned, torrents.comments, torrents.seeders, torrents.leechers, torrents.times_completed, categories.name AS cat_name, categories.parent_cat AS cat_parent FROM torrents LEFT JOIN categories ON category = categories.id $where $orderby LIMIT $offset,$perpage");
+$query = SQL_Query_exec("SELECT torrents.id, torrents.category, torrents.name, torrents.added, torrents.hits, torrents.banned, torrents.comments, torrents.seeders, torrents.leechers, torrents.times_completed, categories.name AS cat_name, categories.parent_cat AS cat_parent, categories.image AS cat_pic, categories.image_sub AS cat_pic_sub FROM torrents LEFT JOIN categories ON category = categories.id $where $orderby LIMIT $offset,$perpage");
 
 $allcats = mysqli_num_rows($query);
 	if($allcats == 0) {

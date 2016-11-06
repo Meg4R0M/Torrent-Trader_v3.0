@@ -83,8 +83,8 @@ dbconn();
 
 $dossier = $CURUSER['bbcode'];
 function shoutfun($dos,$doss,$dossier){
-echo "<table border=0 cellpadding=0 cellspacing=2 align='center'>";
-echo "<tr>";
+echo "<table style=\"display: flex;flex-direction: row;justify-content: space-around;\">";
+echo "<tr style='display:flex; flex-wrap: wrap;'>";
 echo "<td title='Gras'><button onclick=\"bbshout('[b]', '[/b]')\" class=\"submit\"><i class=\"fa fa-bold\" aria-hidden=\"true\"></i></button></td>";
 echo "<td><button onclick=\"bbshout('[i]', '[/i]')\" class=\"submit\"><i class=\"fa fa-italic\" aria-hidden=\"true\" title='Italic'></i></button></td>";
 echo "<td><button onclick=\"bbshout('[u]', '[/u]')\" class=\"submit\"><i class=\"fa fa-underline\" aria-hidden=\"true\" title='Souligner'></i></button></td>";
@@ -106,9 +106,9 @@ echo "<td><button onclick=\"bbshout('[googlemaps]', '[/googlemaps]')\" class=\"s
 
 echo "</tr></table>";
 
-echo "<table border=0 cellpadding=0 cellspacing=2 align='center'><tr>";
+echo "<table><tr style='display:flex; flex-wrap: wrap;'>";
 echo "<td>
-<select name='color' size='0.5' onChange=\"javascript:bbcolor(),initialise(this)\" class=\"s\">
+<select name='color' onChange=\"javascript:bbcolor(),initialise(this)\" class=\"s\">
 <option selected='selected'>Couleurs</option>
 	        <option value='#000000' style='BACKGROUND-COLOR:#000000'>Noir</option>
             <option value='#686868' style='BACKGROUND-COLOR:#686868'>Gris</option>
@@ -150,7 +150,7 @@ echo "<td>
             </select></td>";
 
 echo "<td>
-<select name='font' size='0.5' onChange=\"javascript:bbcolor(),initialise(this)\" class=\"s\">
+<select name='font' onChange=\"javascript:bbcolor(),initialise(this)\" class=\"s\">
           <option value='Arial'>Type de Police</option>
           <option value='Arial' style='font-family: Arial;'>Arial</option>
           <option value='Comic Sans MS' style='font-family: Comic Sans MS;'>Comic Sans MS</option>
@@ -175,7 +175,7 @@ echo "<td>
 		  </select></td>";
 
 echo "<td>
-<select name='size' size='0.5' onChange=\"javascript:bbcolor(),initialise(this)\" class=\"s\">
+<select name='size' onChange=\"javascript:bbcolor(),initialise(this)\" class=\"s\">
 <option selected='selected'>Taille</option>
 			<option value='1'>xx-Petit</option>
 			<option value='2'>x-Petit</option>
@@ -187,7 +187,7 @@ echo "<td>
             </select></td>";
 
 echo"<td>&nbsp;<button  onclick=\"show_hide('sextra1')\" class=\"submit\"><i class=\"fa fa-arrow-down\" aria-hidden=\"true\" title=\"More !\"></i></button>";
-echo "</tr></table></center>";
+echo "</tr></table>";
 
 }
 ?>

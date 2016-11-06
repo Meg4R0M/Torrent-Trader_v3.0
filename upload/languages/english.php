@@ -1079,5 +1079,45 @@ $LANG["YOUR_SETTINGS"] = "Your Settings";
 $LANG["SYSTEM"] = "System";
 $LANG["CANCEL"] = "Cancel";
 $LANG["SENDER"] = "Sender";
- 
+//Genre
+$LANG["GENRE"] = "Genre";
+$LANG["ADD_NEW_CATEGORY"] = "Add new category";
+$LANG["PLEASE_NOTE"] = "Please note that if no image is specified, the category name will be displayed.";
+$LANG["SORT"] = "Sort";
+$LANG["PARANT_CAT"] = "Parant Cat";
+$LANG["PARANT_IMAGE"] = "Parant Image";
+$LANG["SUB_CAT"] = "Sub Cat";
+$LANG["SUB_IMAGE"] = "Sub Image";
+$LANG["CATEGORIES_MANAGEMENT"] = "Categories Management";
+$LANG["NO_CATEGORY"] = "No category with ID";
+$LANG["PARANT_CAT_CAN_NOT_BE_EMPTY"] = "Parent Cat cannot be empty!";
+$LANG["SUB_CAT_CANNOT_BE_EMPTY"] = "Sub cat cannot be empty!";
+$LANG["CATEGORY_SUCCESSFULLY"] = "Category was edited successfully";
+$LANG["PARANT_CATEGORY"] = "Parent Category";
+$LANG["SUB_CATEGORY"] = "Sub Category";
+$LANG["ALL_SUBCATS"] = "All Subcats with EXACTLY the same parent cat are grouped";
+$LANG["SINGLE_FILENAME"] = "single filename";
+$LANG["CATEGORY_DELETED"] = "Category Deleted OK";
+$LANG["CATEGORY_MOVE"] = "Category ID to move all Torrents To";
+$LANG["CAT_ID"] = "(Cat ID)";
+$LANG["CATEGORY_WAS_ADDED_SUCCESSFULLY"] = "Category was added successfully.";
+$LANG["UNABLE_TO_ADD_CATEGORY"] = "Unable to add category";
+//===| Snatchlist
+$LANG["SNATCHLIST"] = "Snatchlist";
+$LANG["YOUR_SNATCHLIST"] = "Your Snatchlist";
+$LANG["SNATCHLIST_FOR"] = "Snatchlist For:";
+$LANG["LAST_ACTION"] = "Last Action";
+$LANG["SEED_TIME"] = "Seed Time";
+$LANG["GO_TO_YOUR_PROFILE"] = "Go to Your Profile";
+$LANG["GO_TO_USER_ACCOUNT"] = "Go to User Account";
+$LANG["HNR"] = "<font color=#FF1200><b>H</b><small>&</small><b>R</b></font>";
+$LANG["SNATCHED_MESSAGE"] = "This page displays the details to all downloaded torrents, completed or not.";
+$LANG["NO_USER_WITH_ID"] = "There is no user with ID: ";
+$LANG["NO_TORRENT_WITH_ID"] = "There is no torrent with ID: ";
+$LANG["REGISTERED_MEMBERS_TO_TORRENT"] = "Registered Members To Torrent:";
+$LANG["NO_PERMISSION"] = "You don't have permission for this action!";
+$LANG["T_L_OR_E"] = "Local or External";
+$LANG["LOCAL_TORRENT"] = "Local Torrent";
+$LANG["EXTERNAL_TORRENT"] = "External Torrent";
+$LANG["FREE"] = "Free";
 ?>

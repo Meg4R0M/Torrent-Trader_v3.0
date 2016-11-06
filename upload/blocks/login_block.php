@@ -13,7 +13,7 @@ if (strpos($_SERVER['REQUEST_URI'], '?') !== false){
 if ($scripturl != "/membercp.php" && $scripturl != "/forums.php"){
 	if (!$CURUSER) {
 		begin_block(T_("LOGIN"));
-			echo '<form id="loginbox_form" action="">
+			echo '<form id="loginbox_form">
 				<p>
 					<label for="loginbox_membername">'.T_("USERNAME").'</label><br />
 					<input type="text" name="username" id="loginbox_membername" class="s" accesskey="m" value="" />
@@ -32,7 +32,7 @@ if ($scripturl != "/membercp.php" && $scripturl != "/forums.php"){
 				</p>
 				<p>
 					<a href="/account-signup.php" id="signup">'.T_("SIGNUP").'</a><br />
-					<a href="/account-recover.php" rel="forgot-password">'.T_("RECOVER_ACCOUNT").'</a>
+					<a href="/account-recover.php">'.T_("RECOVER_ACCOUNT").'</a>
 				</p>
 			</form>';
 		end_block();
