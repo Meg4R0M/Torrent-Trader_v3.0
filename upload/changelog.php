@@ -21,6 +21,10 @@ echo '<table class="forumTable">
     </tr>
     <tr class="threadList">
 	    <td style="width: 5%; text-align: center;">2016-11-06</td>
+	    <td data-th="Title">TTAPI - IMDB v2.0</td>
+	</tr> 
+    <tr class="threadList">
+	    <td style="width: 5%; text-align: center;">2016-11-06</td>
 	    <td data-th="Title">Snatchlist</td>
 	</tr> 
     <tr class="threadList">
@@ -61,10 +65,10 @@ echo '<table class="forumTable">
 	    <td data-th="Title">Peerstable function</td>
 	</tr>
 	<tr class="threadList">
-	    <td data-th="Title">IMDB APi integration</td>
+	    <td data-th="Title">Parent category select</td>
 	</tr>
 	<tr class="threadList">
-	    <td data-th="Title">Parent category select</td>
+	    <td data-th="Title">Tags on Torrents</td>
 	</tr>
 	        
 </table>';

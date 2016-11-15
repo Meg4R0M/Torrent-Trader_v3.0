@@ -149,5 +149,57 @@ if ($action == "bookmarks" && $do == "remove"){
             }
         echo '</tbody>
     </table>';
+}elseif ($action == "refresh_imdb"){
+    $id = $_POST["tid"];
+    $res = SQL_Query_exec("SELECT imdb FROM torrents WHERE id=".$id."");
+    $arr = mysqli_fetch_assoc($res);
+    // iMDB DATA
+    if ($arr["imdb"]){
+        $TTIMDB = new TTIMDB;
+        if ((($_data = $TTCache->Get("imdb/$id", 9000)) === false) && ($_data = $TTIMDB->Get($arr['imdb']))) {
+            $_data->Poster = $TTIMDB->getImage($_data->Poster, $id);
+            if ( ! isset( $_data->imdbTime ) ) {
+                $_data->imdbTime = time();
+                $_data->Alias = 'N/A';
+                $_data->imdbVideo = null;
+            }
+            $TTCache->Set("imdb/$id", $_data, 9000);
+        }
+    }
+    if ($_data):
+        echo '<div class="torrent-box" id="imdb_'.$id.'">
+        <strong class="newIndicator">
+            <span></span>
+            <div class="floatright">';
+                ?><a href="<?php echo $row['imdb']; ?>" target="_blank"><?php echo htmlspecialchars($arr['imdb']); ?></a>
+            </div>
+            IMDB - <?php echo $_data->Title; echo '<img src="../themes/default/buttons/refresh.png" alt="Refresh" title="Refresh" id="refresh_imdb" class="clickable middle" content_id="'.$id.'" />';
+        ?></strong>
+
+        <div class="floatleft previewIMDBImage">
+            <img src="<?php echo $_data->Poster; ?>" alt="<?php echo $_data->Title; ?>" title="<?php echo $_data->Title; ?>" height="317px" width="214px"/>
+        </div>
+
+        <div>
+        <b><?php echo $_data->Title; ?></b> (<?php echo $_data->Year; ?>)<br>
+        <?php echo $_data->Runtime; ?> -  <?php echo $_data->Genre; ?><br>
+        <?php if (($rating = $TTIMDB->getRating($_data->imdbRating)) !== null):
+            echo $rating; ?> (<?php echo $_data->imdbVotes; ?> Votes)
+        <?php endif; ?>
+        <div class="dottedBottom dottedTop"><?php echo $_data->Plot; ?></div>
+        <b>Director:</b> <?php echo $_data->Director; ?><br>
+        <b>Writer:</b> <?php echo $_data->Writer; ?><br>
+        <b>Actors:</b> <?php echo $_data->Actors; ?><br>
+        <?php if ($_data->Awards){ ?>
+            <b>Awards:</b> <?php echo $_data->Awards; ?><br>
+        <?php } ?>
+        <br><b>Last Updated </b><i><?php echo $TTIMDB->getUpdated($_data->imdbTime); ?></i>
+        </div><?php
+
+        echo '<div class="clear"></div>
+            </div>';
+    else:
+        echo 'iMDB Error...';
+    endif;
 }
 ?>

@@ -1120,4 +1120,21 @@ $LANG["T_L_OR_E"] = "Local or External";
 $LANG["LOCAL_TORRENT"] = "Local Torrent";
 $LANG["EXTERNAL_TORRENT"] = "External Torrent";
 $LANG["FREE"] = "Free";
+//===| IMDB
+$LANG["IMDB"] = "Internet Movie Database:";
+$LANG["IMDB_LINK"] = "Link";
+$LANG["IMDB_INFO"] = "If a valid imdb is given we can autofill the description.";
+$LANG["IMDB_RELEASED"] = "Released";
+$LANG["IMDB_RATED"] = "Rated";
+$LANG["IMDB_ALIAS"] = "Also Known As";
+$LANG["IMDB_GENRE"] = "Genre";
+$LANG["IMDB_DIRECTOR"] = "Director";
+$LANG["IMDB_YEAR"] = "Year";
+$LANG["IMDB_WRITER"] = "Writer";
+$LANG["IMDB_RUNTIME"] = "Runtime";
+$LANG["IMDB_VOTES"] = "Votes";
+$LANG["IMDB_ACTORS"] = "Actors";
+$LANG["IMDB_PLOT"] = "Plot";
+$LANG["IMDB_SHORT"] = "IMDB";
+$LANG["IMDB_LASTUPDATED"] = "Last Updated";
 ?>
