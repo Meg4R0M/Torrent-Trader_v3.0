@@ -1,6 +1,6 @@
 <?php 
 //********************************************************//
-//  Mega-Tracker-Vidéo v2                                 //
+//  Mega-Tracker-Vidï¿½o v2                                 //
 //	This file was last updated: 27/02/2011 by HellsAngels //
 //                                                        //	
 //	http://mega-tracker-video.net-community.de            //
@@ -13,10 +13,10 @@ require_once("backend/smilies.php");
 ?>
 <html><head>
 <title>smilies clickable </title>
-<link rel="stylesheet" type="text/css" href="<?=$site_config["SITEURL"]; ?>/themes/smilies.css">
+<link rel="stylesheet" type="text/css" href="/themes/smilies.css">
 </head>
 
-<script language=javascript>
+<script type="text/javascript">
 
 function SmileIT(smile,form,text){
 window.opener.document.forms[form].elements[text].value = window.opener.document.forms[form].elements[text].value+" "+smile+" ";
@@ -27,7 +27,7 @@ window.close();
 
 <table class="smile_table" width="100%" cellpadding="0" cellspacing="1">
 <tr>
-<?
+<?php
 
 while ((list($code, $url) = each($smilies))) {
 if ($count % 5==0)
